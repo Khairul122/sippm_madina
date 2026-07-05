@@ -1,0 +1,132 @@
+<?php
+
+use App\Http\Controllers\Web\Auth\LoginController;
+use App\Http\Controllers\Web\Auth\RegisterController;
+use App\Http\Controllers\Web\Dashboard\ActivityDashboardController;
+use App\Http\Controllers\Web\Dashboard\AuditLogController;
+use App\Http\Controllers\Web\Dashboard\ComplaintDashboardController;
+use App\Http\Controllers\Web\Dashboard\DashboardHomeController;
+use App\Http\Controllers\Web\Dashboard\DesaManagementController;
+use App\Http\Controllers\Web\Dashboard\KecamatanManagementController;
+use App\Http\Controllers\Web\Dashboard\NotificationWebController;
+use App\Http\Controllers\Web\Dashboard\OpdManagementController;
+use App\Http\Controllers\Web\Dashboard\StatisticsController;
+use App\Http\Controllers\Web\Dashboard\UserManagementController;
+use App\Http\Controllers\Web\MyComplaintController;
+use App\Http\Controllers\Web\Public\ActivityFeedController;
+use App\Http\Controllers\Web\Public\HomeController;
+use App\Http\Controllers\Web\Public\TrackComplaintController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Session-based dashboard for internal roles + a thin public site, plus
+| masyarakat's own complaint pages under /pengaduan (deliberately NOT under
+| /dashboard — that prefix is internal-only per AGENTS.md Don'ts). RBAC
+| below follows the role matrix from the PRD (section 4.2) enforced by
+| Spatie's `role:` middleware, layered under `active`
+| (EnsureAccountIsActive). Object-level checks beyond the role matrix are
+| enforced by Policies inside each controller action ($this->authorize()).
+|
+*/
+
+Route::get('/', [HomeController::class, 'index']);
+Route::get('/lacak', [TrackComplaintController::class, 'index']);
+Route::get('/kegiatan', [ActivityFeedController::class, 'index']);
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'create'])->name('login');
+    Route::post('/login', [LoginController::class, 'store']);
+    Route::get('/register', [RegisterController::class, 'create']);
+    Route::post('/register', [RegisterController::class, 'store']);
+});
+
+Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
+
+// Masyarakat: pengaduan milik sendiri.
+Route::prefix('pengaduan')->middleware(['auth', 'active', 'role:masyarakat'])->group(function () {
+    Route::get('/', [MyComplaintController::class, 'index']);
+    Route::get('/ajukan', [MyComplaintController::class, 'create']);
+    Route::post('/', [MyComplaintController::class, 'store']);
+    Route::get('/{complaint}', [MyComplaintController::class, 'show']);
+});
+
+Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
+    // Bare "/dashboard" (login redirect target, bookmarks) — bounces to
+    // the first page the user's role actually has access to.
+    Route::get('/', [DashboardHomeController::class, 'index']);
+
+    // Notification bell (all internal roles).
+    Route::get('/notifications', [NotificationWebController::class, 'index']);
+    Route::post('/notifications/read-all', [NotificationWebController::class, 'markAllRead']);
+    Route::post('/notifications/{notification}/read', [NotificationWebController::class, 'markRead']);
+
+    // All internal roles (masyarakat is excluded — masyarakat never gets a
+    // dashboard account per AGENTS.md Don'ts).
+    Route::middleware('role:kominfo|opd|camat|bupati|wakil_bupati|sekda')->group(function () {
+        Route::get('/statistik', [StatisticsController::class, 'index']);
+        Route::get('/statistik/export/pdf', [StatisticsController::class, 'exportPdf']);
+        Route::get('/statistik/export/excel', [StatisticsController::class, 'exportExcel']);
+    });
+
+    // Complaint + activity dashboard: Kominfo sees/manages everything;
+    // OPD/Camat see only their own scope (filtered in the controllers).
+    Route::middleware('role:kominfo|opd|camat')->group(function () {
+        Route::get('/complaints', [ComplaintDashboardController::class, 'index']);
+        Route::get('/complaints/{complaint}', [ComplaintDashboardController::class, 'show']);
+
+        Route::get('/activities', [ActivityDashboardController::class, 'index']);
+        Route::get('/activities/create', [ActivityDashboardController::class, 'create']);
+        Route::post('/activities', [ActivityDashboardController::class, 'store']);
+    });
+
+    Route::middleware('role:kominfo')->group(function () {
+        Route::post('/complaints/{complaint}/verify', [ComplaintDashboardController::class, 'verify']);
+        Route::post('/complaints/{complaint}/dispose', [ComplaintDashboardController::class, 'dispose']);
+        Route::post('/complaints/{complaint}/respond', [ComplaintDashboardController::class, 'respond']);
+        Route::post('/activities/{activity}/verify', [ActivityDashboardController::class, 'verify']);
+        Route::post('/activities/{activity}/publish', [ActivityDashboardController::class, 'publish']);
+
+        Route::get('/users', [UserManagementController::class, 'index']);
+        Route::get('/users/create', [UserManagementController::class, 'create']);
+        Route::post('/users', [UserManagementController::class, 'store']);
+        Route::get('/users/{user}/edit', [UserManagementController::class, 'edit']);
+        Route::put('/users/{user}', [UserManagementController::class, 'update']);
+        Route::post('/users/{user}/toggle-active', [UserManagementController::class, 'toggleActive']);
+
+        Route::get('/audit-log', [AuditLogController::class, 'index']);
+
+        // Data referensi wilayah (OPD/Kecamatan/Desa).
+        Route::get('/opd', [OpdManagementController::class, 'index']);
+        Route::get('/opd/create', [OpdManagementController::class, 'create']);
+        Route::post('/opd', [OpdManagementController::class, 'store']);
+        Route::get('/opd/{opd}/edit', [OpdManagementController::class, 'edit']);
+        Route::put('/opd/{opd}', [OpdManagementController::class, 'update']);
+        Route::delete('/opd/{opd}', [OpdManagementController::class, 'destroy']);
+
+        Route::get('/kecamatan', [KecamatanManagementController::class, 'index']);
+        Route::get('/kecamatan/create', [KecamatanManagementController::class, 'create']);
+        Route::post('/kecamatan', [KecamatanManagementController::class, 'store']);
+        Route::get('/kecamatan/{kecamatan}/edit', [KecamatanManagementController::class, 'edit']);
+        Route::put('/kecamatan/{kecamatan}', [KecamatanManagementController::class, 'update']);
+        Route::delete('/kecamatan/{kecamatan}', [KecamatanManagementController::class, 'destroy']);
+
+        Route::get('/desa', [DesaManagementController::class, 'index']);
+        Route::get('/desa/create', [DesaManagementController::class, 'create']);
+        Route::post('/desa', [DesaManagementController::class, 'store']);
+        Route::get('/desa/{desa}/edit', [DesaManagementController::class, 'edit']);
+        Route::put('/desa/{desa}', [DesaManagementController::class, 'update']);
+        Route::delete('/desa/{desa}', [DesaManagementController::class, 'destroy']);
+    });
+
+    Route::middleware('role:opd|camat')->group(function () {
+        Route::post('/complaints/{complaint}/handle', [ComplaintDashboardController::class, 'handle']);
+    });
+
+    Route::middleware('role:kominfo|bupati|wakil_bupati|sekda')->group(function () {
+        Route::get('/kinerja', [StatisticsController::class, 'performance']);
+    });
+});
