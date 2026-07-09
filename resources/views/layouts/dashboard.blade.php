@@ -277,15 +277,6 @@
         </header>
 
         <div class="px-4 pb-5">
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
             @yield('content')
         </div>
     </div>
@@ -542,6 +533,14 @@
             showConfirmButton: false,
             timer: 3500,
             timerProgressBar: true,
+        });
+    @endif
+
+    @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Periksa kembali data Anda',
+            html: @json('<ul class="text-start mb-0 ps-3">'.collect($errors->all())->map(fn ($e) => '<li>'.e($e).'</li>')->implode('').'</ul>'),
         });
     @endif
 </script>

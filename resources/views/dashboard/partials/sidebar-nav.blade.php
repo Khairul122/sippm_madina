@@ -33,6 +33,7 @@
         <div class="nav-header">Administrasi</div>
         <a class="nav-link {{ str_starts_with($path,'dashboard/users') ? 'active' : '' }}" href="{{ url('/dashboard/users') }}"><i class="bi bi-people me-2"></i>Kelola Pengguna</a>
         <a class="nav-link {{ str_starts_with($path,'dashboard/audit-log') ? 'active' : '' }}" href="{{ url('/dashboard/audit-log') }}"><i class="bi bi-journal-text me-2"></i>Audit Log</a>
+        <a class="nav-link {{ str_starts_with($path,'dashboard/laporan') ? 'active' : '' }}" href="{{ url('/dashboard/laporan') }}"><i class="bi bi-printer me-2"></i>Laporan</a>
 
         <div class="nav-header">Data Wilayah</div>
         <a class="nav-link {{ str_starts_with($path,'dashboard/opd') ? 'active' : '' }}" href="{{ url('/dashboard/opd') }}"><i class="bi bi-building me-2"></i>Data OPD</a>

@@ -8,6 +8,7 @@ use App\Http\Controllers\Web\Dashboard\ComplaintDashboardController;
 use App\Http\Controllers\Web\Dashboard\DashboardHomeController;
 use App\Http\Controllers\Web\Dashboard\DesaManagementController;
 use App\Http\Controllers\Web\Dashboard\KecamatanManagementController;
+use App\Http\Controllers\Web\Dashboard\LaporanController;
 use App\Http\Controllers\Web\Dashboard\NotificationWebController;
 use App\Http\Controllers\Web\Dashboard\OpdManagementController;
 use App\Http\Controllers\Web\Dashboard\StatisticsController;
@@ -109,6 +110,11 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         Route::post('/users/{user}/toggle-active', [UserManagementController::class, 'toggleActive']);
 
         Route::get('/audit-log', [AuditLogController::class, 'index']);
+
+        Route::get('/laporan', [LaporanController::class, 'index']);
+        Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf']);
+        Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel']);
+        Route::post('/laporan/ttd', [LaporanController::class, 'updateTtd']);
 
         // Data referensi wilayah (OPD/Kecamatan/Desa).
         Route::get('/opd', [OpdManagementController::class, 'index']);

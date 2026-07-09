@@ -12,6 +12,111 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-09 (lanjutan 4)** — Field "Instansi" dihapus total dari fitur
+TTD atas permintaan user (bukan cuma disembunyikan di form — dihilangkan
+dari skema juga, karena migration `ttd_signatures` belum pernah dijalankan
+di environment manapun sehingga aman diedit langsung tanpa migration
+drop-column terpisah, sama seperti pola "migration dibuat & dijalankan
+dalam sesi yang sama" di riwayat proyek ini sebelumnya). Perubahan:
+kolom `instansi` dihapus dari migration `create_ttd_signatures_table`,
+`TtdSignature::class` (`#[Fillable]`), `UpdateTtdRequest::rules()`, form
+input di `dashboard/laporan/index.blade.php` (termasuk `x-data` Alpine),
+baris instansi di blok tanda tangan `dashboard/laporan/export-pdf.blade.php`,
+dan test terkait di `LaporanTest.php`. Preview TTD (lanjutan 3 di bawah)
+sudah dari awal tidak menampilkan instansi jadi tidak perlu diubah. Status
+verifikasi masih sama — lihat "Known Issues".
+
+**2026-07-09 (lanjutan 3)** — Preview TTD live di sub-tab "Pengaturan TTD"
+(`dashboard/laporan/index.blade.php`), atas permintaan user dengan mockup
+gambar acuan. Card baru "Preview Tanda Tangan" di bawah form, meniru
+persis tata letak blok tanda tangan di PDF (tempat+tanggal italic, jabatan
+bold-uppercase, spasi kosong ruang ttd fisik, nama bold-uppercase, pangkat
+italic, NIP format berkelompok "8 6 1 3 digit" berwarna biru) — TAPI
+sengaja tidak menampilkan baris instansi terpisah, sesuai mockup yang
+diberikan (jabatan sudah mewakili instansi). Reaktif langsung saat mengetik
+di form (Alpine.js `x-data`/`x-model` di elemen pembungkus form+preview,
+field input tetap punya `name` asli jadi submit form tidak berubah) —
+tidak perlu tombol "refresh preview" terpisah. NIP di-format live di sisi
+klien pakai getter `formattedNip` (regex strip non-digit, cuma diformat
+kalau genap 18 digit, kalau belum lengkap tampil apa adanya). Nilai awal
+di-inject aman ke Alpine pakai direktif Blade `@js(...)` (bukan interpolasi
+string manual) supaya nama/jabatan yang mengandung tanda kutip tidak
+merusak JS. Bagian ini murni tambahan UI di atas fitur Laporan+TTD yang
+sudah ditulis sebelumnya — status verifikasi masih sama seperti sebelumnya
+(lihat "Known Issues": migration `ttd_signatures` & test terkait masih
+belum pernah dijalankan di environment ini karena PHP CLI tidak tersedia).
+
+**2026-07-09 (lanjutan 2)** — Fitur baru atas permintaan user: halaman
+"Laporan" (Kominfo-only) untuk mencetak laporan pengaduan + sub-tab
+pengaturan TTD (tanda tangan). **BELUM diverifikasi jalan** — lihat catatan
+penting di bawah.
+- Tabel baru `ttd_signatures` (migration
+  `2026_07_09_200000_create_ttd_signatures_table.php`): `nama_penandatangan`,
+  `jabatan_penandatangan`, `pangkat` (nullable), `instansi`, `nip` (18
+  digit). Pola "satu profil aktif": selalu diakses/diupdate lewat
+  `updateOrCreate(['id' => 1], ...)` di controller — tidak ada tabel/flag
+  tambahan untuk "aktif", tidak ada riwayat versi lama.
+  Model: `App\Infrastructure\Persistence\Eloquent\Models\TtdSignature`.
+- `App\Http\Controllers\Web\Dashboard\LaporanController` (baru): `index()`
+  (filter+tabel), `exportPdf()`, `exportExcel()`, `updateTtd()`. Filter
+  pengaduan: status, tujuan (`opd:{id}`/`camat:{id}`, pola sama persis
+  dengan filter Pengaduan FR-19), dan **hari/bulan/tahun** — ketiganya
+  independen satu sama lain (bukan date-range). Poin penting yang beda dari
+  filter lain di project ini: **"Hari" = hari dalam seminggu
+  (Senin–Minggu), BUKAN tanggal 1-31 dalam bulan** (dikonfirmasi eksplisit
+  oleh user) — diimplementasikan `whereRaw('WEEKDAY(created_at) = ?', ...)`
+  dengan dropdown value 0-6 (Senin=0..Minggu=6, cocok persis urutan
+  `WEEKDAY()` MySQL). Logic filter di-extract ke method privat
+  `filteredComplaints()` supaya tabel di layar dan hasil export PDF/Excel
+  selalu memakai filter yang identik.
+  Tidak ada Policy baru — kominfo-only cukup lewat middleware `role:kominfo`
+  di `routes/web.php`, konsisten dengan `StatisticsController` dan
+  `ComplaintDashboardController::index` yang juga tidak punya Policy untuk
+  aksi index/export.
+- `App\Exports\LaporanPengaduanExport` (baru, `FromCollection`+
+  `WithHeadings`+`WithTitle`) — constructor menerima Collection pengaduan
+  yang sudah difilter plus peta nama Opd/Kecamatan (`pluck('name','id')`)
+  supaya resolusi nama "Tujuan" tidak N+1 query per baris.
+- `resources/views/dashboard/laporan/export-pdf.blade.php` (baru): laporan
+  PDF landscape (`setPaper('a4','landscape')`) dengan kop surat (logo
+  `public_path('images/logo-madina.png')` — WAJIB `public_path()` bukan
+  `asset()` karena DomPDF render server-side tanpa konteks HTTP), ringkasan
+  filter aktif, tabel data, dan blok tanda tangan resmi (tempat+tanggal,
+  jabatan+instansi, spasi kosong untuk ttd fisik+cap, nama digarisbawahi,
+  pangkat, NIP) diambil dari `TtdSignature::query()->find(1)` — kalau belum
+  pernah diisi, field ditampilkan `-` (tidak error).
+- `resources/views/dashboard/laporan/index.blade.php` (baru): dua
+  Bootstrap 5 native tab (`nav-tabs`/`tab-content` — tab pertama di
+  project ini, sebelumnya tidak ada) — "Data Laporan" (filter bar persis
+  urutan mockup dari user: search, Status, Tujuan, Hari, Bulan, Tahun,
+  lalu tombol Cari/Reset/TTD/PDF/Excel; tombol "TTD" `type="button"` +
+  `data-bs-toggle="tab"`, BUKAN submit, cuma pindah ke tab satunya) dan
+  "Pengaturan TTD" (form 5 field, pre-filled dari `$ttd` kalau ada).
+  Link PDF/Excel membawa query string filter aktif (`http_build_query(request()->query())`)
+  supaya hasil export selalu sama dengan yang tampil di layar.
+- Route baru di grup `role:kominfo` (`routes/web.php`): `GET
+  /dashboard/laporan`, `GET /dashboard/laporan/export-pdf`, `GET
+  /dashboard/laporan/export-excel`, `POST /dashboard/laporan/ttd`. Link
+  sidebar baru "Laporan" ditambahkan di blok "Administrasi"
+  (`dashboard/partials/sidebar-nav.blade.php`, setelah "Audit Log").
+- Test baru `tests/Feature/Web/LaporanTest.php` (7 method: akses
+  kominfo/non-kominfo, filter status+tujuan, filter hari independen dari
+  bulan/tahun, simpan+update TTD single-row, validasi NIP 18 digit,
+  export PDF/Excel).
+
+**CATATAN PENTING — belum diverifikasi jalan**: environment kerja sesi ini
+**tidak punya PHP CLI terpasang/di-PATH** (berbeda dari sesi-sesi
+sebelumnya yang memakai Laragon — `C:\laragon` tidak ditemukan sama sekali
+di environment ini), jadi `php artisan migrate` (migration `ttd_signatures`
+belum benar-benar dijalankan ke database) dan `php artisan test` **belum
+bisa dieksekusi**. Sebelum dipakai, sesi berikutnya (di environment yang
+punya PHP/Laragon aktif) WAJIB: (1) `php artisan migrate` untuk membuat
+tabel `ttd_signatures`, (2) `php artisan test --filter=LaporanTest` untuk
+verifikasi otomatis, (3) manual QA: login `kominfo@demo.test`, cek filter
+kombinasi, isi form TTD lalu reload untuk pastikan data tersimpan, cek PDF
+(kop surat + blok ttd) dan Excel, dan pastikan `opd@demo.test`/role lain
+ditolak 403 di `/dashboard/laporan`.
+
 **2026-07-09 (lanjutan)** — Polishing visual halaman publik + auth, murni
 UI (tidak ada perubahan business rule/route/migration), atas permintaan
 user. Belum di-commit — lihat "Known Issues".
@@ -493,6 +598,14 @@ RBAC, repository implementations + binding).
 - [x] Export laporan Excel (maatwebsite/excel) —
       `App\Exports\ComplaintStatisticsExport`,
       `/dashboard/statistik/export/excel`
+- [~] Halaman "Laporan" pengaduan (Kominfo-only) dengan filter
+      status/tujuan/hari(hari-dalam-minggu)/bulan/tahun + export PDF
+      (kop surat + blok TTD)/Excel, plus sub-tab pengaturan TTD (nama,
+      jabatan, pangkat, instansi, NIP — tabel `ttd_signatures`, satu baris
+      aktif) — `LaporanController`, `dashboard/laporan/*.blade.php`
+      (2026-07-09). **Kode sudah ditulis lengkap tapi BELUM diverifikasi
+      jalan** (migration belum dijalankan, test belum dieksekusi — lihat
+      "Known Issues" dan entri "Update Terakhir" 2026-07-09 lanjutan 2).
 
 ## Modul Notifikasi Real Time
 
@@ -543,6 +656,17 @@ RBAC, repository implementations + binding).
 
 ## Known Issues
 
+- **Fitur Laporan+TTD (2026-07-09 lanjutan 2) belum diverifikasi jalan.**
+  Sesi yang menulis kodenya (migration `ttd_signatures`, `LaporanController`,
+  views, `tests/Feature/Web/LaporanTest.php`) berjalan di environment tanpa
+  PHP CLI/Laragon terpasang sama sekali (`C:\laragon` tidak ada, `php` tidak
+  ada di PATH) — beda dari environment sesi-sesi sebelumnya. Migration
+  belum pernah dijalankan ke database manapun, test belum pernah
+  dieksekusi sama sekali. Sesi berikutnya (dengan PHP aktif) WAJIB
+  menjalankan `php artisan migrate` lalu `php artisan test
+  --filter=LaporanTest` sebelum fitur ini dianggap selesai/dipakai —
+  jangan asumsikan kode ini bebas bug hanya karena ditulis mengikuti pola
+  yang sudah terbukti di fitur lain.
 - Redis belum terpasang di environment ini — `QUEUE_CONNECTION=database`
   dipakai sebagai default pragmatis (reversible, semua job pakai
   `ShouldQueue`). Ini juga berarti **queue worker (`php artisan
