@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <title>Laporan Pengaduan</title>
     <style>
+        @page {
+            margin: 40px 40px 60px 40px;
+        }
         body {
             font-family: 'Times New Roman', Times, serif;
             color: #000000;
@@ -13,9 +16,13 @@
         .kop {
             width: 100%;
             text-align: center;
-            border-bottom: 4px double #000000;
-            padding-bottom: 8px;
+            padding-bottom: 5px;
             margin-bottom: 15px;
+        }
+        .kop-line {
+            border-top: 4px solid #000000;
+            height: 1.5px;
+            margin-top: 8px;
         }
         .kop h1 {
             margin: 0;
@@ -38,7 +45,7 @@
         }
         h2.judul {
             text-align: center;
-            font-size: 14px;
+            font-size: 20px;
             font-weight: bold;
             margin: 15px 0 5px;
             text-transform: capitalize;
@@ -50,15 +57,22 @@
             color: #555;
             margin-bottom: 10px;
         }
-        .meta {
-            font-size: 9px;
+        .footer {
+            position: fixed;
+            bottom: -45px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            text-align: right;
+            font-size: 8px;
             color: #666;
-            margin-bottom: 8px;
+            font-family: 'Times New Roman', Times, serif;
         }
         table.data {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            margin-top: 20px;
         }
         table.data th, table.data td {
             border: 1px solid #000000;
@@ -107,6 +121,10 @@
     </style>
 </head>
 <body>
+    <!-- Info Cetak Kanan Bawah Kertas (Footer) -->
+    <div class="footer">
+        Dicetak: {{ $generatedAt->translatedFormat('d F Y, H:i') }} WIB &middot; Total data: {{ $complaints->count() }}
+    </div>
     <!-- Kop Surat Resmi (Centered, Double Border) -->
     <div class="kop">
         <h1>PEMERINTAH KABUPATEN MANDAILING NATAL</h1>
@@ -114,6 +132,7 @@
         <p class="address">KOMPLEK PERKANTORAN PAYALOTING, PANYABUNGAN SUMATERA UTARA, KODE POS 22978</p>
         <p>Telp. (0636) 326255, 326258 Fax: (0636) 326254</p>
         <p>E-mail : diskominfo@M.madina.go.id Website : www.diskominfo.madina.go.id</p>
+        <div class="kop-line"></div>
     </div>
 
     <!-- Judul Dokumen -->
@@ -124,7 +143,6 @@
             Filter: {{ implode(' · ', array_map(fn ($key, $value) => "{$key}: {$value}", array_keys($filters), $filters)) }}
         </p>
     @endif
-    <p class="meta">Dicetak: {{ $generatedAt->translatedFormat('d F Y, H:i') }} WIB · Total data: {{ $complaints->count() }}</p>
 
     <!-- Tabel Data Pengaduan (Sesuai Struktur Gambar 1) -->
     <table class="data">
@@ -188,5 +206,6 @@
         </div>
         <div class="clear"></div>
     </div>
+
 </body>
 </html>
