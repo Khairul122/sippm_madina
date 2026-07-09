@@ -12,6 +12,72 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-09 (lanjutan 10)** — Atas permintaan user: manual book yang
+sudah diunggah sekarang tampil sebagai **preview PDF langsung di halaman**
+(`<iframe>`), bukan cuma link unduh. Ditambah endpoint baru
+`GET /manual-book/preview` — `ManualBookController::preview()` pakai
+`Storage::disk('public')->response(...)` (bukan `->download(...)`) supaya
+header `Content-Disposition: inline` (bukan `attachment`), yang membuat
+browser merender PDF di dalam `<iframe>` alih-alih memicu dialog unduh.
+Rute `/manual-book/download` (paksa unduh, `attachment`) tetap
+dipertahankan terpisah untuk tombol "Unduh" — dua rute dengan disposisi
+header berbeda untuk dua kebutuhan berbeda (preview vs unduh eksplisit),
+bukan satu rute yang perilakunya berubah-ubah. Lebar kontainer halaman
+dilebarkan `700px` → `900px` supaya iframe preview (`height:70vh`) cukup
+nyaman dibaca. Test baru `test_preview_streams_pdf_inline_not_as_attachment`
+menambah assert eksplisit bahwa header `content-disposition` mengandung
+`"inline"`, bukan `"attachment"` (regresi kalau nanti tidak sengaja
+diganti balik ke `->download()`). Status verifikasi masih sama seperti
+fitur-fitur lain di sesi ini — lihat "Known Issues" (PHP CLI belum
+tersedia di environment kerja saya).
+
+**2026-07-09 (lanjutan 9)** — Fitur baru atas permintaan user: halaman
+"Manual Book" untuk SEMUA role yang login (lihat/unduh), khusus Kominfo
+bisa unggah/ganti file PDF-nya. **BELUM diverifikasi jalan** (sama seperti
+fitur-fitur sebelumnya di sesi ini — tidak ada PHP CLI di environment
+kerja saya, lihat "Known Issues").
+- Route di prefix netral `/manual-book` (bukan `/dashboard/manual-book`)
+  — pola sama persis dengan keputusan `/profil` sebelumnya: masyarakat
+  tidak boleh masuk `/dashboard/*`. `GET /manual-book` (lihat) dan
+  `GET /manual-book/download` terbuka untuk semua role auth+active;
+  `POST /manual-book` (upload/ganti) dibatasi middleware `role:kominfo`
+  langsung di rute-nya (bukan lewat Policy — konsisten dengan halaman
+  kominfo-only lain yang juga tidak pakai Policy, cukup middleware route).
+- Tabel baru `manual_books` (migration `2026_07_09_230000_create_manual_books_table.php`):
+  `file_path`, `original_name`, `file_size`, `uploaded_by` (FK nullable ke
+  `users`). Pola "satu file aktif" PERSIS sama dengan `ttd_signatures` —
+  selalu `updateOrCreate(['id' => 1], ...)`, tidak ada riwayat versi lama.
+  Model baru `App\Infrastructure\Persistence\Eloquent\Models\ManualBook`
+  (relasi `uploader()` ke `User`).
+- `App\Http\Controllers\Web\ManualBookController`: `show()` (kirim
+  `ManualBook::find(1)`, nullable — Blade yang tampilkan state kosong),
+  `download()` (`Storage::disk('public')->download(...)`, nama file asli
+  dipertahankan lewat kolom `original_name`), `upload()` (kominfo-only via
+  middleware; hapus file lama SEBELUM `updateOrCreate` menimpa row supaya
+  tidak ada file yatim tertinggal di storage, sama seperti pola
+  `deleteOldAvatar()` di `ProfileController`).
+- `App\Http\Requests\ManualBook\UploadManualBookRequest`: `mimes:pdf,
+  max:20480` (20MB — lebih besar dari batas upload gambar 5MB karena buku
+  panduan bisa berisi banyak gambar/screenshot).
+- `resources/views/manual-book/show.blade.php`: kalau `$manualBook` ada,
+  tampilkan kartu info (nama file, ukuran dalam MB, tanggal+pengunggah) +
+  tombol unduh; kalau belum ada, tampilan kosong (ikon `bi-journal-x` +
+  pesan "Manual book belum diunggah", dengan catatan tambahan "Hubungi
+  Kominfo" untuk role non-kominfo). Form upload/ganti HANYA muncul untuk
+  `auth()->user()->hasRole('kominfo')` — baik untuk unggah pertama kali
+  maupun mengganti file yang sudah ada (form yang sama, label tombol
+  berubah "Unggah"/"Ganti File").
+- Link sidebar baru "Manual Book" ditambahkan TANPA `@if` role-gate apa
+  pun di `dashboard/partials/sidebar-nav.blade.php` (satu-satunya link
+  sidebar yang sengaja unconditional) — jadi muncul untuk semua role
+  termasuk masyarakat, konsisten dengan rute yang juga tidak dibatasi role
+  untuk aksi lihat/unduh.
+- Test baru `tests/Feature/Web/ManualBookTest.php` (7 method: semua role
+  bisa lihat halaman, tampilan kosong saat belum upload, kominfo bisa
+  upload, role lain ditolak 403 saat upload, upload ulang menghapus file
+  lama, upload file bukan PDF ditolak validasi, semua role bisa
+  mengunduh file yang sudah ada).
+
 **2026-07-09 (lanjutan 8)** — Fitur baru atas permintaan user: halaman
 "Profil Saya" untuk SEMUA role yang login (termasuk masyarakat), plus
 pojok kanan atas topbar (sebelumnya cuma teks nama+role) diubah jadi

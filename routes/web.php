@@ -13,6 +13,7 @@ use App\Http\Controllers\Web\Dashboard\NotificationWebController;
 use App\Http\Controllers\Web\Dashboard\OpdManagementController;
 use App\Http\Controllers\Web\Dashboard\StatisticsController;
 use App\Http\Controllers\Web\Dashboard\UserManagementController;
+use App\Http\Controllers\Web\ManualBookController;
 use App\Http\Controllers\Web\MyComplaintController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\Public\ActivityFeedController;
@@ -66,6 +67,18 @@ Route::prefix('profil')->middleware(['auth', 'active'])->group(function () {
     Route::put('/', [ProfileController::class, 'updateInfo']);
     Route::post('/avatar', [ProfileController::class, 'updateAvatar']);
     Route::put('/password', [ProfileController::class, 'updatePassword']);
+});
+
+// Manual book: bisa dilihat/diunduh SEMUA role yang login (termasuk
+// masyarakat), sengaja di prefix netral sejajar /pengaduan dan /profil
+// — BUKAN /dashboard. Upload/ganti file dibatasi role:kominfo lewat
+// middleware pada rute POST-nya saja (rute GET tetap terbuka untuk
+// semua auth+active).
+Route::prefix('manual-book')->middleware(['auth', 'active'])->group(function () {
+    Route::get('/', [ManualBookController::class, 'show']);
+    Route::get('/download', [ManualBookController::class, 'download']);
+    Route::get('/preview', [ManualBookController::class, 'preview']);
+    Route::post('/', [ManualBookController::class, 'upload'])->middleware('role:kominfo');
 });
 
 Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {

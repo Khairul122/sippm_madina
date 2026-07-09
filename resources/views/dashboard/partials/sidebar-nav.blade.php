@@ -80,4 +80,7 @@
     @if($user->hasAnyRole(['kominfo','bupati','wakil_bupati','sekda']))
         <a class="nav-link {{ $path === 'dashboard/kinerja' ? 'active' : '' }}" href="{{ url('/dashboard/kinerja') }}"><i class="bi bi-graph-up-arrow me-2"></i>Kinerja OPD/Kecamatan</a>
     @endif
+
+    {{-- Manual book: tersedia untuk SEMUA role, tanpa @if role-gate --}}
+    <a class="nav-link {{ str_starts_with($path,'manual-book') ? 'active' : '' }}" href="{{ url('/manual-book') }}"><i class="bi bi-journal-richtext me-2"></i>Manual Book</a>
 </nav>
