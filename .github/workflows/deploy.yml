@@ -84,7 +84,23 @@ jobs:
       - name: Build frontend assets
         run: npm run build
 
+      - name: Deploy start summary
+        run: |
+          {
+            echo "### 🚀 Deploy dimulai"
+            echo ""
+            echo "| Info | Nilai |"
+            echo "|---|---|"
+            echo "| Commit | \`${GITHUB_SHA:0:7}\` — $(git log -1 --pretty=%s) |"
+            echo "| Branch | \`${GITHUB_REF_NAME}\` |"
+            echo "| Trigger oleh | ${GITHUB_ACTOR} |"
+            echo "| Waktu (UTC) | $(date -u '+%Y-%m-%d %H:%M:%S') |"
+            echo "| Target server | \`${{ secrets.FTP_SERVER }}:21\` |"
+            echo "| Target folder | \`${{ secrets.FTP_SERVER_DIR }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Deploy to server via FTP
+        id: ftp_deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -93,6 +109,8 @@ jobs:
           port: 21
           protocol: ftp
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          log-level: verbose
+          state-name: .ftp-deploy-sync-state.json
           exclude: |
             **/.git*
             **/.git*/**
@@ -104,3 +122,24 @@ jobs:
             **/storage/framework/views/**
             **/storage/logs/**
             **/.env
+
+      - name: Deploy result summary
+        if: always()
+        run: |
+          {
+            echo ""
+            echo "### 📦 Hasil deploy"
+            echo ""
+            if [ "${{ steps.ftp_deploy.outcome }}" = "success" ]; then
+              echo "✅ Berhasil di-deploy ke \`${{ secrets.FTP_SERVER }}${{ secrets.FTP_SERVER_DIR }}\`"
+            else
+              echo "❌ Deploy gagal — cek log step \"Deploy to server via FTP\" di atas untuk detail error FTP."
+            fi
+            echo ""
+            echo "| Metrik | Jumlah |"
+            echo "|---|---|"
+            echo "| File diunggah | ${{ steps.ftp_deploy.outputs.total-files-uploaded }} |"
+            echo "| File dihapus | ${{ steps.ftp_deploy.outputs.total-files-deleted }} |"
+            echo "| File dilewati (tidak berubah) | ${{ steps.ftp_deploy.outputs.total-files-skipped }} |"
+            echo "| Total file dipindai | ${{ steps.ftp_deploy.outputs.total-files-count }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
