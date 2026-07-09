@@ -12,6 +12,63 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-09 (lanjutan 6)** — Bug dilaporkan user: `SQLSTATE[22001]...
+Data too long for column 'nip'` saat submit form TTD. Penyebab: asumsi di
+entri sebelumnya ("migration `ttd_signatures` belum pernah dijalankan
+manapun jadi aman diedit langsung") **TERBUKTI SALAH** — user memang
+sempat menjalankan `php artisan migrate` di mesin sendiri (di antara
+perbaikan "hapus instansi" dan "hapus batasan 18 digit"), jadi tabel nyata
+sudah terlanjur dibuat dengan `nip VARCHAR(18)` dari versi migration saat
+itu. Edit lanjutan ke file migration create (`32`, lalu `50`) tidak
+berpengaruh apa-apa ke database yang sudah pernah di-migrate — migration
+di Laravel hanya menjalankan `up()` sekali, tercatat di tabel `migrations`.
+**Pelajaran**: jangan lagi asumsikan "migration belum pernah jalan" tanpa
+verifikasi eksplisit (mis. minta user jalankan `php artisan migrate:status`)
+ketika sesi kerja sendiri tidak punya akses PHP untuk mengecek — asumsi
+itu cuma valid untuk migration yang benar-benar ditulis & dijalankan
+dalam sesi yang sama.
+Perbaikan: migration ALTER baru
+`2026_07_09_210000_widen_nip_column_in_ttd_signatures_table.php` — pakai
+raw SQL `ALTER TABLE ... MODIFY nip VARCHAR(50) NOT NULL` (bukan
+`Schema::table()->change()`, karena `doctrine/dbal` tidak terpasang di
+proyek ini), idempotent via `Schema::hasColumn()` guard. Migration create
+awal juga ikut disamakan ke `50` (`down()` `ALTER TABLE ...->change()` versi lama)
+supaya instalasi baru (`migrate:fresh`) langsung konsisten tanpa perlu dua
+migration terpisah. `UpdateTtdRequest`: `nip` max disesuaikan `32` → `50`.
+**User WAJIB jalankan `php artisan migrate` lagi** supaya migration ALTER
+baru ini benar-benar diterapkan sebelum submit form TTD dicoba lagi.
+
+**2026-07-09 (lanjutan 5)** — Dua perbaikan atas permintaan user:
+1. Batasan "NIP wajib 18 digit" (`digits:18`) di `UpdateTtdRequest`
+   dihapus — sekarang cuma `required|string|max:32` (bebas format/panjang,
+   masih wajib diisi). Kolom `nip` di migration `ttd_signatures` ikut
+   dilebarkan dari `string(18)` ke `string(32)` supaya nilai lebih panjang
+   dari 18 karakter tidak silently truncated oleh DB (migration masih
+   belum pernah dijalankan di environment manapun, jadi aman diedit
+   langsung). `maxlength="18"` di input NIP (`dashboard/laporan/index.blade.php`)
+   ikut dihapus. Preview TTD (`formattedNip` di Alpine) tidak diubah —
+   tetap otomatis mem-format jadi kelompok "8 6 1 3" HANYA kalau NIP yang
+   diketik kebetulan genap 18 digit, dan menampilkan apa adanya kalau
+   tidak (sudah begitu dari awal, jadi tidak perlu logic baru).
+2. Semua pesan error validasi di dashboard (bukan cuma form TTD — ini
+   perbaikan global karena block `@if($errors->any())` sebelumnya ada di
+   `layouts/dashboard.blade.php`, dipakai oleh SEMUA halaman dashboard)
+   sekarang tampil sebagai dialog SweetAlert2 (icon error + daftar semua
+   pesan sebagai `<ul>`), bukan lagi kotak `alert-danger` inline statis di
+   atas konten — konsisten dengan pola SweetAlert2 yang sudah dipakai
+   project ini untuk toast sukses (`session('status')`). Pesan
+   di-escape (`e()`) lalu di-encode lewat `@json(...)` (pola sama seperti
+   `@json(session('status'))` yang sudah ada) supaya aman dari XSS/karakter
+   kutip.
+`tests/Feature/Web/LaporanTest.php`: test validasi NIP 18-digit diganti
+jadi `test_ttd_nip_no_longer_requires_exactly_18_digits` (assert NIP bebas
+panjang tetap tersimpan, `assertSessionDoesntHaveErrors('nip')`), test
+"missing required fields" disesuaikan (tidak lagi mengirim NIP invalid,
+cukup NIP kosong untuk trigger `required`). Status verifikasi masih sama
+seperti sebelumnya — lihat "Known Issues" (PHP CLI belum tersedia di
+environment sesi ini, migration & test belum pernah benar-benar
+dieksekusi).
+
 **2026-07-09 (lanjutan 4)** — Field "Instansi" dihapus total dari fitur
 TTD atas permintaan user (bukan cuma disembunyikan di form — dihilangkan
 dari skema juga, karena migration `ttd_signatures` belum pernah dijalankan

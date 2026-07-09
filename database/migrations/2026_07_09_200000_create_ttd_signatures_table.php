@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('nama_penandatangan');
             $table->string('jabatan_penandatangan');
             $table->string('pangkat')->nullable();
-            $table->string('nip', 32);
+            $table->string('nip', 50);
             $table->timestamps();
         });
     }
