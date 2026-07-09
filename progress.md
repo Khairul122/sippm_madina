@@ -12,6 +12,75 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-09 (lanjutan 8)** — Fitur baru atas permintaan user: halaman
+"Profil Saya" untuk SEMUA role yang login (termasuk masyarakat), plus
+pojok kanan atas topbar (sebelumnya cuma teks nama+role) diubah jadi
+avatar yang bisa diklik dan diganti. **BELUM diverifikasi jalan** (sama
+seperti fitur-fitur sebelumnya di sesi ini — lihat "Known Issues", tidak
+ada PHP CLI di environment kerja saya).
+- **Route sengaja di prefix netral `/profil`, BUKAN `/dashboard/profil`**
+  — `AGENTS.md` eksplisit melarang masyarakat mengakses `/dashboard/*`,
+  dan `routes/web.php` sendiri sudah punya komentar bahwa `/pengaduan`
+  sengaja dipisah dari `/dashboard` untuk alasan yang sama; `/profil`
+  jadi prefix ketiga yang sejajar, cuma butuh middleware `auth`+`active`
+  (bukan `role:`). Tidak ada Policy baru — tidak ada satupun action yang
+  menerima `{user}` dari route/request, semua operasi murni ke
+  `$request->user()` sendiri, jadi tidak ada celah IDOR untuk dijaga.
+  Ditemukan sekaligus dikonfirmasi lewat eksplorasi kode: masyarakat
+  ternyata SUDAH memakai `layouts.dashboard` yang sama untuk halaman
+  `/pengaduan/*` (`sidebar-nav.blade.php` punya blok
+  `@if($user->hasRole('masyarakat'))`) — jadi topbar cuma perlu diubah di
+  SATU tempat (`layouts/dashboard.blade.php`), otomatis berlaku untuk
+  semua role tanpa perlu ubah layout terpisah untuk masyarakat.
+- Kolom baru `avatar_path` (nullable) di tabel `users` (migration
+  `2026_07_09_220000_add_avatar_path_to_users_table.php`). Accessor baru
+  `User::avatarUrl(): ?string` (`asset('storage/'.$this->avatar_path)`
+  atau `null`) — sengaja cuma kembalikan data, bukan HTML; Blade yang
+  putuskan render `<img>` vs ikon fallback `bi-person-circle`, dipakai di
+  2 tempat (topbar + halaman profil) supaya logic `asset('storage/...')`
+  tidak duplikasi.
+- `App\Http\Controllers\Web\ProfileController` (baru, sejajar
+  `MyComplaintController`, bukan di bawah `Web\Dashboard`): `show()`,
+  `updateInfo()` (nama+telepon, EMAIL & NIK sengaja tetap read-only —
+  email tidak ada alur verifikasi ganti-email di proyek ini, NIK adalah
+  anchor identitas pemerintah yang divalidasi ketat saat registrasi),
+  `updateAvatar()` (endpoint terpisah `POST /profil/avatar`, bukan
+  digabung form info, supaya upload gagal tidak berisiko menimpa
+  nama/telepon; hapus file lama via `deleteOldAvatar()` SEBELUM
+  `update()` menimpa path lama di model), `updatePassword()` (rule
+  bawaan Laravel `current_password` untuk verifikasi password lama,
+  update lewat `->update(['password' => ...])` mengandalkan cast model
+  `password => hashed` untuk auto-hash — BUKAN `Hash::make()` manual,
+  supaya tidak double-hash).
+- 3 Form Request baru di `app/Http/Requests/Profile/`:
+  `UpdateProfileInfoRequest` (phone `Rule::unique(...)->ignore($this->user()->id)`,
+  pola sama dengan `UpdateUserRequest` tapi ignore diri sendiri bukan
+  route param), `UpdateAvatarRequest` (`mimes:jpg,jpeg,png|max:5120`,
+  sama persis batas upload gambar kegiatan), `UpdatePasswordRequest`
+  (`min:8|confirmed`, sama dengan aturan password di `RegisterRequest`).
+- Topbar (`layouts/dashboard.blade.php`, ganti blok teks nama+role
+  polos): dropdown Alpine baru meniru persis idiom `x-show`/
+  `@click.outside`/`x-cloak` yang sudah dipakai notification bell tepat
+  di sebelahnya — avatar (foto atau ikon `bi-person-circle` default) +
+  nama + role sebagai tombol toggle, isi dropdown "Profil Saya" (link
+  `/profil`) + "Keluar" (form logout dengan `data-confirm` yang sama
+  seperti di sidebar — sebelumnya topbar tidak punya kontrol logout sama
+  sekali, cuma sidebar).
+- `resources/views/profile/show.blade.php` (baru): SATU halaman scroll
+  (bukan tab — beda dari halaman Laporan yang memang gabung 2 concern
+  operasional terpisah; di sini semua bagian sama-sama "tentang saya"),
+  4 card: Informasi Akun (read-only: nama/email/role/OPD/Kecamatan/NIK),
+  Foto Profil (upload + preview live client-side), Data Pribadi (edit
+  nama+telepon), Ubah Kata Sandi. Preview avatar live pakai listener baru
+  `data-avatar-preview` di `resources/js/app.js` (pola sama dengan
+  listener `data-toggle-password` yang sudah ada — `URL.createObjectURL`,
+  murni kosmetik sisi klien, validasi asli tetap di server).
+- Test baru `tests/Feature/Web/ProfileTest.php` (7 method: semua 7 role
+  bisa lihat profil sendiri, update nama+telepon, update profil tidak
+  pernah menyentuh user lain, upload avatar tersimpan, ganti avatar
+  menghapus file lama, ganti password ditolak kalau current_password
+  salah, ganti password berhasil update hash).
+
 **2026-07-09 (lanjutan 7)** — Atas permintaan user: tombol PDF di halaman
 Laporan sekarang **preview di browser**, bukan langsung memaksa download.
 `LaporanController::exportPdf()` diganti dari `$pdf->download(...)` ke

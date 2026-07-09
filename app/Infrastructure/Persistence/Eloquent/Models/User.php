@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'nik', 'phone', 'is_active', 'consent_at', 'opd_id', 'kecamatan_id'])]
+#[Fillable(['name', 'email', 'password', 'nik', 'phone', 'is_active', 'consent_at', 'opd_id', 'kecamatan_id', 'avatar_path'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -64,5 +64,10 @@ class User extends Authenticatable
     public function kecamatan(): BelongsTo
     {
         return $this->belongsTo(Kecamatan::class);
+    }
+
+    public function avatarUrl(): ?string
+    {
+        return $this->avatar_path ? asset('storage/'.$this->avatar_path) : null;
     }
 }

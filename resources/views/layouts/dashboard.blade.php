@@ -269,9 +269,26 @@
                         </div>
                     </div>
                 </div>
-                <div class="text-end small d-none d-sm-block">
-                    <div class="fw-semibold">{{ $user->name }}</div>
-                    <div class="text-muted">{{ ucfirst(str_replace('_',' ', $user->getRoleNames()->first() ?? '')) }}</div>
+                <div class="position-relative" x-data="{ open: false }">
+                    <button class="btn btn-light d-flex align-items-center gap-2 rounded-pill px-2 py-1 shadow-sm" @click="open = !open" type="button">
+                        @if($user->avatarUrl())
+                            <img src="{{ $user->avatarUrl() }}" alt="Foto profil" class="rounded-circle" style="width:36px; height:36px; object-fit:cover;">
+                        @else
+                            <i class="bi bi-person-circle text-secondary" style="font-size:36px; line-height:1;"></i>
+                        @endif
+                        <span class="text-end small d-none d-sm-block">
+                            <span class="fw-semibold d-block">{{ $user->name }}</span>
+                            <span class="text-muted d-block">{{ ucfirst(str_replace('_',' ', $user->getRoleNames()->first() ?? '')) }}</span>
+                        </span>
+                    </button>
+                    <div x-show="open" @click.outside="open = false" x-cloak class="dropdown-menu show p-0 border-0 shadow-lg" style="position:absolute; right:0; top:110%; z-index:1050; min-width:220px;">
+                        <a href="{{ url('/profil') }}" class="dropdown-item py-2 px-3"><i class="bi bi-person me-2"></i>Profil Saya</a>
+                        <div class="border-top"></div>
+                        <form method="post" action="{{ url('/logout') }}" data-confirm="Apakah Anda yakin ingin keluar?" class="m-0">
+                            @csrf
+                            <button type="submit" class="dropdown-item py-2 px-3 text-danger w-100 text-start border-0 bg-transparent"><i class="bi bi-box-arrow-left me-2"></i>Keluar</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </header>

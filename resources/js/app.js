@@ -71,6 +71,25 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// Live client-side preview for any `<input type="file" data-avatar-preview="#targetId">`
+// (see profile/show.blade.php) — swaps the target <img>'s src to the
+// locally-selected file via an object URL, before the form is ever
+// submitted. Purely cosmetic; the actual upload/validation still happens
+// server-side in ProfileController::updateAvatar().
+document.addEventListener('change', (e) => {
+    const input = e.target.closest('[data-avatar-preview]');
+    if (!(input instanceof HTMLInputElement) || !input.files || !input.files[0]) {
+        return;
+    }
+
+    const target = document.querySelector(input.dataset.avatarPreview);
+    if (!target) {
+        return;
+    }
+
+    target.src = URL.createObjectURL(input.files[0]);
+});
+
 // Scroll/load-reveal for elements marked `.reveal` (currently only used on
 // the public landing page, see public/home.blade.php). Adds `.is-visible`
 // once an element enters the viewport; falls back to revealing everything

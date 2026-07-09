@@ -14,6 +14,7 @@ use App\Http\Controllers\Web\Dashboard\OpdManagementController;
 use App\Http\Controllers\Web\Dashboard\StatisticsController;
 use App\Http\Controllers\Web\Dashboard\UserManagementController;
 use App\Http\Controllers\Web\MyComplaintController;
+use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\Public\ActivityFeedController;
 use App\Http\Controllers\Web\Public\HomeController;
 use App\Http\Controllers\Web\Public\TrackComplaintController;
@@ -53,6 +54,18 @@ Route::prefix('pengaduan')->middleware(['auth', 'active', 'role:masyarakat'])->g
     Route::get('/ajukan', [MyComplaintController::class, 'create']);
     Route::post('/', [MyComplaintController::class, 'store']);
     Route::get('/{complaint}', [MyComplaintController::class, 'show']);
+});
+
+// Profil diri sendiri: berlaku untuk SEMUA role yang login (termasuk
+// masyarakat), sengaja di prefix netral, sejajar /pengaduan — BUKAN
+// /dashboard, karena masyarakat tidak boleh masuk /dashboard/*
+// (AGENTS.md Don'ts). Tidak ada parameter {user}, semua action operasi
+// ke $request->user() sendiri.
+Route::prefix('profil')->middleware(['auth', 'active'])->group(function () {
+    Route::get('/', [ProfileController::class, 'show']);
+    Route::put('/', [ProfileController::class, 'updateInfo']);
+    Route::post('/avatar', [ProfileController::class, 'updateAvatar']);
+    Route::put('/password', [ProfileController::class, 'updatePassword']);
 });
 
 Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
