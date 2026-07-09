@@ -176,6 +176,7 @@
     @stack('styles')
 </head>
 <body>
+<div id="sippmPageLoader"></div>
 @php $user = auth()->user(); @endphp
 <div class="d-flex">
     <aside class="sippm-sidebar d-none d-lg-flex flex-column py-3">
@@ -184,12 +185,6 @@
             SIPPM Madina
         </a>
         @include('dashboard.partials.sidebar-nav')
-        <div class="px-3 pt-2 border-top border-white border-opacity-25">
-            <form method="post" action="{{ url('/logout') }}" data-confirm="Apakah Anda yakin ingin keluar?">
-                @csrf
-                <button class="btn btn-sm btn-outline-light w-100" type="submit"><i class="bi bi-box-arrow-left me-1"></i>Keluar</button>
-            </form>
-        </div>
     </aside>
 
     <!-- Mobile sidebar (Bootstrap 5 offcanvas) -->
@@ -203,12 +198,6 @@
         </div>
         <div class="offcanvas-body d-flex flex-column">
             @include('dashboard.partials.sidebar-nav')
-            <div class="px-1 pt-2 border-top border-white border-opacity-25">
-                <form method="post" action="{{ url('/logout') }}" data-confirm="Apakah Anda yakin ingin keluar?">
-                    @csrf
-                    <button class="btn btn-sm btn-outline-light w-100" type="submit"><i class="bi bi-box-arrow-left me-1"></i>Keluar</button>
-                </form>
-            </div>
         </div>
     </div>
 

@@ -473,3 +473,24 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
 .text-sippm {
     color: var(--sippm-navy);
 }
+
+/* Slim top-of-page loading bar, shown during full-page navigation inside
+   the panel/dashboard layout (layouts/dashboard.blade.php — the layout
+   shared by every logged-in role, including masyarakat). This app is
+   server-rendered (no SPA router), so "loading" just means: give instant
+   feedback the moment a link/form triggers a real navigation, since a
+   full page load can take a beat. Driven entirely by
+   resources/js/app.js (#sippmPageLoader) — width/opacity toggled via
+   inline style, this block only defines the static look. */
+#sippmPageLoader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    opacity: 0;
+    background: linear-gradient(90deg, var(--sippm-gold) 0%, var(--sippm-navy) 100%);
+    box-shadow: 0 0 8px rgba(201, 162, 39, 0.6);
+    z-index: 2000;
+    pointer-events: none;
+}

@@ -12,6 +12,40 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-09 (lanjutan 11)** — Atas permintaan user: loading bar tipis di
+bagian atas halaman muncul saat beralih halaman, berlaku di SEMUA halaman
+panel yang login (`layouts/dashboard.blade.php` — layout yang sama untuk
+`/dashboard/*`, `/pengaduan/*`, `/profil`, `/manual-book`, jadi cukup
+diubah satu tempat untuk berlaku ke semua role termasuk masyarakat, pola
+yang sama dengan alasan topbar avatar sebelumnya).
+- Elemen `<div id="sippmPageLoader">` (baru) ditambah tepat setelah
+  `<body>` di `layouts/dashboard.blade.php`; style statis (gradient
+  navy→gold, tinggi 3px, fixed top) di `resources/css/app.css`.
+- Proyek ini server-rendered penuh (bukan SPA), jadi tidak ada "selesai
+  loading" yang bisa dideteksi di halaman yang sama — context JS-nya
+  hancur total setiap kali browser pindah halaman. Solusi:
+  `resources/js/app.js` set flag `sessionStorage` (`sippm:page-loading`)
+  saat navigasi dipicu (klik link/submit form), lalu di
+  `DOMContentLoaded` halaman TUJUAN, kalau flag itu ada → animasikan bar
+  ke 100% lalu fade out, kalau tidak ada (load langsung/ketik URL/bookmark)
+  → bar tetap tidak terlihat, tidak asal flash setiap kali.
+- Listener klik global menyaring supaya bar TIDAK muncul untuk: anchor
+  `#...` (dipakai submenu collapse sidebar Bootstrap), `javascript:`/
+  `mailto:`/`tel:`, link `target="_blank"`/`download`, klik dengan
+  modifier key (ctrl/cmd/shift — buka tab baru), dan link ke domain lain.
+  Listener submit global menyaring form yang punya `data-confirm` (dialog
+  SweetAlert2 konfirmasi) — untuk form itu, `showPageLoader()` dipanggil
+  dari DALAM handler konfirmasi yang sudah ada, persis sebelum
+  `form.submit()` asli dipanggil, supaya bar baru muncul SETELAH user
+  benar-benar konfirmasi (bukan langsung saat form pertama kali disubmit
+  lalu dialog Swal muncul menimpa progress bar yang sudah jalan).
+- `pageshow` dengan `event.persisted` (halaman dipulihkan dari bfcache,
+  mis. tombol Back browser) me-reset flag & bar — navigasi jenis ini
+  selesai instan, tidak perlu animasi loading sama sekali.
+- Tidak ada perubahan di `layouts/app.blade.php` (layout publik) — sesuai
+  permintaan yang eksplisit menyebut "halaman panel yang login", bukan
+  halaman publik anonim.
+
 **2026-07-09 (lanjutan 10)** — Atas permintaan user: manual book yang
 sudah diunggah sekarang tampil sebagai **preview PDF langsung di halaman**
 (`<iframe>`), bukan cuma link unduh. Ditambah endpoint baru
