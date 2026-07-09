@@ -21,24 +21,25 @@
         }
         .kop-line {
             border-top: 4px solid #000000;
+            border-bottom: 1.5px solid #000000;
             height: 1.5px;
             margin-top: 8px;
         }
         .kop h1 {
             margin: 0;
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 16pt;
+            font-weight: normal;
             text-transform: uppercase;
         }
         .kop h2 {
             margin: 2px 0 0;
-            font-size: 16px;
+            font-size: 20pt;
             font-weight: bold;
             text-transform: uppercase;
         }
         .kop p {
             margin: 2px 0 0;
-            font-size: 10px;
+            font-size: 10pt;
         }
         .kop .address {
             margin-top: 3px;
@@ -131,7 +132,7 @@
         <h2>DINAS KOMUNIKASI DAN INFORMATIKA</h2>
         <p class="address">KOMPLEK PERKANTORAN PAYALOTING, PANYABUNGAN SUMATERA UTARA, KODE POS 22978</p>
         <p>Telp. (0636) 326255, 326258 Fax: (0636) 326254</p>
-        <p>E-mail : diskominfo@M.madina.go.id Website : www.diskominfo.madina.go.id</p>
+        <p>E-mail : diskominfo@M.madina.go.id &nbsp;&nbsp;&nbsp;&nbsp; Website : www.diskominfo.madina.go.id</p>
         <div class="kop-line"></div>
     </div>
 
@@ -149,18 +150,20 @@
         <thead>
             <tr>
                 <th style="width: 5%;">No</th>
-                <th style="width: 15%;">Nama Pelapor</th>
-                <th style="width: 15%;">Nama Desa</th>
-                <th style="width: 15%;">Nama Kecamatan</th>
-                <th style="width: 10%;">Tujuan</th>
-                <th style="width: 25%;">Uraian Laporan</th>
-                <th style="width: 15%;">Tanggal</th>
+                <th style="width: 15%;">No Tiket</th>
+                <th style="width: 13%;">Nama Pelapor</th>
+                <th style="width: 13%;">Nama Desa</th>
+                <th style="width: 13%;">Nama Kecamatan</th>
+                <th style="width: 8%;">Tujuan</th>
+                <th style="width: 20%;">Uraian Laporan</th>
+                <th style="width: 13%;">Tanggal</th>
             </tr>
         </thead>
         <tbody>
         @forelse($complaints as $index => $complaint)
             <tr>
                 <td class="center">{{ $index + 1 }}</td>
+                <td>{{ $complaint->ticket_number }}</td>
                 <td>{{ $complaint->user?->name ?? '-' }}</td>
                 <td>{{ $complaint->user?->kecamatan?->desas?->first()?->name ?? '-' }}</td>
                 <td>{{ $complaint->user?->kecamatan?->name ?? '-' }}</td>
@@ -177,7 +180,7 @@
                 <td>{{ $complaint->created_at?->translatedFormat('l, d F Y') }}</td>
             </tr>
         @empty
-            <tr><td colspan="7" class="center">Tidak ada data pengaduan.</td></tr>
+            <tr><td colspan="8" class="center">Tidak ada data pengaduan.</td></tr>
         @endforelse
         </tbody>
     </table>
