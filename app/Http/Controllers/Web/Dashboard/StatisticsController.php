@@ -36,7 +36,7 @@ class StatisticsController extends Controller
                     Complaint::query()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status'),
                     array_map(fn (ComplaintStatus $s) => $s->value, ComplaintStatus::cases()),
                 ),
-                'complaintsByCategory' => Complaint::query()->selectRaw('category, count(*) as total')->groupBy('category')->pluck('total', 'category'),
+                'complaintsByCategory' => Complaint::query()->selectRaw('category, count(*) as total')->groupBy('category')->pluck('total', 'category')->toArray(),
                 'activitiesByStatus' => $this->fillCounts(
                     Activity::query()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status'),
                     array_map(fn (ActivityStatus $s) => $s->value, ActivityStatus::cases()),

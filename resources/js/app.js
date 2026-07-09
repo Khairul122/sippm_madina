@@ -46,6 +46,63 @@ document.addEventListener('submit', (e) => {
     });
 });
 
+// Generic password show/hide toggle for any `<button data-toggle-password="#targetId">`
+// button placed next to a password `<input>` (see auth/login.blade.php and
+// auth/register.blade.php). Toggles the input's type and swaps the
+// Bootstrap Icons eye/eye-slash icon inside the button.
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-toggle-password]');
+    if (!btn) {
+        return;
+    }
+
+    const target = document.querySelector(btn.dataset.togglePassword);
+    if (!target) {
+        return;
+    }
+
+    const showing = target.type === 'text';
+    target.type = showing ? 'password' : 'text';
+
+    const icon = btn.querySelector('i');
+    if (icon) {
+        icon.classList.toggle('bi-eye', showing);
+        icon.classList.toggle('bi-eye-slash', !showing);
+    }
+});
+
+// Scroll/load-reveal for elements marked `.reveal` (currently only used on
+// the public landing page, see public/home.blade.php). Adds `.is-visible`
+// once an element enters the viewport; falls back to revealing everything
+// immediately when the user prefers reduced motion or the browser lacks
+// IntersectionObserver, and force-reveals everything after 2s as a safety
+// net so content is never stuck invisible if this script errors elsewhere.
+document.addEventListener('DOMContentLoaded', () => {
+    const targets = document.querySelectorAll('.reveal');
+    if (!targets.length) {
+        return;
+    }
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+        targets.forEach((el) => el.classList.add('is-visible'));
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    targets.forEach((el) => observer.observe(el));
+
+    setTimeout(() => targets.forEach((el) => el.classList.add('is-visible')), 2000);
+});
+
 window.Pusher = Pusher;
 
 window.Echo = new Echo({

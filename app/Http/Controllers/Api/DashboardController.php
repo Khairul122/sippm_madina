@@ -47,7 +47,7 @@ class DashboardController extends Controller
                 'complaints' => [
                     'total' => Complaint::query()->count(),
                     'by_status' => $this->fillEnumCounts($byStatus, ComplaintStatus::cases()),
-                    'by_category' => $byCategory,
+                    'by_category' => $byCategory->toArray(),
                 ],
                 'activities' => [
                     'total' => Activity::query()->count(),
@@ -77,7 +77,7 @@ class DashboardController extends Controller
             $totalCount = Complaint::query()->count();
 
             return [
-                'by_target_type' => $byTargetType,
+                'by_target_type' => $byTargetType->toArray(),
                 'resolution_rate' => $totalCount > 0 ? round($resolvedCount / $totalCount * 100, 2) : 0.0,
             ];
         });

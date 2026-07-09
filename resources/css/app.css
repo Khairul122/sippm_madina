@@ -32,12 +32,28 @@
     --sippm-radius-lg: 16px;
 }
 
+/* Sitewide type-scale — public pages previously ran on stock 16px Bootstrap
+   defaults with several headings deliberately downgraded to .h4/.h5/.h6,
+   which read as cramped for a government portal. 17px root + an explicit
+   heading scale fixes every page using these classes without markup churn. */
+html {
+    font-size: 17px;
+}
+
 body {
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     background-color: var(--sippm-cream);
     color: var(--sippm-text);
+    line-height: 1.65;
 }
+
+h1, .h1 { font-size: clamp(2.25rem, 1.9rem + 1.2vw, 3rem); font-weight: 700; }
+h2, .h2 { font-size: clamp(1.75rem, 1.5rem + 0.9vw, 2.25rem); font-weight: 700; }
+h3, .h3 { font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem); font-weight: 700; }
+h4, .h4 { font-size: 1.375rem; font-weight: 700; }
+h5, .h5 { font-size: 1.15rem; font-weight: 600; }
+h6, .h6 { font-size: 1rem; font-weight: 600; }
 
 /* Utility classes reused by Blade views (dashboard cards, badges, buttons) */
 
@@ -141,11 +157,12 @@ body {
 .sippm-footer .footer-col-title {
     color: var(--sippm-gold);
     font-family: 'Poppins', sans-serif;
-    font-size: .8rem;
+    font-size: 1.05rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .06em;
     margin-bottom: .75rem;
+    position: relative;
 }
 
 .sippm-footer a {
@@ -194,8 +211,8 @@ body {
 .form-control, .form-select {
     border-radius: var(--sippm-radius-sm);
     border: 1px solid rgba(22, 52, 92, 0.18);
-    padding: 0.6rem 0.9rem;
-    font-size: 0.9rem;
+    padding: 0.85rem 1.1rem;
+    font-size: 1.05rem;
     transition: all 0.2s ease-in-out;
     background-color: #fbfbfa;
 }
@@ -208,7 +225,7 @@ body {
 
 .form-label {
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     color: var(--sippm-navy);
     margin-bottom: 0.4rem;
 }
@@ -349,6 +366,106 @@ body {
 @keyframes slideInUp {
     from { transform: translateY(10px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+/* Scroll/load reveal animation — used by public/home.blade.php, toggled via
+   IntersectionObserver in resources/js/app.js. Element stays in the DOM at
+   all times (never display:none), only opacity/transform are animated, so
+   content is never truly hidden if JS fails to run. */
+.reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}
+
+/* Lightweight value-prop card for the "Kenapa SIPPM Madina" section on the
+   public landing page — intentionally plainer than .sippm-card-raised so it
+   doesn't visually compete with the "Layanan Utama" CTA cards. */
+.sippm-value-card {
+    background: #fff;
+    border: 1px solid var(--sippm-border);
+    border-radius: var(--sippm-radius-sm);
+    padding: 1.25rem 1rem;
+    text-align: center;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+}
+.sippm-value-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sippm-shadow-soft);
+    border-color: var(--sippm-gold);
+}
+.sippm-value-icon {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 0.75rem;
+}
+
+/* Gold halo frame around the landing-page hero illustration — reads as an
+   official badge/frame rather than a floating image. */
+.sippm-hero-frame {
+    border-radius: var(--sippm-radius-lg);
+    box-shadow: 0 0 0 8px rgba(201, 162, 39, 0.08);
+}
+
+/* Activity preview card — shared by resources/views/public/activities.blade.php
+   and the "Kegiatan Terbaru" section on the landing page. Moved here (from an
+   inline @push('styles') block in activities.blade.php) so both views reuse
+   the same rules instead of duplicating them. */
+.activity-card {
+    transition: all 0.3s ease;
+    border: 1px solid var(--sippm-border);
+}
+.activity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--sippm-shadow-raised) !important;
+    border-color: var(--sippm-gold) !important;
+}
+.activity-card-img-wrap {
+    overflow: hidden;
+    position: relative;
+}
+.activity-card-img {
+    transition: transform 0.5s ease;
+}
+.activity-card:hover .activity-card-img {
+    transform: scale(1.08);
+}
+
+/* Auth card — resources/views/auth/{login,register}.blade.php. */
+.sippm-auth-card {
+    border-radius: var(--sippm-radius-lg);
+    box-shadow: var(--sippm-shadow-raised);
+    overflow: hidden;
+    background-color: var(--sippm-surface);
+}
+
+/* Password show/hide toggle button inside an .input-group, wired up by
+   the generic `data-toggle-password` handler in resources/js/app.js. */
+.sippm-password-toggle {
+    background-color: #fff;
+    border: 1px solid rgba(22, 52, 92, 0.18);
+    color: var(--sippm-navy);
+    border-left: none !important;
+}
+.sippm-password-toggle:hover,
+.sippm-password-toggle:focus {
+    background-color: #fff;
+    color: var(--sippm-navy);
 }
 
 /* Referenced across several redesigned views (auth/activities/complaints

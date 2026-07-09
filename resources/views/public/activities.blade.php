@@ -2,26 +2,9 @@
 
 @push('styles')
 <style>
-    .activity-card {
-        transition: all 0.3s ease;
-        border: 1px solid var(--sippm-border);
-    }
-    .activity-card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--sippm-shadow-raised) !important;
-        border-color: var(--sippm-gold) !important;
-    }
-    .activity-card-img-wrap {
-        overflow: hidden;
-        position: relative;
-    }
-    .activity-card-img {
-        transition: transform 0.5s ease;
-    }
-    .activity-card:hover .activity-card-img {
-        transform: scale(1.08);
-    }
-    /* Modal styles */
+    /* .activity-card* rules live in resources/css/app.css (shared with the
+       landing page "Kegiatan Terbaru" preview) — only modal-specific styling
+       stays here. */
     .modal-content {
         background-color: var(--sippm-surface);
         border: 1px solid var(--sippm-border);
@@ -34,8 +17,8 @@
     <!-- Page Header Banner -->
     <div class="sippm-card-raised p-4 mb-5 bg-white text-center text-md-start d-md-flex align-items-center justify-content-between gap-4 border-start border-4" style="border-color: var(--sippm-gold) !important;">
         <div>
-            <h1 class="h4 fw-bold text-sippm mb-1"><i class="bi bi-calendar3 me-2 text-secondary"></i>Kegiatan Pemerintah Kabupaten Mandailing Natal</h1>
-            <p class="text-muted small mb-0">Publikasi dokumentasi dan laporan kegiatan pembangunan oleh OPD dan Kecamatan setempat.</p>
+            <h1 class="h3 fw-bold text-sippm mb-1"><i class="bi bi-calendar3 me-2 text-secondary"></i>Kegiatan Pemerintah Kabupaten Mandailing Natal</h1>
+            <p class="text-muted mb-0">Publikasi dokumentasi dan laporan kegiatan pembangunan oleh OPD dan Kecamatan setempat.</p>
         </div>
         <div class="mt-3 mt-md-0">
             <span class="badge bg-gold text-dark fs-6 py-2 px-3 fw-bold" style="background-color: var(--sippm-gold) !important;">
@@ -47,7 +30,7 @@
     <div class="row g-4">
         @forelse($activities as $activity)
             <div class="col-md-6 col-lg-4">
-                <div class="sippm-card h-100 overflow-hidden activity-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#activityModal{{ $activity->id }}">
+                <div class="reveal sippm-card h-100 overflow-hidden activity-card" style="cursor: pointer; transition-delay: {{ ($loop->index % 3) * 80 }}ms;" data-bs-toggle="modal" data-bs-target="#activityModal{{ $activity->id }}">
                     <div class="activity-card-img-wrap">
                         @php($doc = $activity->documentations->first())
                         @if($doc)
@@ -64,8 +47,8 @@
                     
                     <div class="p-4 d-flex flex-column justify-content-between" style="min-height: 180px;">
                         <div>
-                            <h3 class="h6 fw-bold text-sippm mb-2" style="line-height: 1.4;">{{ $activity->title }}</h3>
-                            <p class="small text-muted mb-3" style="line-height: 1.5;">{{ \Illuminate\Support\Str::limit(strip_tags($activity->description), 110) }}</p>
+                            <h3 class="h5 fw-bold text-sippm mb-2" style="line-height: 1.4;">{{ $activity->title }}</h3>
+                            <p class="text-muted mb-3" style="line-height: 1.5;">{{ \Illuminate\Support\Str::limit(strip_tags($activity->description), 110) }}</p>
                         </div>
                         
                         @if($activity->actor)

@@ -20,6 +20,12 @@ class HomeController extends Controller
             'totalComplaints' => Complaint::query()->count(),
             'resolvedComplaints' => Complaint::query()->where('status', ComplaintStatus::SELESAI->value)->count(),
             'publishedActivities' => Activity::query()->where('status', ActivityStatus::DIPUBLIKASIKAN->value)->count(),
+            'recentActivities' => Activity::query()
+                ->where('status', ActivityStatus::DIPUBLIKASIKAN->value)
+                ->with(['documentations', 'actor'])
+                ->latest('date')
+                ->take(3)
+                ->get(),
         ]);
     }
 }

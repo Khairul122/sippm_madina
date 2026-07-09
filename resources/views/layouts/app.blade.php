@@ -12,7 +12,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         h1, h2, h3, h4, .navbar-brand { font-family: 'Poppins', sans-serif; }
-        .sippm-topbar-identity { background-color: #fafaf9; border-bottom: 1px solid var(--sippm-border); font-size: 0.8rem; color: #64748b; }
+        .sippm-topbar-identity { background-color: #fafaf9; border-bottom: 1px solid var(--sippm-border); font-size: 0.95rem; color: #64748b; }
         .sippm-page-header { background-color: #ffffff; border-bottom: 1px solid rgba(22, 52, 92, 0.06); }
         .navbar-sippm { background-color: var(--sippm-navy); box-shadow: var(--sippm-shadow-soft); padding: 0.75rem 0; }
         
@@ -61,7 +61,9 @@
         footer.sippm-footer { background-color: var(--sippm-navy); color: #f0ede4; }
         footer.sippm-footer a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s ease; }
         footer.sippm-footer a:hover { color: var(--sippm-gold); }
-        .footer-col-title { font-weight: bold; font-family: 'Poppins', sans-serif; font-size: 1rem; margin-bottom: 1.25rem; color: var(--sippm-gold); position: relative; }
+        /* Sizing/weight/color/margin for .footer-col-title live in
+           resources/css/app.css (.sippm-footer .footer-col-title), which
+           wins on specificity — only the decorative underline stays here. */
         .footer-col-title::after {
             content: '';
             position: absolute;
@@ -110,12 +112,12 @@
                 <img src="{{ asset('images/logo-madina.png') }}" alt="Lambang Kabupaten Mandailing Natal" style="height:56px; width:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
                 <span>
                     <span class="d-block fw-bold fs-5 mb-0" style="color: var(--sippm-navy); font-family: 'Poppins', sans-serif;">SIPPM Madina</span>
-                    <span class="d-block small text-muted fw-medium">Sistem Informasi Pengaduan &amp; Pelaporan Kegiatan</span>
+                    <span class="d-block text-muted fw-medium">Sistem Informasi Pengaduan &amp; Pelaporan Kegiatan</span>
                 </span>
             </a>
             <form method="get" action="{{ url('/lacak') }}" class="d-flex align-items-center" style="max-width: 320px; width: 100%;">
                 <div class="input-group shadow-sm">
-                    <input type="text" name="ticket_number" class="form-control bg-light border-end-0" placeholder="Cari nomor tiket..." style="font-size: 0.875rem;">
+                    <input type="text" name="ticket_number" class="form-control bg-light border-end-0" placeholder="Cari nomor tiket...">
                     <button type="submit" class="btn btn-sippm px-3"><i class="bi bi-search"></i></button>
                 </div>
             </form>
@@ -162,7 +164,7 @@
                         <img src="{{ asset('images/logo-madina.png') }}" alt="Lambang Kabupaten Mandailing Natal" style="height:36px; width:auto;">
                         <span class="fw-bold fs-6">SIPPM Madina</span>
                     </div>
-                    <p class="small mb-3">Sistem Informasi Pengaduan Masyarakat dan Pelaporan Kegiatan Kabupaten Mandailing Natal — layanan satu pintu melalui Dinas Komunikasi dan Informatika.</p>
+                    <p class="mb-3">Sistem Informasi Pengaduan Masyarakat dan Pelaporan Kegiatan Kabupaten Mandailing Natal — layanan satu pintu melalui Dinas Komunikasi dan Informatika.</p>
                     <div class="d-flex gap-2">
                         <a href="#" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
@@ -187,7 +189,7 @@
                 </div>
             </div>
             <hr class="border-light opacity-25">
-            <div class="text-center small">
+            <div class="text-center">
                 &copy; {{ date('Y') }} Pemerintah Kabupaten Mandailing Natal · Dinas Komunikasi dan Informatika
             </div>
         </div>

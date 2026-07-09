@@ -12,6 +12,48 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-09 (lanjutan)** — Polishing visual halaman publik + auth, murni
+UI (tidak ada perubahan business rule/route/migration), atas permintaan
+user. Belum di-commit — lihat "Known Issues".
+- **Beranda publik** (`public/home.blade.php`): section baru "Kenapa SIPPM
+  Madina" (3 value-prop card) di bawah hero, section baru "Kegiatan &amp;
+  Dokumentasi Terbaru" (3 kegiatan terpublikasi terbaru, card sama dengan
+  `/kegiatan`) sebelum footer, dan CTA band penutup baru
+  (`.btn-sippm-gov-primary`/`.btn-sippm-gov-secondary`). Ditopang query baru
+  `recentActivities` di `HomeController::index()`
+  (`Activity::where(status=DIPUBLIKASIKAN)->with(['documentations','actor'])->latest('date')->take(3)`).
+- Style `.activity-card*` yang sebelumnya inline di `@push('styles')`
+  `public/activities.blade.php` dipindah ke `resources/css/app.css` supaya
+  section "Kegiatan Terbaru" di beranda bisa reuse tanpa duplikasi CSS.
+- Animasi scroll-reveal baru: class `.reveal` (opacity+translateY, transisi
+  di-trigger `.is-visible`) dipasang di kartu-kartu beranda, kartu
+  aktivitas, dan kartu form auth. Digerakkan `IntersectionObserver` baru di
+  `resources/js/app.js` — fallback aman: elemen tetap ada di DOM (bukan
+  `display:none`), langsung `.is-visible` kalau `prefers-reduced-motion`
+  atau browser tidak dukung `IntersectionObserver`, dan force-reveal semua
+  elemen setelah 2 detik sebagai safety net kalau script lain error.
+- Toggle show/hide password baru (`data-toggle-password="#id"`, listener
+  generik di `app.js`) dipasang di `auth/{login,register}.blade.php`.
+  Kartu auth juga direstyle (`.sippm-auth-card`, heading+subheading baru,
+  tombol lebih besar).
+- Type-scale sitewide dinaikkan (root `17px`, heading `h1-h6` dapat skala
+  eksplisit lewat `clamp()`) di `resources/css/app.css` karena banyak
+  halaman publik sebelumnya sengaja pakai `.h4`/`.h5`/`.h6`/`.small` yang
+  terasa terlalu kecil untuk portal pemerintah — beberapa Blade
+  (`public/{activities,track}.blade.php`, `layouts/app.blade.php`) sekalian
+  dinaikkan kelas heading-nya (mis. `.h4`→`.h3`) dan `font-size` inline kecil
+  yang sekarang mubazir dihapus.
+- Bug kecil ditemukan & diperbaiki sekalian: `dashboard/statistics/index.blade.php`
+  memanggil `$complaintsByCategory->keys()`/`->values()` (method
+  `Collection`), tapi `StatisticsController::index()` dan
+  `Api\DashboardController::statistics()/performance()` sekarang eksplisit
+  `->toArray()` hasil `pluck()` sebelum masuk payload — Blade diikutkan
+  memakai `array_keys()`/`array_values()` native. `min-width:260px` +
+  `flex-shrink:0` ditambah ke `.sippm-sidebar` (`layouts/dashboard.blade.php`)
+  supaya sidebar tidak collapse saat konten tabel lebar (DataTables).
+- `php artisan test`: 25 test tetap **passed** (tidak ada test baru — murni
+  perubahan visual/CSS/JS tanpa business rule baru).
+
 **2026-07-09** — Audit PRD menyeluruh (bukan cuma percaya progress.md,
 tapi verifikasi langsung ke kode via subagent Explore) menemukan 3 gap
 nyata, semua diperbaiki dan diverifikasi lewat test otomatis baru:
@@ -531,13 +573,18 @@ RBAC, repository implementations + binding).
   hanya benar-benar terpicu kalau cron/Task Scheduler OS memanggilnya
   tiap menit, atau `php artisan schedule:work` dibiarkan berjalan — di
   environment dev ini tidak ada keduanya yang otomatis aktif.
-- Perubahan hardening RBAC/NFR-07/NFR-16/FR-08/FR-19 (lihat entri
-  "2026-07-05 (lanjutan 6)" di atas) **masih berupa working tree, belum
-  di-commit ke git**, begitu juga `lang/id/*`, `config/backup.php`, dan
-  `public/images/hero-illustration.png` (untracked). Sesi berikutnya
-  perlu `git add`/commit ini dulu sebelum menambah pekerjaan baru, supaya
-  tidak tertumpuk jadi satu commit besar (bertentangan dengan PRD 13.4:
-  "Commit wajib dilakukan per fitur").
+- Working tree saat ini (per 2026-07-09 lanjutan) berisi 13 file uncommitted
+  — polishing visual beranda/auth/layout dari entri "Update Terakhir" di
+  atas (`app/Http/Controllers/{Api/DashboardController,
+  Web/Dashboard/StatisticsController,Web/Public/HomeController}.php`,
+  `resources/{css/app.css,js/app.js}`,
+  `resources/views/{auth/{login,register},dashboard/statistics/index,
+  layouts/{app,dashboard},public/{activities,home,track}}.blade.php`).
+  Catatan sebelumnya di sini soal `lang/id/*`/`config/backup.php`/
+  `hero-illustration.png` sudah usang (item itu sudah ter-commit di
+  `dcb3a02 update`) — dikoreksi. Sesi berikutnya perlu `git add`/commit
+  perubahan visual di atas dulu sebelum menambah pekerjaan baru, per PRD
+  13.4 ("commit wajib per fitur").
 
 ## Next Steps
 

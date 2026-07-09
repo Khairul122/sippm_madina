@@ -25,7 +25,7 @@
         h1, h2, h3, h4, .brand-text { font-family: 'Poppins', sans-serif; }
 
         .sippm-sidebar {
-            width: 260px; min-height: 100vh; background-color: var(--sippm-navy);
+            width: 260px; min-width: 260px; flex-shrink: 0; min-height: 100vh; background-color: var(--sippm-navy);
             box-shadow: var(--sippm-shadow-raised); position: sticky; top: 0;
         }
         .sippm-sidebar .brand-text { color: #fff; }

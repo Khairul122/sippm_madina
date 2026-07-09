@@ -66,16 +66,16 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="sippm-card-raised p-4 p-md-5 bg-white">
+            <div class="reveal sippm-card-raised p-4 p-md-5 bg-white">
                 <div class="text-center mb-3">
                     <img src="{{ asset('images/logo-madina.png') }}" alt="Lambang Kabupaten Mandailing Natal" style="height:56px; width:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
                 </div>
-                <h1 class="h4 mb-2 text-center fw-bold text-sippm">Lacak Status Pengaduan</h1>
-                <p class="text-muted text-center small mb-4">Masukkan nomor tiket pengaduan Anda untuk memantau proses tindak lanjut</p>
-                
+                <h1 class="h3 mb-2 text-center fw-bold text-sippm">Lacak Status Pengaduan</h1>
+                <p class="text-muted text-center mb-4">Masukkan nomor tiket pengaduan Anda untuk memantau proses tindak lanjut</p>
+
                 <form method="get" action="{{ url('/lacak') }}" class="mb-4">
                     <div class="input-group shadow-sm">
-                        <input type="text" name="ticket_number" class="form-control form-control-lg bg-light" placeholder="Contoh: PGD-2026-000001" value="{{ $ticketNumber }}" style="font-size: 0.95rem;">
+                        <input type="text" name="ticket_number" class="form-control form-control-lg bg-light" placeholder="Contoh: PGD-2026-000001" value="{{ $ticketNumber }}">
                         <button type="submit" class="btn btn-sippm px-4"><i class="bi bi-search me-1"></i> Cari Tiket</button>
                     </div>
                 </form>
@@ -87,14 +87,14 @@
                             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                                 <div>
                                     <span class="font-monospace small text-muted d-block mb-1">{{ $complaint->ticket_number }}</span>
-                                    <h2 class="h5 fw-bold mb-0 text-sippm">{{ $complaint->title }}</h2>
+                                    <h2 class="h4 fw-bold mb-0 text-sippm">{{ $complaint->title }}</h2>
                                 </div>
                                 <span class="badge badge-status-{{ $complaint->status->value }} fs-6 py-2 px-3">{{ $complaint->status->label() }}</span>
                             </div>
                         </div>
 
                         <!-- Timeline Heading -->
-                        <h3 class="h6 fw-bold mb-4 text-sippm border-bottom pb-2"><i class="bi bi-clock-history me-1"></i>Riwayat Alur Proses</h3>
+                        <h3 class="h5 fw-bold mb-4 text-sippm border-bottom pb-2"><i class="bi bi-clock-history me-1"></i>Riwayat Alur Proses</h3>
 
                         <!-- Vertical Timeline -->
                         <div class="timeline-track">

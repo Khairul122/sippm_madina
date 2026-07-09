@@ -61,8 +61,8 @@
     new Chart(document.getElementById('categoryChart'), {
         type: 'bar',
         data: {
-            labels: @json(array_map('ucfirst', $complaintsByCategory->keys()->all())),
-            datasets: [{ label: 'Jumlah', data: @json($complaintsByCategory->values()->all()), backgroundColor: '#16345c' }],
+            labels: @json(array_map('ucfirst', array_keys($complaintsByCategory))),
+            datasets: [{ label: 'Jumlah', data: @json(array_values($complaintsByCategory)), backgroundColor: '#16345c' }],
         },
         options: { ...chartDefaults, plugins: { legend: { display: false } } },
     });
