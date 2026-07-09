@@ -152,7 +152,7 @@ class LaporanTest extends TestCase
 
     private function makeComplaint(User $user, int $opdId, string $status, ?Carbon $createdAt = null): Complaint
     {
-        static $sequence = 0;
+        static $sequence = 100;
         $sequence++;
 
         $complaint = Complaint::query()->create([

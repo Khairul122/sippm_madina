@@ -12,6 +12,23 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-09 (lanjutan 7)** — Atas permintaan user: tombol PDF di halaman
+Laporan sekarang **preview di browser**, bukan langsung memaksa download.
+`LaporanController::exportPdf()` diganti dari `$pdf->download(...)` ke
+`$pdf->stream(...)` (dompdf: `Content-Disposition: inline` alih-alih
+`attachment`, browser modern menampilkan PDF viewer bawaan — user tetap
+bisa download sendiri dari situ kalau mau). Link "Ekspor PDF" di
+`dashboard/laporan/index.blade.php` diganti label jadi "Preview PDF" dan
+ditambah `target="_blank" rel="noopener"` supaya preview terbuka di tab
+baru, bukan menggantikan halaman Laporan yang sedang dilihat. Tombol
+Excel tidak diubah — export Excel tetap `->download()` seperti biasa
+(tidak ada konsep "preview" yang natural untuk file xlsx di browser).
+Catatan: sesi ini masih mewarisi keterbatasan yang sama — tidak ada PHP
+CLI untuk menjalankan `php artisan test` di environment kerja saya,
+perubahan ini murni berdasar baca kode `barryvdh/laravel-dompdf`
+(`stream()` vs `download()` adalah API resmi package, bukan hal baru)
+tanpa verifikasi otomatis tambahan.
+
 **2026-07-09 (lanjutan 6)** — Bug dilaporkan user: `SQLSTATE[22001]...
 Data too long for column 'nip'` saat submit form TTD. Penyebab: asumsi di
 entri sebelumnya ("migration `ttd_signatures` belum pernah dijalankan

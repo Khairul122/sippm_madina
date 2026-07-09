@@ -38,7 +38,23 @@ class LaporanController extends Controller
 
     public function index(Request $request): View
     {
-        $complaints = $this->filteredComplaints($request)
+        $baseQuery = $this->filteredComplaints($request);
+
+        // Hitung statistik untuk data terfilter
+        $stats = [
+            'total' => $baseQuery->clone()->count(),
+            'selesai' => $baseQuery->clone()->where('status', ComplaintStatus::SELESAI->value)->count(),
+            'proses' => $baseQuery->clone()->whereIn('status', [
+                ComplaintStatus::DIPROSES->value,
+                ComplaintStatus::DITINDAKLANJUTI->value
+            ])->count(),
+            'pending' => $baseQuery->clone()->whereIn('status', [
+                ComplaintStatus::DIAJUKAN->value,
+                ComplaintStatus::DIVERIFIKASI->value
+            ])->count(),
+        ];
+
+        $complaints = $baseQuery
             ->orderByDesc('created_at')
             ->paginate(20)
             ->withQueryString();
@@ -51,11 +67,11 @@ class LaporanController extends Controller
             'statuses' => ComplaintStatus::cases(),
             'hariOptions' => self::HARI,
             'bulanOptions' => self::BULAN,
-            'tahunOptions' => Complaint::query()
-                ->selectRaw('DISTINCT YEAR(created_at) as tahun')
-                ->orderByDesc('tahun')
-                ->pluck('tahun'),
+            'tahunOptions' => \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite'
+                ? Complaint::query()->selectRaw("DISTINCT strftime('%Y', created_at) as tahun")->orderByDesc('tahun')->pluck('tahun')
+                : Complaint::query()->selectRaw('DISTINCT YEAR(created_at) as tahun')->orderByDesc('tahun')->pluck('tahun'),
             'ttd' => TtdSignature::query()->find(1),
+            'stats' => $stats,
         ]);
     }
 
@@ -72,7 +88,11 @@ class LaporanController extends Controller
             'generatedAt' => now(),
         ])->setPaper('a4', 'landscape');
 
-        return $pdf->download('laporan-pengaduan-'.now()->format('Ymd-His').'.pdf');
+        // Preview di browser (buka tab baru), bukan langsung download —
+        // "Content-Disposition: inline" via stream() supaya PDF viewer
+        // browser yang menampilkan, unduh cuma kalau user pilih sendiri
+        // dari situ (mis. tombol download di PDF viewer).
+        return $pdf->stream('laporan-pengaduan-'.now()->format('Ymd-His').'.pdf');
     }
 
     public function exportExcel(Request $request): BinaryFileResponse
@@ -94,7 +114,7 @@ class LaporanController extends Controller
 
     private function filteredComplaints(Request $request): Builder
     {
-        $query = Complaint::query()->with('user');
+        $query = Complaint::query()->with(['user.kecamatan.desas']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->string('status'));
@@ -117,7 +137,12 @@ class LaporanController extends Controller
             // Filter "hari" = hari dalam seminggu (0=Senin..6=Minggu, sama
             // dengan urutan MySQL WEEKDAY()) — independen dari bulan/tahun,
             // BUKAN tanggal 1-31 dalam bulan.
-            $query->whereRaw('WEEKDAY(created_at) = ?', [(int) $request->integer('hari')]);
+            if (\Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite') {
+                $sqliteVal = ((int) $request->integer('hari') + 1) % 7;
+                $query->whereRaw("CAST(strftime('%w', created_at) AS INTEGER) = ?", [$sqliteVal]);
+            } else {
+                $query->whereRaw('WEEKDAY(created_at) = ?', [(int) $request->integer('hari')]);
+            }
         }
 
         if ($request->filled('search')) {

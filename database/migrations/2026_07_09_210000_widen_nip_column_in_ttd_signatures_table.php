@@ -21,6 +21,9 @@ return new class extends Migration
     public function up(): void
     {
         if (Schema::hasColumn('ttd_signatures', 'nip')) {
+            if (DB::connection()->getDriverName() === 'sqlite') {
+                return;
+            }
             DB::statement('ALTER TABLE ttd_signatures MODIFY nip VARCHAR(50) NOT NULL');
         }
     }
@@ -28,6 +31,9 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasColumn('ttd_signatures', 'nip')) {
+            if (DB::connection()->getDriverName() === 'sqlite') {
+                return;
+            }
             DB::statement('ALTER TABLE ttd_signatures MODIFY nip VARCHAR(18) NOT NULL');
         }
     }
