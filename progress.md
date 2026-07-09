@@ -12,6 +12,31 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-09 (lanjutan 12)** — User minta laporan testing PDF resmi;
+dijelaskan saya tidak bisa eksekusi live (tidak ada PHP CLI di sesi ini),
+lalu diarahkan ulang: TULIS unit test tambahan untuk celah yang saya
+identifikasi sendiri, bukan bikin laporan PDF. Ditambahkan 2 file test
+baru menutup 2 dari 7 celah yang teridentifikasi (sisanya belum sempat —
+sesi dialihkan ke permintaan CI/CD berikutnya):
+- `tests/Feature/Web/ComplaintRejectionTest.php` — skenario "tolak"
+  (BR-04 diajukan→ditolak) yang sebelumnya SAMA SEKALI tidak dites (cuma
+  happy-path is_valid=1 di `ComplaintWorkflowTest`): rejection_reason
+  wajib diisi, status jadi `ditolak`, dan pengaduan yang sudah ditolak
+  tidak bisa didisposisikan lagi (StatusTransitionGuard).
+- `tests/Feature/Web/WilayahManagementTest.php` — CRUD OPD/Kecamatan/Desa
+  yang sebelumnya nol test: RBAC kominfo-only, dan yang paling penting —
+  guard anti-orphan-delete (OPD yang masih dipakai user tidak bisa
+  dihapus, Kecamatan yang masih punya Desa tidak bisa dihapus).
+
+**Celah yang MASIH belum ada test-nya** (belum sempat, dicatat supaya
+tidak lupa): export PDF/Excel `StatisticsController`, halaman Audit Log,
+halaman publik (beranda/lacak/kegiatan), Login/Register/rate-limiting
+dedicated test, sebagian besar endpoint API (`Api\DashboardController`,
+`Api\ActivityController`, `Api\NotificationController`, `Api\UserController`
+belum ada test sama sekali), dan tentu saja — semua test di proyek ini
+(lama maupun baru) belum pernah benar-benar dijalankan di sesi manapun
+sejauh ini karena tidak ada PHP CLI di environment kerja.
+
 **2026-07-09 (lanjutan 11)** — Atas permintaan user: loading bar tipis di
 bagian atas halaman muncul saat beralih halaman, berlaku di SEMUA halaman
 panel yang login (`layouts/dashboard.blade.php` — layout yang sama untuk
