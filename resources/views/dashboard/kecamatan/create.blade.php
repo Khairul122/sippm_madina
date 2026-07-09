@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="sippm-card-raised p-4 mb-4" style="max-width:560px;">
+<div class="sippm-card-raised p-4 mb-4">
     <div class="border-bottom pb-2 mb-4 d-flex align-items-center gap-2">
         <i class="bi bi-signpost-2 text-sippm fs-4"></i>
         <h2 class="h5 mb-0 font-weight-bold" style="font-family: 'Poppins', sans-serif;">Tambah Kecamatan</h2>

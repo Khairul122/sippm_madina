@@ -1,21 +1,11 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="container-fluid py-2" style="max-width: 1200px;">
-    <!-- Welcome Header & Quick Actions -->
-    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
-        <div>
-            <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sippm-navy) !important;">Statistik & Monitoring</h1>
-            <p class="text-muted small mb-0">Selamat datang kembali, <strong>{{ auth()->user()->name }}</strong>. Berikut adalah ikhtisar laporan pengaduan masyarakat.</p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="{{ url('/dashboard/statistik/export/pdf') }}" class="btn btn-outline-danger btn-sm px-3 rounded-pill fw-semibold shadow-sm d-flex align-items-center gap-1">
-                <i class="bi bi-file-earmark-pdf"></i> Cetak PDF
-            </a>
-            <a href="{{ url('/dashboard/statistik/export/excel') }}" class="btn btn-outline-success btn-sm px-3 rounded-pill fw-semibold shadow-sm d-flex align-items-center gap-1">
-                <i class="bi bi-file-earmark-excel"></i> Unduh Excel
-            </a>
-        </div>
+<div class="container-fluid py-2">
+    <!-- Welcome Header -->
+    <div class="mb-4">
+        <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sippm-navy) !important;">Statistik & Monitoring</h1>
+        <p class="text-muted small mb-0">Selamat datang kembali, <strong>{{ auth()->user()->name }}</strong>. Berikut adalah ikhtisar laporan pengaduan masyarakat.</p>
     </div>
 
     @php
