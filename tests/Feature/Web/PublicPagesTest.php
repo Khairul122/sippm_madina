@@ -52,7 +52,7 @@ class PublicPagesTest extends TestCase
             'target_type' => 'bupati',
         ]);
 
-        $complaint = Complaint::query()->firstOrFail();
+        $complaint = Complaint::query()->where('title', 'Lampu Jalan Mati')->firstOrFail();
 
         $this->get('/lacak?ticket_number='.$complaint->ticket_number)
             ->assertOk()
