@@ -21,14 +21,14 @@
                             <input type="email" name="email" class="form-control border-start-0 ps-0" required autofocus style="border-radius: 0 var(--sippm-radius-sm) var(--sippm-radius-sm) 0;">
                         </div>
                     </div>
-                    <div class="mb-4">
+                    <div class="mb-2">
                         <label class="form-label">Kata Sandi</label>
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0 text-muted" style="border-radius: var(--sippm-radius-sm) 0 0 var(--sippm-radius-sm); border: 1px solid rgba(22, 52, 92, 0.18);"><i class="bi bi-lock-fill"></i></span>
                             <input type="password" name="password" class="form-control border-start-0 ps-0" required style="border-radius: 0 var(--sippm-radius-sm) var(--sippm-radius-sm) 0;">
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-sippm w-100 py-2.5 fw-semibold" style="transition: all 0.2s ease;">Masuk</button>
+                    <button type="submit" class="btn btn-sippm w-100 py-2.5 fw-semibold mt-4" style="transition: all 0.2s ease;">Masuk</button>
                 </form>
                 <p class="text-center small mt-3 mb-0">Belum punya akun? <a href="{{ url('/register') }}">Daftar sebagai masyarakat</a></p>
             </div>

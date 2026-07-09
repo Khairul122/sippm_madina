@@ -12,6 +12,252 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-09** — Audit PRD menyeluruh (bukan cuma percaya progress.md,
+tapi verifikasi langsung ke kode via subagent Explore) menemukan 3 gap
+nyata, semua diperbaiki dan diverifikasi lewat test otomatis baru:
+1. **FR-23/FR-24**: `ActivityDashboardController::index()` sebelumnya
+   cuma auto-scope ke OPD/Kecamatan milik user login, tanpa filter
+   pilih-bebas. Ditambah filter `status`, `target` (encoded
+   `opd:{id}`/`kecamatan:{id}`, hanya untuk role yang melihat semua
+   kegiatan — Kominfo/Bupati/Wabup/Sekda, karena OPD/Camat sudah
+   auto-scoped), dan `date_from`/`date_to` (kolom `date`, bukan
+   `created_at`) — pola yang sama persis dengan filter Pengaduan FR-19,
+   plus filter bar baru di `dashboard/activities/index.blade.php`.
+   Catatan: `activities.actor_type` pakai `'opd'`/`'kecamatan'`, BEDA
+   dari `complaints.target_type` yang pakai `'camat'`.
+2. **FR-36/FR-37**: `RecordAuditLog` sebelumnya hardcode `old_data =
+   null` di semua baris — tidak pernah merekam state sebelum perubahan,
+   padahal FR-37 eksplisit minta "data yang berubah". Diperbaiki dengan
+   menambah param `previousStatus` ke 5 domain event
+   (`ComplaintVerified/Disposed/Handled/Resolved`, `ActivityPublished`)
+   yang diisi dari entity pre-mutation yang sudah ada di scope UseCase
+   (entity immutable, `withStatus()` return instance baru — status lama
+   tidak pernah hilang, cuma belum pernah diteruskan ke event). Selain
+   itu, aksi "kelola pengguna" (create/edit/nonaktifkan akun) di
+   `UserManagementController` tidak pernah tercatat ke `audit_logs` sama
+   sekali meski disebut eksplisit di FR-36 — ditulis langsung di
+   controller (`recordUserAudit()`, action `user_created`/
+   `user_updated`/`user_activated`/`user_deactivated`) karena controller
+   ini sudah menyimpang dari pola UseCase (Eloquent langsung), sama
+   seperti `RecordLoginAuditLog` menulis langsung untuk event auth
+   bawaan Laravel.
+3. **FR-34**: badge unread notifikasi di `layouts/dashboard.blade.php`
+   sebelumnya dihitung client-side dari daftar 20 notifikasi terbaru
+   saja (`per_page=20`), jadi under-count kalau user punya >20 notifikasi
+   belum dibaca. `NotificationRepositoryInterface::countUnreadForUser()`
+   sudah ada tapi tidak pernah dipanggil — sekarang dipanggil di
+   `NotificationWebController::index()` dan diteruskan sebagai
+   `unread_count` di response JSON; Alpine `notificationBell()` di
+   `layouts/dashboard.blade.php` dipakai sebagai sumber kebenaran
+   (bukan lagi `items.filter(...)` yang cuma menghitung 20 item
+   terpaginasi).
+
+4 test baru ditambahkan (`ActivityWorkflowTest::test_activity_index_filters_by_status_and_target`,
+audit-log assertions di `ActivityWorkflowTest`/`ComplaintWorkflowTest`/
+`UserManagementTest`, dan `NotificationWebControllerTest` baru).
+`php artisan test`: 25 test (4 baru) tetap **passed**.
+
+**2026-07-06 (lanjutan 3)** — Atas permintaan eksplisit: fitur "Laporan
+Kejadian" khusus role camat (entri sebelumnya di bawah) **dicopot penuh**
+— tidak jadi dipakai. Dikembalikan bersih ke kondisi sebelum fitur itu
+ada, bukan sekadar dinonaktifkan:
+- Migration `add_reporting_fields_to_activities_table` di-rollback lalu
+  file migration-nya dihapus (bukan ditambah migration baru untuk
+  drop-column, karena migration itu sendiri dibuat & dijalankan dalam
+  sesi yang sama sehingga aman dihapus langsung tanpa jejak).
+  Kolom `reporter_name`/`desa_id`/`target_type`/`target_id` di
+  `activities` sudah tidak ada lagi.
+- Dihapus: enum `App\Domain\Activity\ValueObjects\ActivityTargetType`.
+- Dikembalikan ke versi sebelum fitur: `Domain\Activity\Entities\Activity`,
+  `Infrastructure\...\Models\Activity` (fillable/casts/relasi `desa()`/
+  method `targetLabel()` dicopot), `EloquentActivityRepository`,
+  `SubmitActivityDTO`, `SubmitActivityUseCase`, `SubmitActivityRequest`
+  (validasi kembali satu set aturan untuk OPD & Camat, tanpa percabangan
+  role), `Web\Dashboard\ActivityDashboardController`,
+  `Api\ActivityController`, `ActivityResource`,
+  `dashboard/activities/{create,index}.blade.php`.
+- Form "Input Kegiatan" kembali sama persis untuk OPD maupun Camat:
+  judul, deskripsi, tanggal, lokasi, dokumentasi foto (JPG/PNG maks
+  5 MB) — tidak ada lagi nama pelapor/desa/tujuan laporan.
+- `ActivityWorkflowTest` dikembalikan ke versi semula. Test regresi
+  lokalisasi pesan validasi (`test_oversized_documentation_upload_...`,
+  entri sebelumnya) TETAP dipertahankan karena itu perbaikan terpisah
+  yang tidak terkait fitur ini.
+- Model/CRUD Desa (dari fitur Data Wilayah sebelumnya) tidak disentuh —
+  hanya relasi `Activity::desa()` yang ditambahkan khusus untuk fitur ini
+  yang dicopot.
+`php artisan test`: 21 test tetap **passed**.
+
+**2026-07-06 (lanjutan 2)** — Bug dilaporkan user: submit form "Input
+Kegiatan" role OPD dengan lampiran melebihi batas ukuran menampilkan
+pesan error mentah `validation.max.filevalidation.max.file` alih-alih
+kalimat yang bisa dibaca. Akar masalah ternyata jauh lebih luas dari satu
+pesan itu saja: proyek ini memakai `APP_LOCALE=id` (dan
+`APP_FALLBACK_LOCALE=id` — tanpa fallback Inggris), tapi **tidak pernah
+punya file `lang/id/validation.php` sama sekali** (folder `lang/` cuma
+berisi terjemahan vendor `spatie/laravel-backup`) — jadi SETIAP pesan
+error validasi bawaan Laravel di seluruh aplikasi (login, registrasi,
+pengaduan, kegiatan/laporan kejadian, kelola pengguna, dst.) sebenarnya
+selalu menampilkan key mentah, bukan cuma kasus upload ini.
+Diperbaiki dengan `php artisan lang:publish` (menerbitkan
+`lang/en/{validation,auth,pagination}.php` bawaan Laravel sebagai
+acuan struktur), lalu ditulis penuh terjemahan Indonesia di
+`lang/id/validation.php` (seluruh rule Laravel + `attributes` untuk
+nama field yang dipakai di seluruh form aplikasi supaya pesan
+menyebut "nama pelapor"/"desa" dst, bukan `reporter_name`/`desa_id` mentah)
+serta `lang/id/{auth,pagination}.php` (yang terakhir dipakai
+`Paginator::useBootstrapFive()` di setiap tabel berpaginasi — sama-sama
+akan menampilkan key mentah "pagination.previous"/"pagination.next" tanpa
+file ini). `lang/en/passwords.php` hasil publish dihapus lagi karena
+fitur reset password via email sudah dicopot total (lihat entri
+sebelumnya). Regresi ditambahkan di `ActivityWorkflowTest`
+(`test_oversized_documentation_upload_shows_localized_error_message`):
+submit lampiran 6000 KB (batas OPD 5120 KB) dan pastikan pesan error
+tidak mengandung `"validation."` mentah. `php artisan test`: 21 test
+(1 baru) tetap **passed**.
+
+**2026-07-06 (lanjutan)** — Form "Input Kegiatan" milik role camat diganti
+jadi "Laporan Kejadian" sesuai spesifikasi field baru: Nama Pelapor, Nama
+Kecamatan (readonly, dari akun camat sendiri), Nama Desa (select, hanya
+desa milik kecamatan camat tsb), Waktu Kejadian, Tujuan Laporan
+(Bupati/Wakil Bupati/Sekda/OPD), Uraian Laporan (rich text, sudah ada
+sejak sebelumnya), dan Lampiran (gambar/video/dokumen, maks 15 MB).
+Form OPD ("Input Kegiatan" biasa: judul/deskripsi/tanggal/lokasi, gambar
+maks 5 MB) **tidak berubah** — keduanya tetap berbagi satu form request
+(`SubmitActivityRequest`), yang sekarang bercabang aturan validasi
+berdasarkan role (`hasRole('camat')`).
+- Migration baru menambah 4 kolom nullable ke `activities`:
+  `reporter_name`, `desa_id` (FK ke `desas`, nullOnDelete), `target_type`,
+  `target_id` — nullable karena OPD tidak pernah mengisinya.
+- Enum baru `App\Domain\Activity\ValueObjects\ActivityTargetType`
+  (bupati/wakil_bupati/sekda/opd) — sengaja dibuat terpisah dari
+  `Complaint\ValueObjects\TargetType` yang sudah ada (meski isinya mirip)
+  supaya modul Activity tidak bergantung ke domain Complaint.
+- "Tujuan Laporan" dikirim sebagai satu field `target` dari `<select>`
+  tunggal, di-encode `"opd:{id}"` untuk OPD atau `"bupati"`/
+  `"wakil_bupati"`/`"sekda"` untuk pejabat — pola yang sama persis dengan
+  filter "tujuan" di `ComplaintDashboardController` (bukan pasangan
+  dropdown type+id terpisah). Parsing `target` jadi `target_type`/
+  `target_id` dilakukan lewat 2 method baru di `SubmitActivityRequest`
+  (`targetType()`/`targetId()`), dipakai bersama oleh web dashboard
+  maupun API controller supaya tidak duplikasi logic parsing.
+- Field "Judul Kegiatan" TIDAK ada di form camat (sesuai spesifikasi) —
+  `title` tetap wajib diisi di kolom DB (dipakai listing/feed publik) jadi
+  di-generate otomatis oleh controller: `"Laporan Kejadian - {desa},
+  Kec. {kecamatan}"`. `location` juga di-generate otomatis dari
+  desa+kecamatan yang sama supaya kolom "Lokasi" di tabel Kegiatan tetap
+  terisi wajar tanpa perlu field lokasi terpisah di form.
+- `Activity::targetLabel()` (accessor baru): resolve nama OPD dari
+  `target_id` kalau `target_type=opd`, atau label tetap (Bupati/dst) untuk
+  ketiganya. Dipakai di kolom baru "Tujuan" pada
+  `dashboard/activities/index.blade.php` (juga ditambah kolom "Pelapor").
+- `ActivityResource` (API) diperluas dengan `reporter_name`, `desa_id`,
+  `target_type`, `target_label`, `target_id`.
+- Bug tes ditemukan sekalian saat verifikasi: `ActivityWorkflowTest`
+  memakai `Activity::query()->firstOrFail()` untuk mengambil record yang
+  baru dibuat — ternyata `DummyReportSeeder` sudah menyeed 2 activity
+  lain duluan (OPD & Camat), jadi `firstOrFail()` diam-diam mengambil
+  record seeder, bukan punya test (kebetulan tidak ketahuan sebelumnya
+  karena assertion lama tidak memeriksa field yang dibedakan). Diperbaiki
+  dengan filter eksplisit `where('reporter_name', ...)`.
+  Diverifikasi end-to-end via curl sebagai `camat@demo.test`: form
+  menampilkan field & opsi (desa milik kecamatan sendiri, opsi tujuan
+  Bupati/Wabup/Sekda + optgroup semua OPD) dengan benar; submit dengan
+  tujuan `opd:1` tersimpan benar (title/location ter-generate, target_type
+  `opd`, target_label resolve ke nama OPD asli). `php artisan test`: 20
+  test tetap **passed**.
+
+**2026-07-06** — Atas permintaan eksplisit: fitur berbasis pengiriman
+email (verifikasi email saat registrasi/FR-03, lupa password via
+email/FR-07) **dicopot total** — proyek ini tidak jadi memakai mailer apa
+pun. Field `email` tetap ada di form registrasi/login (tetap dipakai
+sebagai identitas login), hanya fungsinya yang dihapus:
+- Dihapus: `ForgotPasswordController`, `ResetPasswordController`,
+  `EmailVerificationController` beserta view-nya
+  (`auth/{forgot-password,reset-password,verify-email}.blade.php`) dan
+  rute terkait di `routes/web.php` (`/forgot-password`,
+  `/reset-password/{token}`, `/email/verify*`).
+- `User` model tidak lagi `implements MustVerifyEmail`
+  (trait+contract dicopot); middleware `verified` dicopot dari rute
+  `/pengaduan/*` — masyarakat bisa langsung mengajukan pengaduan begitu
+  registrasi tanpa syarat verifikasi email.
+- `RegisterController` tidak lagi memicu event `Registered` (yang
+  sebelumnya memicu `SendEmailVerificationNotification`).
+  `AppServiceProvider::boot()` tidak lagi mendaftarkan listener tsb.
+- Link "Lupa kata sandi?" dicopot dari `auth/login.blade.php`.
+- Rate limiting login (NFR-07) dan audit log
+  login/logout/login_failed (FR-08) **tetap dipertahankan** — keduanya
+  tidak bergantung pada pengiriman email.
+`php artisan test`: 20 test tetap **passed**.
+
+**2026-07-05 (lanjutan 6)** — Audit kepatuhan penuh terhadap PRD (bukan
+sekadar percaya `progress.md`, tapi pengecekan kode langsung) menemukan 8
+celah nyata, semua diperbaiki dan diverifikasi end-to-end (curl
+cookie-session + query DB langsung):
+1. **RBAC**: Bupati/Wakil Bupati/Sekda sebelumnya tidak punya akses web ke
+   "Lihat Laporan Kegiatan" (pelanggaran matriks PRD §4.2) — rute
+   `GET /dashboard/activities` dipisah dari rute create-nya, middleware
+   `role:` diperluas mencakup ketiga role tsb; sidebar nav dipecah supaya
+   mereka lihat menu "Kegiatan" tanpa "Pengaduan". Diverifikasi:
+   `bupati@demo.test` → `/dashboard/activities` = 200, `/dashboard/complaints`
+   tetap 403 (benar).
+2. **FR-19**: filter pengaduan diperluas dari status+search saja menjadi
+   +kategori, +rentang tanggal, +tujuan disposisi (OPD/Kecamatan, encoded
+   `opd:{id}`/`camat:{id}` di satu `<select>`). Bug ditemukan saat
+   verifikasi manual: `$request->string('target')` mengembalikan
+   `Illuminate\Support\Stringable`, bukan `string` — `str_contains()`/
+   `explode()` native PHP melempar `TypeError`. Diperbaiki dengan cast
+   `(string)` eksplisit di `ComplaintDashboardController`.
+3. **NFR-07**: `RateLimiter::for('login', ...)` (5x/menit per
+   email+IP) + middleware `throttle:login` di rute web `/login` maupun API
+   `/api/v1/login`. Callback custom: request API/JSON dapat 429 JSON,
+   request web dapat redirect-back dengan pesan "Terlalu banyak percobaan
+   masuk...". Diverifikasi: percobaan ke-6 dengan kredensial salah
+   langsung diblokir dengan pesan tsb tampil di halaman login.
+4. **FR-08**: listener baru `RecordLoginAuditLog` (sync, bukan queued)
+   didaftarkan untuk event native Laravel `Login`/`Logout`/`Failed`,
+   menulis ke `audit_logs` (action `login`/`logout`/`login_failed`).
+   Diverifikasi via query DB: baris `login` (dengan `model_id` user yang
+   benar) dan `login_failed` (saat percobaan gagal) benar-benar tercatat.
+5. **FR-07**: alur lupa password lengkap pakai password broker bawaan
+   Laravel (`Password::sendResetLink`/`Password::reset`) — halaman
+   `/forgot-password` dan `/reset-password/{token}`, rute `password.reset`
+   dinamai sesuai konvensi notifikasi default Laravel. Diverifikasi
+   end-to-end: submit email → link reset diekstrak dari
+   `storage/logs/laravel.log` (`MAIL_MAILER=log`) → set password baru →
+   berhasil login dengan password baru → password didemo dikembalikan ke
+   semula setelahnya.
+6. **FR-03**: verifikasi email saat registrasi pakai kontrak native
+   Laravel (`MustVerifyEmail` di model `User`, listener bawaan
+   `SendEmailVerificationNotification` pada event `Registered`). Rute
+   `/pengaduan/*` sekarang juga di-guard middleware `verified` (akun demo
+   seeder aman karena `DemoUserSeeder` sudah set `email_verified_at`).
+   Diverifikasi end-to-end: registrasi akun baru → `/pengaduan` diblokir
+   (302) → link verifikasi diekstrak dari log → klik → `/pengaduan` lolos
+   (200). Akun uji dihapus lagi setelah verifikasi selesai.
+7. **NFR-13/FR-39**: `spatie/laravel-backup` sudah ter-install tapi
+   `config/backup.php` belum pernah dipublish dan tidak pernah dijadwalkan
+   — dipublish, dijadwalkan (`backup:run` 01:00 + `backup:clean` 01:30
+   harian, `Schedule::command()` di `routes/console.php`). Ditemukan &
+   diperbaiki masalah lingkungan Windows/Laragon: `mysqldump` tidak ada di
+   PATH → ditambahkan `dump.dump_binary_path` di `config/database.php`
+   (dari env `MYSQLDUMP_PATH`, default kosong supaya tidak berdampak di
+   Linux produksi yang biasanya sudah punya `mysqldump` di PATH).
+   Diverifikasi: `php artisan backup:run --only-db` benar-benar
+   menghasilkan file zip nyata di `storage/app/private/SIPPM Madina/`.
+8. **NFR-16**: `Cache::remember()` TTL 60 detik dipasang di kedua endpoint
+   statistik (`StatisticsController::index/performance` web,
+   `DashboardController::statistics/performance` API) — TTL pendek dipilih
+   ketimbang cache tags/invalidasi manual karena `CACHE_STORE=database`
+   tidak mendukung cache tags. Diverifikasi: baris `dashboard.statistik`/
+   `dashboard.kinerja` benar-benar muncul di tabel `cache` setelah
+   endpoint diakses.
+
+`php artisan test`: 20 test tetap **passed** (tidak ada test baru — semua
+perbaikan di atas adalah RBAC/middleware/config/listener native Laravel
+tanpa business rule baru yang butuh unit test, coverage lewat verifikasi
+manual end-to-end di atas).
+
 **2026-07-05 (lanjutan 5)** — CRUD Data Wilayah (kominfo-only): Data OPD,
 Data Kecamatan, Data Desa (`/dashboard/{opd,kecamatan,desa}`). Desa adalah
 entitas baru (migration `desas`, FK `kecamatan_id` cascade-delete, model
@@ -188,6 +434,9 @@ RBAC, repository implementations + binding).
       `dashboard/activities/index.blade.php` + `@verify`
 - [x] Publikasi kegiatan (Kominfo) + feed publik — `@publish`,
       tampil di `public/activities.blade.php` (`/kegiatan`)
+- [x] Riwayat kegiatan per OPD/Kecamatan + filter status/tujuan/periode
+      (FR-23/FR-24) — `ActivityDashboardController@index`,
+      `dashboard/activities/index.blade.php` (2026-07-09)
 
 ## Modul Monitoring dan Dashboard
 
@@ -226,6 +475,11 @@ RBAC, repository implementations + binding).
       pengecualian dari private channel)
 - [x] routes/channels.php authorization — sudah ada sejak Fase 5, kini
       diverifikasi jalan dengan Reverb aktif
+- [x] Indikator jumlah notifikasi belum dibaca (FR-34) dihitung
+      server-side (`countUnreadForUser`, sudah ada di repository sejak
+      awal tapi baru dipanggil sekarang) — sebelumnya client-side dari
+      20 notifikasi terbaru saja, under-count untuk >20 unread
+      (2026-07-09)
 
 ## Modul Audit Log
 
@@ -237,6 +491,13 @@ RBAC, repository implementations + binding).
       `App\Infrastructure\Notification\Listeners\RecordAuditLog`)
 - [x] Halaman audit log (Kominfo-only) — `dashboard/audit-log/index.blade.php`
       bergaya Bootstrap, `/dashboard/audit-log`
+- [x] `old_data` (state sebelum perubahan) direkam di setiap baris audit
+      log transisi status (FR-37) — sebelumnya selalu `null`; sekarang
+      diisi dari `previousStatus` yang diteruskan tiap domain event
+      (2026-07-09)
+- [x] Aksi "kelola pengguna" (create/edit/nonaktifkan akun) tercatat ke
+      audit log (FR-36) — sebelumnya tidak tercatat sama sekali;
+      `UserManagementController::recordUserAudit()` (2026-07-09)
 
 ## Known Issues
 
@@ -266,26 +527,36 @@ RBAC, repository implementations + binding).
   spatie/laravel-backup) — sudah diaktifkan dengan menghapus `;` di
   depan `extension=zip` pada
   `C:\laragon\bin\php\php-8.3.30-Win32-vs16-x64\php.ini`.
-- `resources/views/dashboard/statistics/index.blade.php` dan
-  `performance.blade.php` mengambil data query on-demand tanpa caching —
-  NFR-16 (caching statistik/dashboard) belum diimplementasikan, cocok
-  untuk fase hardening berikutnya.
-- Belum ada rate limiting eksplisit pada endpoint login (NFR-07) di luar
-  default Laravel; perlu ditambahkan `throttle` middleware pada rute
-  `/login` dan `/api/v1/auth/login` sebelum production.
+- `php artisan schedule:run` (backup harian, lihat FR-39 di Riwayat)
+  hanya benar-benar terpicu kalau cron/Task Scheduler OS memanggilnya
+  tiap menit, atau `php artisan schedule:work` dibiarkan berjalan — di
+  environment dev ini tidak ada keduanya yang otomatis aktif.
+- Perubahan hardening RBAC/NFR-07/NFR-16/FR-08/FR-19 (lihat entri
+  "2026-07-05 (lanjutan 6)" di atas) **masih berupa working tree, belum
+  di-commit ke git**, begitu juga `lang/id/*`, `config/backup.php`, dan
+  `public/images/hero-illustration.png` (untracked). Sesi berikutnya
+  perlu `git add`/commit ini dulu sebelum menambah pekerjaan baru, supaya
+  tidak tertumpuk jadi satu commit besar (bertentangan dengan PRD 13.4:
+  "Commit wajib dilakukan per fitur").
 
 ## Next Steps
 
 Fase 0-8 (fondasi sampai Presentation layer web penuh + Reverb) sudah
-selesai. Pekerjaan yang tersisa bersifat pengerasan produksi (hardening)
-dan sudah tidak mengubah arsitektur:
+selesai. Seluruh item pengerasan produksi (hardening) dari audit PRD
+("2026-07-05 lanjutan 6" di atas) **sudah diimplementasikan** — NFR-07
+(`throttle:login`), NFR-16 (`Cache::remember` di `StatisticsController`
+dan `Api\DashboardController`), FR-08 (`RecordLoginAuditLog`), FR-19
+(filter kategori/tanggal/tujuan), FR-39 (backup terjadwal), dan gap RBAC
+Bupati/Wabup/Sekda pada "Lihat Laporan Kegiatan" — hanya belum di-commit
+(lihat "Known Issues"). Sisa pekerjaan:
 
-- Tambahkan `throttle:login` pada rute login (web & API) untuk NFR-07.
-- Terapkan caching (`Cache::remember`) pada `StatisticsController` dan
-  `Api\DashboardController` untuk NFR-16.
+- **Commit dulu** seluruh perubahan working tree di atas sebelum
+  menambah fitur baru, per-fitur sesuai PRD 13.4 (bukan satu commit
+  besar gabungan).
 - Tambahkan HTTPS/TLS di reverse proxy (Nginx) saat deployment — NFR-05
   tidak relevan di localhost dev.
-- Jalankan `php artisan queue:work` dan `php artisan reverb:start` di
+- Jalankan `php artisan queue:work`, `php artisan reverb:start`, dan
+  `php artisan schedule:work` (atau cron `schedule:run` per menit) di
   bawah Supervisor sebelum UAT/production (lihat "Known Issues").
 - Pertimbangkan memindahkan sidebar dashboard ke library AdminLTE resmi
   jika proyek suatu saat turun versi ke Bootstrap 4, atau tunggu AdminLTE

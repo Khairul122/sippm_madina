@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Broadcasting\Events;
 
 use App\Domain\Activity\Entities\Activity;
+use App\Domain\Activity\ValueObjects\ActivityStatus;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -22,6 +23,7 @@ class ActivityPublished implements ShouldBroadcast
 
     public function __construct(
         public readonly Activity $activity,
+        public readonly ?ActivityStatus $previousStatus = null,
     ) {
     }
 

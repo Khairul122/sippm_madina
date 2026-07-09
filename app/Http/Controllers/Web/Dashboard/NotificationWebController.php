@@ -34,6 +34,10 @@ class NotificationWebController extends Controller
                 'type' => $n->type,
                 'created_at' => $n->createdAt?->format(\DateTimeInterface::ATOM),
             ], $result['data']),
+            // FR-34: dihitung dari seluruh baris "belum dibaca" di DB, bukan
+            // cuma dari 20 item terbaru di atas — supaya badge tetap akurat
+            // kalau user punya lebih dari 20 notifikasi belum dibaca.
+            'unread_count' => $this->notifications->countUnreadForUser($request->user()->id),
         ]);
     }
 

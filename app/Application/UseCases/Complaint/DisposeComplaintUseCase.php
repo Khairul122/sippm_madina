@@ -85,7 +85,7 @@ final class DisposeComplaintUseCase
             $updated = $complaint->withStatus(ComplaintStatus::DIPROSES);
 
             foreach ($dto->targets as $index => $target) {
-                event(new ComplaintDisposed($updated, $targetTypes[$index], (int) $target['id']));
+                event(new ComplaintDisposed($updated, $targetTypes[$index], (int) $target['id'], $complaint->status));
             }
 
             return $updated;

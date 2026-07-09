@@ -39,7 +39,7 @@ Route::get('/kegiatan', [ActivityFeedController::class, 'index']);
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
-    Route::post('/login', [LoginController::class, 'store']);
+    Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:login');
     Route::get('/register', [RegisterController::class, 'create']);
     Route::post('/register', [RegisterController::class, 'store']);
 });
@@ -72,13 +72,24 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         Route::get('/statistik/export/excel', [StatisticsController::class, 'exportExcel']);
     });
 
-    // Complaint + activity dashboard: Kominfo sees/manages everything;
-    // OPD/Camat see only their own scope (filtered in the controllers).
+    // Complaint dashboard: Kominfo sees/manages everything; OPD/Camat see
+    // only their own scope (filtered in the controller). Per PRD 4.2
+    // there is no "Lihat Pengaduan" row for Bupati/Wabup/Sekda — their
+    // visibility is limited to aggregate stats (/statistik, /kinerja).
     Route::middleware('role:kominfo|opd|camat')->group(function () {
         Route::get('/complaints', [ComplaintDashboardController::class, 'index']);
         Route::get('/complaints/{complaint}', [ComplaintDashboardController::class, 'show']);
+    });
 
+    // Kegiatan: "Lihat Laporan Kegiatan" (PRD 4.2) is granted to EVERY
+    // internal role, not just kominfo/opd/camat — Bupati/Wabup/Sekda must
+    // be able to view this list too (previously missing, a real RBAC gap
+    // vs the PRD matrix). "Input Kegiatan" stays OPD/Camat-only.
+    Route::middleware('role:kominfo|opd|camat|bupati|wakil_bupati|sekda')->group(function () {
         Route::get('/activities', [ActivityDashboardController::class, 'index']);
+    });
+
+    Route::middleware('role:opd|camat')->group(function () {
         Route::get('/activities/create', [ActivityDashboardController::class, 'create']);
         Route::post('/activities', [ActivityDashboardController::class, 'store']);
     });

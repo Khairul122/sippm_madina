@@ -394,13 +394,16 @@
                     if (!res.ok) return;
                     const json = await res.json();
                     this.items = json.data ?? [];
-                    this.unread = this.items.filter(i => !i.is_read).length;
+                    // Server-side count (seluruh baris belum dibaca di DB),
+                    // bukan dihitung dari `items` yang cuma 20 item terbaru —
+                    // fallback ke hitungan lokal kalau field belum ada.
+                    this.unread = json.unread_count ?? this.items.filter(i => !i.is_read).length;
                 } catch (e) { /* diamkan bila gagal memuat */ }
             },
             async markRead(item) {
                 if (item.is_read) return;
                 item.is_read = true;
-                this.unread = this.items.filter(i => !i.is_read).length;
+                this.unread = Math.max(0, this.unread - 1);
                 
                 // Don't fetch for temporary live items without integer DB ID
                 if (typeof item.id === 'string' && item.id.startsWith('live-')) {

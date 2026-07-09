@@ -15,17 +15,24 @@ use App\Infrastructure\Broadcasting\Events\ComplaintVerified;
 use App\Infrastructure\Notification\Listeners\PersistActivityNotification;
 use App\Infrastructure\Notification\Listeners\PersistComplaintNotification;
 use App\Infrastructure\Notification\Listeners\RecordAuditLog;
+use App\Infrastructure\Notification\Listeners\RecordLoginAuditLog;
 use App\Infrastructure\Persistence\Eloquent\Models\Activity;
 use App\Infrastructure\Persistence\Eloquent\Models\AuditLog;
 use App\Infrastructure\Persistence\Eloquent\Models\Complaint;
 use App\Infrastructure\Persistence\Eloquent\Models\Kecamatan;
 use App\Infrastructure\Persistence\Eloquent\Models\Opd;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -100,5 +107,33 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Event::listen(ActivityPublished::class, PersistActivityNotification::class);
+
+        // FR-08: catat setiap aktivitas login (berhasil/gagal) dan logout
+        // ke audit log — pakai Auth event bawaan Laravel yang sudah
+        // otomatis terpicu dari Auth::attempt()/login()/logout() di
+        // Web\Auth\LoginController dan Api\AuthController, tanpa perlu
+        // ubah controller itu sendiri. Sengaja SYNC (bukan ShouldQueue)
+        // sama seperti keputusan notifikasi — supaya baris audit log
+        // langsung ada begitu login/logout terjadi.
+        Event::listen(Login::class, [RecordLoginAuditLog::class, 'handleLogin']);
+        Event::listen(Logout::class, [RecordLoginAuditLog::class, 'handleLogout']);
+        Event::listen(Failed::class, [RecordLoginAuditLog::class, 'handleFailed']);
+
+        // NFR-07: batasi percobaan login per kombinasi IP+email supaya
+        // brute force pada satu akun ataupun dari satu sumber sama-sama
+        // dibatasi. Diterapkan via `throttle:login` di routes/web.php
+        // (session login) dan routes/api.php (Sanctum token login).
+        RateLimiter::for('login', function (Request $request) {
+            $key = strtolower((string) $request->input('email')).'|'.$request->ip();
+            $message = 'Terlalu banyak percobaan masuk. Coba lagi dalam beberapa menit.';
+
+            return Limit::perMinute(5)->by($key)->response(function () use ($request, $message) {
+                if ($request->is('api/*') || $request->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => $message], 429);
+                }
+
+                return back()->withErrors(['email' => $message])->onlyInput('email');
+            });
+        });
     }
 }

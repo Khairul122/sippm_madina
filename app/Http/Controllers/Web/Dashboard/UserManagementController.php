@@ -8,6 +8,7 @@ use App\Domain\User\ValueObjects\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Infrastructure\Persistence\Eloquent\Models\AuditLog;
 use App\Infrastructure\Persistence\Eloquent\Models\Kecamatan;
 use App\Infrastructure\Persistence\Eloquent\Models\Opd;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
@@ -63,6 +64,14 @@ class UserManagementController extends Controller
 
         $user->assignRole($data['role']);
 
+        $this->recordUserAudit('user_created', $user->id, null, [
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $data['role'],
+            'opd_id' => $user->opd_id,
+            'kecamatan_id' => $user->kecamatan_id,
+        ]);
+
         return redirect('/dashboard/users')->with('status', 'Pengguna berhasil dibuat.');
     }
 
@@ -84,7 +93,12 @@ class UserManagementController extends Controller
         $model = User::query()->findOrFail($user);
         $this->authorize('update', $model);
 
+        $auditFields = ['name', 'email', 'is_active', 'opd_id', 'kecamatan_id'];
+        $oldData = $model->only($auditFields);
+
         $model->update($request->validated());
+
+        $this->recordUserAudit('user_updated', $model->id, $oldData, $model->only($auditFields));
 
         return redirect('/dashboard/users')->with('status', 'Pengguna berhasil diperbarui.');
     }
@@ -94,8 +108,37 @@ class UserManagementController extends Controller
         $model = User::query()->findOrFail($user);
         $this->authorize('deactivate', $model);
 
-        $model->update(['is_active' => ! $model->is_active]);
+        $wasActive = $model->is_active;
+        $model->update(['is_active' => ! $wasActive]);
+
+        $this->recordUserAudit(
+            $model->is_active ? 'user_activated' : 'user_deactivated',
+            $model->id,
+            ['is_active' => $wasActive],
+            ['is_active' => $model->is_active],
+        );
 
         return back()->with('status', $model->is_active ? 'Pengguna diaktifkan kembali.' : 'Pengguna dinonaktifkan.');
+    }
+
+    /**
+     * FR-36: "kelola pengguna" wajib tercatat di audit log. Ditulis
+     * langsung di sini (bukan lewat listener event terpusat seperti
+     * modul Complaint/Activity) karena controller ini sudah sengaja
+     * memakai Eloquent langsung tanpa UseCase — sama seperti
+     * RecordLoginAuditLog menulis langsung untuk event auth bawaan
+     * Laravel yang juga di luar alur UseCase.
+     */
+    private function recordUserAudit(string $action, int $modelId, ?array $oldData, array $newData): void
+    {
+        AuditLog::query()->create([
+            'user_id' => auth()->id(),
+            'action' => $action,
+            'model_type' => 'user',
+            'model_id' => $modelId,
+            'old_data' => $oldData,
+            'new_data' => $newData,
+            'ip_address' => request()?->ip(),
+        ]);
     }
 }

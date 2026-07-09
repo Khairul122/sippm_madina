@@ -62,6 +62,15 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+            // NFR-13/FR-39: spatie/laravel-backup shells out to
+            // `mysqldump`. On Windows/Laragon it isn't on PATH by
+            // default, so `backup:run` fails unless pointed at the
+            // directory containing mysqldump.exe explicitly. No-op
+            // (empty string) on servers where mysqldump is already on
+            // PATH — e.g. most Linux production hosts.
+            'dump' => [
+                'dump_binary_path' => env('MYSQLDUMP_PATH', ''),
+            ],
         ],
 
         'mariadb' => [

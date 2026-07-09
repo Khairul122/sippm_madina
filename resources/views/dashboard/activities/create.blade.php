@@ -35,7 +35,7 @@
                 <p class="text-muted small mb-0">Format: JPG, JPEG, PNG (bisa memilih lebih dari satu)</p>
                 <input type="file" name="documentations[]" class="form-control" multiple accept=".jpg,.jpeg,.png" @change="files = Array.from($event.target.files).map(f => ({ name: f.name, size: (f.size / 1024 / 1024).toFixed(2) + ' MB' }))">
             </div>
-            
+
             <!-- File Preview -->
             <div class="mt-3" x-show="files.length > 0">
                 <p class="small fw-semibold text-secondary mb-2">Foto Terpilih:</p>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Web;
 
+use App\Infrastructure\Persistence\Eloquent\Models\AuditLog;
 use App\Infrastructure\Persistence\Eloquent\Models\Complaint;
 use App\Infrastructure\Persistence\Eloquent\Models\Opd;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
@@ -86,6 +87,33 @@ class ComplaintWorkflowTest extends TestCase
         $this->actingAs($masyarakat)->get("/pengaduan/{$complaint->id}")
             ->assertOk()
             ->assertSee('Terima kasih, pengaduan telah selesai ditangani.');
+
+        // FR-36/FR-37: setiap baris audit log transisi status pengaduan
+        // wajib merekam status SEBELUM perubahan (old_data), tidak cuma
+        // status baru — sebelumnya old_data selalu null di semua baris.
+        $verifyLog = AuditLog::query()
+            ->where('action', 'App\\Infrastructure\\Broadcasting\\Events\\ComplaintVerified')
+            ->where('model_id', $complaint->id)
+            ->firstOrFail();
+        $this->assertSame(['status' => 'diajukan'], $verifyLog->old_data);
+
+        $disposeLog = AuditLog::query()
+            ->where('action', 'App\\Infrastructure\\Broadcasting\\Events\\ComplaintDisposed')
+            ->where('model_id', $complaint->id)
+            ->firstOrFail();
+        $this->assertSame(['status' => 'diverifikasi'], $disposeLog->old_data);
+
+        $handleLog = AuditLog::query()
+            ->where('action', 'App\\Infrastructure\\Broadcasting\\Events\\ComplaintHandled')
+            ->where('model_id', $complaint->id)
+            ->firstOrFail();
+        $this->assertSame(['status' => 'diproses'], $handleLog->old_data);
+
+        $resolveLog = AuditLog::query()
+            ->where('action', 'App\\Infrastructure\\Broadcasting\\Events\\ComplaintResolved')
+            ->where('model_id', $complaint->id)
+            ->firstOrFail();
+        $this->assertSame(['status' => 'ditindaklanjuti'], $resolveLog->old_data);
     }
 
     public function test_kominfo_cannot_dispose_directly_to_bupati(): void

@@ -38,7 +38,7 @@ final class PublishActivityUseCase
 
         $published = $activity->withStatus(ActivityStatus::DIPUBLIKASIKAN);
 
-        event(new ActivityPublished($published));
+        event(new ActivityPublished($published, $activity->status));
 
         return $published;
     }

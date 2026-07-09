@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Broadcasting\Events;
 
 use App\Domain\Complaint\Entities\Complaint;
+use App\Domain\Complaint\ValueObjects\ComplaintStatus;
 use App\Domain\Complaint\ValueObjects\TargetType;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -27,6 +28,7 @@ class ComplaintDisposed implements ShouldBroadcast
         public readonly Complaint $complaint,
         public readonly TargetType $disposedToType,
         public readonly int $disposedToId,
+        public readonly ?ComplaintStatus $previousStatus = null,
     ) {
     }
 

@@ -20,6 +20,12 @@
     @if($user->hasAnyRole(['kominfo','opd','camat']))
         <div class="nav-header">Pengaduan</div>
         <a class="nav-link {{ str_starts_with($path,'dashboard/complaints') ? 'active' : '' }}" href="{{ url('/dashboard/complaints') }}"><i class="bi bi-chat-square-text me-2"></i>Pengaduan</a>
+    @endif
+
+    @if($user->hasAnyRole(['kominfo','opd','camat','bupati','wakil_bupati','sekda']))
+        @unless($user->hasAnyRole(['kominfo','opd','camat']))
+            <div class="nav-header">Kegiatan</div>
+        @endunless
         <a class="nav-link {{ str_starts_with($path,'dashboard/activities') ? 'active' : '' }}" href="{{ url('/dashboard/activities') }}"><i class="bi bi-calendar-event me-2"></i>Kegiatan</a>
     @endif
 

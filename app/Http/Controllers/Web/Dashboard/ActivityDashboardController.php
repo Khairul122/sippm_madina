@@ -13,6 +13,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Activity\SubmitActivityRequest;
 use App\Http\Requests\Activity\VerifyActivityRequest;
 use App\Infrastructure\Persistence\Eloquent\Models\Activity;
+use App\Infrastructure\Persistence\Eloquent\Models\Kecamatan;
+use App\Infrastructure\Persistence\Eloquent\Models\Opd;
 use DomainException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -28,22 +30,50 @@ class ActivityDashboardController extends Controller
     ) {
     }
 
+    /**
+     * FR-23/FR-24: riwayat kegiatan per OPD/Kecamatan dengan filter status
+     * dan periode waktu. OPD/Camat tetap auto-scoped ke unit sendiri
+     * (tidak bisa memilih target lain); filter "tujuan" hanya berlaku
+     * untuk role yang melihat semua kegiatan (Kominfo/Bupati/Wabup/Sekda).
+     */
     public function index(Request $request): View
     {
         $user = $request->user();
         $query = Activity::query()->with('documentations');
 
+        $canFilterByTarget = $user->hasAnyRole(['kominfo', 'bupati', 'wakil_bupati', 'sekda']);
+
         if ($user->hasRole('opd') && $user->opd_id) {
             $query->where('actor_type', 'opd')->where('actor_id', $user->opd_id);
         } elseif ($user->hasRole('camat') && $user->kecamatan_id) {
             $query->where('actor_type', 'kecamatan')->where('actor_id', $user->kecamatan_id);
+        } elseif ($canFilterByTarget && $request->filled('target') && str_contains((string) $request->string('target'), ':')) {
+            // Encoded as "opd:3" / "kecamatan:5" — activities.actor_type
+            // uses 'kecamatan' (not 'camat' like complaints.target_type).
+            [$actorType, $actorId] = explode(':', (string) $request->string('target'), 2);
+            $query->where('actor_type', $actorType)->where('actor_id', (int) $actorId);
         }
 
-        $activities = $query->orderByDesc('date')->paginate(15);
+        if ($request->filled('status')) {
+            $query->where('status', $request->string('status'));
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('date', '>=', $request->date('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('date', '<=', $request->date('date_to'));
+        }
+
+        $activities = $query->orderByDesc('date')->paginate(15)->withQueryString();
 
         return view('dashboard.activities.index', [
             'title' => 'Kegiatan',
             'activities' => $activities,
+            'opds' => Opd::query()->orderBy('name')->get(),
+            'kecamatans' => Kecamatan::query()->orderBy('name')->get(),
+            'canFilterByTarget' => $canFilterByTarget,
         ]);
     }
 

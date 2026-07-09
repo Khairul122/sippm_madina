@@ -9,6 +9,45 @@
     </div>
     @endif
 
+    <form method="get" class="row g-2 mb-3 align-items-center">
+        <div class="col-auto">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Semua Status</option>
+                @foreach(['draft','diverifikasi','dipublikasikan','ditolak'] as $status)
+                    <option value="{{ $status }}" @selected(request('status') === $status)>{{ ucfirst($status) }}</option>
+                @endforeach
+            </select>
+        </div>
+        @if($canFilterByTarget)
+        <div class="col-auto">
+            <select name="target" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Semua Tujuan</option>
+                <optgroup label="OPD">
+                    @foreach($opds as $opd)
+                        <option value="opd:{{ $opd->id }}" @selected(request('target') === 'opd:'.$opd->id)>{{ $opd->name }}</option>
+                    @endforeach
+                </optgroup>
+                <optgroup label="Kecamatan">
+                    @foreach($kecamatans as $kecamatan)
+                        <option value="kecamatan:{{ $kecamatan->id }}" @selected(request('target') === 'kecamatan:'.$kecamatan->id)>{{ $kecamatan->name }}</option>
+                    @endforeach
+                </optgroup>
+            </select>
+        </div>
+        @endif
+        <div class="col-auto">
+            <input type="date" name="date_from" class="form-control form-control-sm" value="{{ request('date_from') }}" title="Dari tanggal" onchange="this.form.submit()">
+        </div>
+        <div class="col-auto">
+            <input type="date" name="date_to" class="form-control form-control-sm" value="{{ request('date_to') }}" title="Sampai tanggal" onchange="this.form.submit()">
+        </div>
+        @if(request()->anyFilled(['status','target','date_from','date_to']))
+            <div class="col-auto">
+                <a href="{{ url('/dashboard/activities') }}" class="btn btn-secondary btn-sm"><i class="bi bi-x-circle"></i> Reset</a>
+            </div>
+        @endif
+    </form>
+
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead><tr><th>Judul</th><th>Tanggal</th><th>Lokasi</th><th>Status</th>@if($user->hasRole('kominfo'))<th></th>@endif</tr></thead>

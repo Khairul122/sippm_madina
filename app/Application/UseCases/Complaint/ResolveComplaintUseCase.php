@@ -56,7 +56,7 @@ final class ResolveComplaintUseCase
 
             $updated = $complaint->withStatus(ComplaintStatus::SELESAI);
 
-            event(new ComplaintResolved($updated, $dto->responseText));
+            event(new ComplaintResolved($updated, $dto->responseText, $complaint->status));
 
             return $updated;
         });

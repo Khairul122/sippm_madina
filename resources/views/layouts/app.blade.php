@@ -12,41 +12,112 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         h1, h2, h3, h4, .navbar-brand { font-family: 'Poppins', sans-serif; }
-        .navbar-sippm { background-color: var(--sippm-navy); box-shadow: var(--sippm-shadow-soft); }
-        .navbar-sippm .nav-link { color: rgba(255,255,255,.85) !important; }
+        .sippm-topbar-identity { background-color: #fafaf9; border-bottom: 1px solid var(--sippm-border); font-size: 0.8rem; color: #64748b; }
+        .sippm-page-header { background-color: #ffffff; border-bottom: 1px solid rgba(22, 52, 92, 0.06); }
+        .navbar-sippm { background-color: var(--sippm-navy); box-shadow: var(--sippm-shadow-soft); padding: 0.75rem 0; }
+        
+        .navbar-sippm .nav-link { 
+            color: rgba(255,255,255,.85) !important; 
+            font-weight: 500; 
+            padding: 0.5rem 1rem !important;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+        .navbar-sippm .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: var(--sippm-gold);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .navbar-sippm .nav-link:hover::after, .navbar-sippm .nav-link.active::after {
+            width: 80%;
+        }
         .navbar-sippm .nav-link:hover, .navbar-sippm .nav-link.active { color: var(--sippm-gold) !important; }
-        .btn-sippm { background-color: var(--sippm-navy); color: #fff; border-radius: var(--sippm-radius-sm); box-shadow: var(--sippm-shadow-soft); border: none; }
-        .btn-sippm:hover { background-color: var(--sippm-navy-light); color: #fff; }
+        
+        .btn-sippm { 
+            background-color: var(--sippm-navy); 
+            color: #fff; 
+            border-radius: var(--sippm-radius-sm); 
+            box-shadow: var(--sippm-shadow-soft); 
+            border: 2px solid transparent; 
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-sippm:hover { 
+            background-color: var(--sippm-navy-light); 
+            color: #fff; 
+            transform: translateY(-1px);
+            box-shadow: var(--sippm-shadow-raised);
+        }
+        .btn-sippm:active {
+            transform: translateY(0);
+        }
+        
         footer.sippm-footer { background-color: var(--sippm-navy); color: #f0ede4; }
+        footer.sippm-footer a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s ease; }
+        footer.sippm-footer a:hover { color: var(--sippm-gold); }
+        .footer-col-title { font-weight: bold; font-family: 'Poppins', sans-serif; font-size: 1rem; margin-bottom: 1.25rem; color: var(--sippm-gold); position: relative; }
+        .footer-col-title::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background-color: var(--sippm-gold);
+        }
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: #fff !important;
+            transition: all 0.2s ease;
+        }
+        .social-icon:hover {
+            background-color: var(--sippm-gold);
+            color: var(--sippm-navy) !important;
+            transform: scale(1.1);
+        }
     </style>
     @stack('styles')
 </head>
 <body class="d-flex flex-column min-vh-100">
 
     <!-- Tier 1: identity bar -->
-    <div class="sippm-topbar-identity py-1 d-none d-md-block">
+    <div class="sippm-topbar-identity py-2 d-none d-md-block">
         <div class="container d-flex justify-content-between align-items-center flex-wrap">
-            <span><i class="bi bi-geo-alt me-1"></i>Pemerintah Kabupaten Mandailing Natal</span>
+            <span class="fw-medium"><i class="bi bi-geo-alt-fill me-1 text-secondary"></i>Pemerintah Kabupaten Mandailing Natal</span>
             <div class="d-flex gap-3">
-                <span><i class="bi bi-envelope me-1"></i>diskominfo@madina.go.id</span>
-                <span><i class="bi bi-telephone me-1"></i>(0636) 000000</span>
+                <span><i class="bi bi-envelope-fill me-1 text-secondary"></i>diskominfo@madina.go.id</span>
+                <span><i class="bi bi-telephone-fill me-1 text-secondary"></i>(0636) 000000</span>
             </div>
         </div>
     </div>
 
     <!-- Tier 2: page header (logo + search) -->
-    <div class="sippm-page-header py-3">
+    <div class="sippm-page-header py-3 shadow-xs">
         <div class="container d-flex justify-content-between align-items-center gap-3 flex-wrap">
             <a href="{{ url('/') }}" class="d-flex align-items-center text-decoration-none gap-3">
-                <img src="{{ asset('images/logo-madina.png') }}" alt="Lambang Kabupaten Mandailing Natal" style="height:56px; width:auto;">
+                <img src="{{ asset('images/logo-madina.png') }}" alt="Lambang Kabupaten Mandailing Natal" style="height:56px; width:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
                 <span>
-                    <span class="d-block fw-bold fs-5" style="color: var(--sippm-navy);">SIPPM Madina</span>
-                    <span class="d-block small text-muted">Sistem Informasi Pengaduan &amp; Pelaporan Kegiatan</span>
+                    <span class="d-block fw-bold fs-5 mb-0" style="color: var(--sippm-navy); font-family: 'Poppins', sans-serif;">SIPPM Madina</span>
+                    <span class="d-block small text-muted fw-medium">Sistem Informasi Pengaduan &amp; Pelaporan Kegiatan</span>
                 </span>
             </a>
-            <form method="get" action="{{ url('/lacak') }}" class="d-flex" style="max-width: 320px; width: 100%;">
-                <input type="text" name="ticket_number" class="form-control" placeholder="Cari nomor tiket pengaduan...">
-                <button type="submit" class="btn btn-sippm ms-2"><i class="bi bi-search"></i></button>
+            <form method="get" action="{{ url('/lacak') }}" class="d-flex align-items-center" style="max-width: 320px; width: 100%;">
+                <div class="input-group shadow-sm">
+                    <input type="text" name="ticket_number" class="form-control bg-light border-end-0" placeholder="Cari nomor tiket..." style="font-size: 0.875rem;">
+                    <button type="submit" class="btn btn-sippm px-3"><i class="bi bi-search"></i></button>
+                </div>
             </form>
         </div>
     </div>

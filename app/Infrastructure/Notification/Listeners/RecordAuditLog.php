@@ -22,32 +22,43 @@ class RecordAuditLog
 {
     public function handle(object $event): void
     {
-        [$modelType, $modelId, $newData] = match (true) {
-            $event instanceof ComplaintSubmitted => ['complaint', $event->complaint->id, [
+        [$modelType, $modelId, $oldData, $newData] = match (true) {
+            $event instanceof ComplaintSubmitted => ['complaint', $event->complaint->id, null, [
                 'ticket_number' => (string) $event->complaint->ticketNumber,
                 'status' => $event->complaint->status->value,
             ]],
-            $event instanceof ComplaintVerified => ['complaint', $event->complaint->id, [
-                'status' => $event->complaint->status->value,
-                'is_valid' => $event->isValid,
-                'rejection_reason' => $event->rejectionReason,
-            ]],
-            $event instanceof ComplaintDisposed => ['complaint', $event->complaint->id, [
-                'status' => $event->complaint->status->value,
-                'disposed_to_type' => $event->disposedToType->value,
-                'disposed_to_id' => $event->disposedToId,
-            ]],
-            $event instanceof ComplaintHandled => ['complaint', $event->complaint->id, [
-                'status' => $event->complaint->status->value,
-            ]],
-            $event instanceof ComplaintResolved => ['complaint', $event->complaint->id, [
-                'status' => $event->complaint->status->value,
-                'response_text' => $event->responseText,
-            ]],
-            $event instanceof ActivityPublished => ['activity', $event->activity->id, [
-                'status' => $event->activity->status->value,
-            ]],
-            default => [null, null, null],
+            $event instanceof ComplaintVerified => ['complaint', $event->complaint->id,
+                $event->previousStatus ? ['status' => $event->previousStatus->value] : null,
+                [
+                    'status' => $event->complaint->status->value,
+                    'is_valid' => $event->isValid,
+                    'rejection_reason' => $event->rejectionReason,
+                ],
+            ],
+            $event instanceof ComplaintDisposed => ['complaint', $event->complaint->id,
+                $event->previousStatus ? ['status' => $event->previousStatus->value] : null,
+                [
+                    'status' => $event->complaint->status->value,
+                    'disposed_to_type' => $event->disposedToType->value,
+                    'disposed_to_id' => $event->disposedToId,
+                ],
+            ],
+            $event instanceof ComplaintHandled => ['complaint', $event->complaint->id,
+                $event->previousStatus ? ['status' => $event->previousStatus->value] : null,
+                ['status' => $event->complaint->status->value],
+            ],
+            $event instanceof ComplaintResolved => ['complaint', $event->complaint->id,
+                $event->previousStatus ? ['status' => $event->previousStatus->value] : null,
+                [
+                    'status' => $event->complaint->status->value,
+                    'response_text' => $event->responseText,
+                ],
+            ],
+            $event instanceof ActivityPublished => ['activity', $event->activity->id,
+                $event->previousStatus ? ['status' => $event->previousStatus->value] : null,
+                ['status' => $event->activity->status->value],
+            ],
+            default => [null, null, null, null],
         };
 
         if ($modelType === null) {
@@ -59,7 +70,7 @@ class RecordAuditLog
             'action' => $event::class,
             'model_type' => $modelType,
             'model_id' => $modelId,
-            'old_data' => null,
+            'old_data' => $oldData,
             'new_data' => $newData,
             'ip_address' => request()?->ip(),
         ]);

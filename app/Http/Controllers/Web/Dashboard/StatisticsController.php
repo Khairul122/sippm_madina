@@ -13,40 +13,57 @@ use App\Infrastructure\Persistence\Eloquent\Models\Complaint;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
 class StatisticsController extends Controller
 {
+    /**
+     * NFR-16: "Sistem mendukung caching untuk data statistik dan
+     * dashboard." TTL pendek (60 detik) dipilih daripada cache
+     * berumur panjang + invalidasi manual — data pengaduan/kegiatan
+     * berubah cukup sering (tiap verifikasi/disposisi/publikasi), dan
+     * `CACHE_STORE=database` tidak mendukung cache tags untuk
+     * invalidasi selektif.
+     */
+    private const CACHE_TTL_SECONDS = 60;
+
     public function index(): View
     {
-        return view('dashboard.statistics.index', [
-            'title' => 'Statistik',
-            'complaintsByStatus' => $this->fillCounts(
-                Complaint::query()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status'),
-                array_map(fn (ComplaintStatus $s) => $s->value, ComplaintStatus::cases()),
-            ),
-            'complaintsByCategory' => Complaint::query()->selectRaw('category, count(*) as total')->groupBy('category')->pluck('total', 'category'),
-            'activitiesByStatus' => $this->fillCounts(
-                Activity::query()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status'),
-                array_map(fn (ActivityStatus $s) => $s->value, ActivityStatus::cases()),
-            ),
-        ]);
+        $data = Cache::remember('dashboard.statistik', self::CACHE_TTL_SECONDS, function () {
+            return [
+                'complaintsByStatus' => $this->fillCounts(
+                    Complaint::query()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status'),
+                    array_map(fn (ComplaintStatus $s) => $s->value, ComplaintStatus::cases()),
+                ),
+                'complaintsByCategory' => Complaint::query()->selectRaw('category, count(*) as total')->groupBy('category')->pluck('total', 'category'),
+                'activitiesByStatus' => $this->fillCounts(
+                    Activity::query()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status'),
+                    array_map(fn (ActivityStatus $s) => $s->value, ActivityStatus::cases()),
+                ),
+            ];
+        });
+
+        return view('dashboard.statistics.index', ['title' => 'Statistik'] + $data);
     }
 
     public function performance(): View
     {
-        $byTarget = Complaint::query()->selectRaw('target_type, count(*) as total')->groupBy('target_type')->pluck('total', 'target_type');
-        $total = Complaint::query()->count();
-        $resolved = Complaint::query()->where('status', ComplaintStatus::SELESAI->value)->count();
+        $data = Cache::remember('dashboard.kinerja', self::CACHE_TTL_SECONDS, function () {
+            $byTarget = Complaint::query()->selectRaw('target_type, count(*) as total')->groupBy('target_type')->pluck('total', 'target_type');
+            $total = Complaint::query()->count();
+            $resolved = Complaint::query()->where('status', ComplaintStatus::SELESAI->value)->count();
 
-        return view('dashboard.statistics.performance', [
-            'title' => 'Kinerja OPD / Kecamatan',
-            'targetLabels' => array_map(fn (string $key) => ucfirst(str_replace('_', ' ', $key)), $byTarget->keys()->all()),
-            'targetTotals' => $byTarget->values()->all(),
-            'resolutionRate' => $total > 0 ? round($resolved / $total * 100, 2) : 0.0,
-            'totalComplaints' => $total,
-            'resolvedComplaints' => $resolved,
-        ]);
+            return [
+                'targetLabels' => array_map(fn (string $key) => ucfirst(str_replace('_', ' ', $key)), $byTarget->keys()->all()),
+                'targetTotals' => $byTarget->values()->all(),
+                'resolutionRate' => $total > 0 ? round($resolved / $total * 100, 2) : 0.0,
+                'totalComplaints' => $total,
+                'resolvedComplaints' => $resolved,
+            ];
+        });
+
+        return view('dashboard.statistics.performance', ['title' => 'Kinerja OPD / Kecamatan'] + $data);
     }
 
     public function exportPdf(): Response

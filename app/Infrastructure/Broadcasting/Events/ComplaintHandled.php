@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Broadcasting\Events;
 
 use App\Domain\Complaint\Entities\Complaint;
+use App\Domain\Complaint\ValueObjects\ComplaintStatus;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -23,6 +24,7 @@ class ComplaintHandled implements ShouldBroadcast
 
     public function __construct(
         public readonly Complaint $complaint,
+        public readonly ?ComplaintStatus $previousStatus = null,
     ) {
     }
 

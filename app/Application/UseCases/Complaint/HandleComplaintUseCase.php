@@ -56,7 +56,7 @@ final class HandleComplaintUseCase
 
             $updated = $complaint->withStatus(ComplaintStatus::DITINDAKLANJUTI);
 
-            event(new ComplaintHandled($updated));
+            event(new ComplaintHandled($updated, $complaint->status));
 
             return $updated;
         });

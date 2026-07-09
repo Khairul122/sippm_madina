@@ -42,6 +42,10 @@ class ComplaintDashboardController extends Controller
     ) {
     }
 
+    /**
+     * FR-19: filter pengaduan berdasarkan status, kategori, tanggal, dan
+     * OPD/Kecamatan tujuan — plus pencarian teks bebas (tiket/judul/desc).
+     */
     public function index(Request $request): View
     {
         $user = $request->user();
@@ -55,6 +59,26 @@ class ComplaintDashboardController extends Controller
 
         if ($request->filled('status')) {
             $query->where('status', $request->string('status'));
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->string('category'));
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date('date_to'));
+        }
+
+        // Combined "tujuan" filter from a single <select>, encoded as
+        // "opd:3" / "camat:5" to keep the filter bar to one dropdown
+        // instead of a type+id pair.
+        if ($request->filled('target') && str_contains((string) $request->string('target'), ':')) {
+            [$targetType, $targetId] = explode(':', (string) $request->string('target'), 2);
+            $query->where('target_type', $targetType)->where('target_id', (int) $targetId);
         }
 
         if ($request->filled('search')) {
@@ -71,6 +95,9 @@ class ComplaintDashboardController extends Controller
         return view('dashboard.complaints.index', [
             'title' => 'Pengaduan',
             'complaints' => $complaints,
+            'categories' => Complaint::query()->distinct()->orderBy('category')->pluck('category'),
+            'opds' => Opd::query()->orderBy('name')->get(),
+            'kecamatans' => Kecamatan::query()->orderBy('name')->get(),
         ]);
     }
 

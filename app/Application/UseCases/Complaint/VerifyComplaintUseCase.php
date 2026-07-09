@@ -61,7 +61,7 @@ final class VerifyComplaintUseCase
 
             $updated = $complaint->withStatus($targetStatus, $dto->rejectionReason);
 
-            event(new ComplaintVerified($updated, $dto->isValid, $dto->rejectionReason));
+            event(new ComplaintVerified($updated, $dto->isValid, $dto->rejectionReason, $complaint->status));
 
             return $updated;
         });
