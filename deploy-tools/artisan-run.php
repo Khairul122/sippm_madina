@@ -2,7 +2,7 @@
 // SCRIPT SEMENTARA — jangan biarkan menetap di public_html.
 // Cara pakai ada di deploy-tools/README.md di repo ini.
 
-$token = 'GANTI_DENGAN_STRING_RANDOM_PANJANG_MILIKMU';
+$token = 'uwVW5Kx3Xfmv';
 
 if (!hash_equals($token, $_GET['token'] ?? '')) {
     http_response_code(403);
