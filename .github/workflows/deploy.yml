@@ -62,6 +62,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, dom, fileinfo, sqlite3, pdo_sqlite, gd, zip
+          coverage: none
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -73,6 +80,17 @@ jobs:
 
       - name: Build frontend assets
         run: npm run build
+
+      - name: Install Composer dependencies (production)
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
+      - name: Prepare public folder for hosting without a configurable document root
+        run: |
+          mkdir -p dist_public
+          cp -r public/. dist_public/
+          sed -i "s#__DIR__.'/../storage/framework/maintenance.php'#__DIR__.'/../laravel_app/storage/framework/maintenance.php'#" dist_public/index.php
+          sed -i "s#__DIR__.'/../vendor/autoload.php'#__DIR__.'/../laravel_app/vendor/autoload.php'#" dist_public/index.php
+          sed -i "s#__DIR__.'/../bootstrap/app.php'#__DIR__.'/../laravel_app/bootstrap/app.php'#" dist_public/index.php
 
       - name: Deploy start summary
         run: |
@@ -86,11 +104,12 @@ jobs:
             echo "| Trigger oleh | ${GITHUB_ACTOR} |"
             echo "| Waktu (UTC) | $(date -u '+%Y-%m-%d %H:%M:%S') |"
             echo "| Target server | \`${{ secrets.FTP_SERVER }}:21\` |"
-            echo "| Target folder | \`${{ secrets.FTP_SERVER_DIR }}\` |"
+            echo "| Target folder (publik) | \`${{ secrets.FTP_SERVER_DIR }}\` |"
+            echo "| Target folder (app inti) | \`/laravel_app/\` |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Deploy to server via FTP
-        id: ftp_deploy
+      - name: Deploy app core (outside public_html) via FTP
+        id: ftp_deploy_core
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -98,21 +117,36 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           protocol: ftp
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          server-dir: /laravel_app/
           log-level: verbose
-          state-name: .ftp-deploy-sync-state.json
+          state-name: .ftp-deploy-sync-state-core.json
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
             **/tests/**
             **/.github/**
-            **/vendor/**
+            **/public/**
+            **/dist_public/**
             **/storage/framework/cache/**
             **/storage/framework/sessions/**
             **/storage/framework/views/**
             **/storage/logs/**
             **/.env
+
+      - name: Deploy public assets (into public_html) via FTP
+        id: ftp_deploy_public
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: dist_public/
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          log-level: verbose
+          state-name: .ftp-deploy-sync-state-public.json
 
       - name: Deploy result summary
         if: always()
@@ -121,16 +155,25 @@ jobs:
             echo ""
             echo "### 📦 Hasil deploy"
             echo ""
-            if [ "${{ steps.ftp_deploy.outcome }}" = "success" ]; then
-              echo "✅ Berhasil di-deploy ke \`${{ secrets.FTP_SERVER }}${{ secrets.FTP_SERVER_DIR }}\`"
+            if [ "${{ steps.ftp_deploy_core.outcome }}" = "success" ] && [ "${{ steps.ftp_deploy_public.outcome }}" = "success" ]; then
+              echo "✅ Berhasil di-deploy ke \`${{ secrets.FTP_SERVER }}\`"
             else
-              echo "❌ Deploy gagal — cek log step \"Deploy to server via FTP\" di atas untuk detail error FTP."
+              echo "❌ Deploy gagal — cek log step \"Deploy app core\"/\"Deploy public assets\" di atas untuk detail error FTP."
             fi
+            echo ""
+            echo "**App core (/laravel_app/)**"
             echo ""
             echo "| Metrik | Jumlah |"
             echo "|---|---|"
-            echo "| File diunggah | ${{ steps.ftp_deploy.outputs.total-files-uploaded }} |"
-            echo "| File dihapus | ${{ steps.ftp_deploy.outputs.total-files-deleted }} |"
-            echo "| File dilewati (tidak berubah) | ${{ steps.ftp_deploy.outputs.total-files-skipped }} |"
-            echo "| Total file dipindai | ${{ steps.ftp_deploy.outputs.total-files-count }} |"
+            echo "| File diunggah | ${{ steps.ftp_deploy_core.outputs.total-files-uploaded }} |"
+            echo "| File dihapus | ${{ steps.ftp_deploy_core.outputs.total-files-deleted }} |"
+            echo "| File dilewati (tidak berubah) | ${{ steps.ftp_deploy_core.outputs.total-files-skipped }} |"
+            echo ""
+            echo "**Public assets (${{ secrets.FTP_SERVER_DIR }})**"
+            echo ""
+            echo "| Metrik | Jumlah |"
+            echo "|---|---|"
+            echo "| File diunggah | ${{ steps.ftp_deploy_public.outputs.total-files-uploaded }} |"
+            echo "| File dihapus | ${{ steps.ftp_deploy_public.outputs.total-files-deleted }} |"
+            echo "| File dilewati (tidak berubah) | ${{ steps.ftp_deploy_public.outputs.total-files-skipped }} |"
           } >> "$GITHUB_STEP_SUMMARY"
