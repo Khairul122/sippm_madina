@@ -75,7 +75,8 @@ jobs:
             echo "| Waktu (UTC) | $(date -u '+%Y-%m-%d %H:%M:%S') |"
             echo "| Target server | \`${{ secrets.FTP_SERVER }}:21\` |"
             echo "| Target folder (app inti) | \`/laravel_app/\` |"
-            echo "| public/ dan vendor/ | di-deploy manual, tidak lewat CI |"
+            echo "| Target folder (isi public/) | \`/public_html/\` |"
+            echo "| vendor/ dan node_modules/ | di-deploy manual, tidak lewat CI |"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Deploy app core (outside public_html) via FTP
@@ -104,6 +105,25 @@ jobs:
             **/storage/logs/**
             **/.env
 
+      - name: Deploy public assets (public/) to public_html via FTP
+        id: ftp_deploy_public
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: ./public/
+          server-dir: /public_html/
+          log-level: verbose
+          state-name: .ftp-deploy-sync-state-public.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            index.php
+
       - name: Deploy result summary
         if: always()
         run: |
@@ -111,10 +131,10 @@ jobs:
             echo ""
             echo "### 📦 Hasil deploy"
             echo ""
-            if [ "${{ steps.ftp_deploy_core.outcome }}" = "success" ]; then
-              echo "✅ Berhasil di-deploy ke \`${{ secrets.FTP_SERVER }}/laravel_app/\`"
+            if [ "${{ steps.ftp_deploy_core.outcome }}" = "success" ] && [ "${{ steps.ftp_deploy_public.outcome }}" = "success" ]; then
+              echo "✅ Berhasil di-deploy ke \`${{ secrets.FTP_SERVER }}\`"
             else
-              echo "❌ Deploy gagal — cek log step \"Deploy app core\" di atas untuk detail error FTP."
+              echo "❌ Deploy gagal — cek log step \"Deploy app core\" / \"Deploy public assets\" di atas untuk detail error FTP."
             fi
             echo ""
             echo "**App core (/laravel_app/)**"
@@ -124,4 +144,12 @@ jobs:
             echo "| File diunggah | ${{ steps.ftp_deploy_core.outputs.total-files-uploaded }} |"
             echo "| File dihapus | ${{ steps.ftp_deploy_core.outputs.total-files-deleted }} |"
             echo "| File dilewati (tidak berubah) | ${{ steps.ftp_deploy_core.outputs.total-files-skipped }} |"
+            echo ""
+            echo "**Public assets (/public_html/)**"
+            echo ""
+            echo "| Metrik | Jumlah |"
+            echo "|---|---|"
+            echo "| File diunggah | ${{ steps.ftp_deploy_public.outputs.total-files-uploaded }} |"
+            echo "| File dihapus | ${{ steps.ftp_deploy_public.outputs.total-files-deleted }} |"
+            echo "| File dilewati (tidak berubah) | ${{ steps.ftp_deploy_public.outputs.total-files-skipped }} |"
           } >> "$GITHUB_STEP_SUMMARY"
