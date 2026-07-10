@@ -94,9 +94,12 @@ jobs:
 
       - name: Deploy to server via rsync over SSH
         id: rsync_deploy
+        env:
+          SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
+          PORT="${SSH_PORT:-22}"
           sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz --delete \
-            -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
+            -e "ssh -p $PORT -o StrictHostKeyChecking=no" \
             --exclude='.git*' \
             --exclude='node_modules' \
             --exclude='tests' \
