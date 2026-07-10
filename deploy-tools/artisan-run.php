@@ -25,6 +25,12 @@ if (!file_exists($bootstrapApp)) {
 require $vendorAutoload;
 
 $app = require_once $bootstrapApp;
+
+// Script ini selalu diakses dari public_html/, jadi __DIR__ = public_html.
+// Tanpa baris ini, artisan mengira "public" adalah laravel_app/public (yang tidak ada
+// karena isi public/ dikirim ke public_html/), sehingga storage:link gagal symlink().
+$app->usePublicPath(__DIR__);
+
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
 $allowedCommands = [
