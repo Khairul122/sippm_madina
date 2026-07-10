@@ -53,7 +53,7 @@ jobs:
         run: php artisan test
 
   deploy:
-    name: Deploy via SSH
+    name: Deploy via FTP
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -74,9 +74,6 @@ jobs:
       - name: Build frontend assets
         run: npm run build
 
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-
       - name: Deploy start summary
         run: |
           {
@@ -88,41 +85,34 @@ jobs:
             echo "| Branch | \`${GITHUB_REF_NAME}\` |"
             echo "| Trigger oleh | ${GITHUB_ACTOR} |"
             echo "| Waktu (UTC) | $(date -u '+%Y-%m-%d %H:%M:%S') |"
-            echo "| Target server | \`${{ secrets.SSH_HOST }}:${{ secrets.SSH_PORT }}\` |"
-            echo "| Target folder | \`${{ secrets.SSH_REMOTE_PATH }}\` |"
+            echo "| Target server | \`${{ secrets.FTP_SERVER }}:21\` |"
+            echo "| Target folder | \`${{ secrets.FTP_SERVER_DIR }}\` |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Deploy to server via rsync over SSH
-        id: rsync_deploy
-        env:
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-        run: |
-          PORT="${SSH_PORT:-22}"
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz --delete \
-            -e "ssh -p $PORT -o StrictHostKeyChecking=no" \
-            --exclude='.git*' \
-            --exclude='node_modules' \
-            --exclude='tests' \
-            --exclude='.github' \
-            --exclude='vendor' \
-            --exclude='storage/framework/cache' \
-            --exclude='storage/framework/sessions' \
-            --exclude='storage/framework/views' \
-            --exclude='storage/logs' \
-            --exclude='.env' \
-            ./ "${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}/"
-
-      - name: Install Composer dependencies on server via SSH
-        if: steps.rsync_deploy.outcome == 'success'
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Deploy to server via FTP
+        id: ftp_deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd ${{ secrets.SSH_REMOTE_PATH }}
-            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          log-level: verbose
+          state-name: .ftp-deploy-sync-state.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            **/.github/**
+            **/vendor/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
+            **/storage/logs/**
+            **/.env
 
       - name: Deploy result summary
         if: always()
@@ -131,9 +121,16 @@ jobs:
             echo ""
             echo "### 📦 Hasil deploy"
             echo ""
-            if [ "${{ steps.rsync_deploy.outcome }}" = "success" ]; then
-              echo "✅ Berhasil di-deploy ke \`${{ secrets.SSH_HOST }}:${{ secrets.SSH_REMOTE_PATH }}\`"
+            if [ "${{ steps.ftp_deploy.outcome }}" = "success" ]; then
+              echo "✅ Berhasil di-deploy ke \`${{ secrets.FTP_SERVER }}${{ secrets.FTP_SERVER_DIR }}\`"
             else
-              echo "❌ Deploy gagal — cek log step \"Deploy to server via rsync over SSH\" di atas untuk detail error."
+              echo "❌ Deploy gagal — cek log step \"Deploy to server via FTP\" di atas untuk detail error FTP."
             fi
+            echo ""
+            echo "| Metrik | Jumlah |"
+            echo "|---|---|"
+            echo "| File diunggah | ${{ steps.ftp_deploy.outputs.total-files-uploaded }} |"
+            echo "| File dihapus | ${{ steps.ftp_deploy.outputs.total-files-deleted }} |"
+            echo "| File dilewati (tidak berubah) | ${{ steps.ftp_deploy.outputs.total-files-skipped }} |"
+            echo "| Total file dipindai | ${{ steps.ftp_deploy.outputs.total-files-count }} |"
           } >> "$GITHUB_STEP_SUMMARY"
