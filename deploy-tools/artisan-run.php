@@ -9,19 +9,32 @@ if (!hash_equals($token, $_GET['token'] ?? '')) {
     exit('Forbidden');
 }
 
-require __DIR__.'/../laravel_app/vendor/autoload.php';
+$vendorAutoload = __DIR__.'/../laravel_app/vendor/autoload.php';
+$bootstrapApp = __DIR__.'/../laravel_app/bootstrap/app.php';
 
-$app = require_once __DIR__.'/../laravel_app/bootstrap/app.php';
+if (!file_exists($vendorAutoload)) {
+    http_response_code(500);
+    exit('vendor/autoload.php tidak ditemukan di: ' . $vendorAutoload . ' — pastikan folder vendor/ sudah diupload ke laravel_app/.');
+}
+
+if (!file_exists($bootstrapApp)) {
+    http_response_code(500);
+    exit('bootstrap/app.php tidak ditemukan di: ' . $bootstrapApp . ' — cek apakah path laravel_app/ sudah benar.');
+}
+
+require $vendorAutoload;
+
+$app = require_once $bootstrapApp;
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
 $allowedCommands = [
-    'key'     => 'key:generate --force',
-    'migrate' => 'migrate --force',
-    'link'    => 'storage:link',
-    'config'  => 'config:cache',
-    'route'   => 'route:cache',
-    'view'    => 'view:cache',
-    'clear'   => 'config:clear',
+    'key'     => ['key:generate', ['--force' => true]],
+    'migrate' => ['migrate', ['--force' => true]],
+    'link'    => ['storage:link', []],
+    'config'  => ['config:cache', []],
+    'route'   => ['route:cache', []],
+    'view'    => ['view:cache', []],
+    'clear'   => ['config:clear', []],
 ];
 
 $cmd = $_GET['cmd'] ?? '';
@@ -31,9 +44,18 @@ if (!isset($allowedCommands[$cmd])) {
     exit;
 }
 
-$status = $kernel->call($allowedCommands[$cmd]);
+[$commandName, $parameters] = $allowedCommands[$cmd];
 
-echo '<pre>';
-echo htmlspecialchars($kernel->output());
-echo "\nExit code: {$status}";
-echo '</pre>';
+try {
+    $status = $kernel->call($commandName, $parameters);
+    echo '<pre>';
+    echo htmlspecialchars($kernel->output());
+    echo "\nExit code: {$status}";
+    echo '</pre>';
+} catch (\Throwable $e) {
+    http_response_code(500);
+    echo '<pre>';
+    echo 'Error: ' . htmlspecialchars($e->getMessage()) . "\n\n";
+    echo htmlspecialchars($e->getTraceAsString());
+    echo '</pre>';
+}
