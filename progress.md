@@ -12,6 +12,76 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-12 (lanjutan 2)** — Dua permintaan user, keduanya diperbaiki di
+kode (belum diverifikasi jalan — masih tidak ada PHP CLI di environment
+kerja sesi ini):
+1. **Bug baru dilaporkan setelah fix dompdf sebelumnya**: `RuntimeException
+   Cannot resolve public path` di
+   `vendor/barryvdh/laravel-dompdf/src/ServiceProvider.php:56` saat akses
+   `/dashboard/laporan/export-pdf` di situs live. Root cause BEDA dari bug
+   "Cannot resolve public path" — package ini resolve base path PDF lewat
+   `base_path('public')` yang HARDCODED (bukan `public_path()`), jadi tidak
+   ikut terpengaruh fix `$app->usePublicPath(__DIR__)` yang sudah dipasang
+   di `public_html/index.php` (entri 2026-07-12 sebelumnya). Karena setup
+   deploy split `public/` ke `public_html/` terpisah dari app core di
+   `laravel_app/` (entri 2026-07-11), `base_path('public')` menunjuk ke
+   `laravel_app/public` yang memang sengaja tidak ada di server →
+   `realpath()` gagal → exception. Diperbaiki dengan mem-publish
+   `config/dompdf.php` (sebelumnya tidak pernah dipublish sama sekali, jadi
+   selalu pakai default package dengan `public_path => null`) dan set
+   eksplisit `'public_path' => public_path()` — resolve benar di lokal
+   maupun server. **User wajib deploy ulang lalu `config:clear`** (lewat
+   `artisan-run.php`, lihat entri 2026-07-11) sebelum coba export PDF lagi.
+2. **Bug rich text**: user melaporkan (screenshot) deskripsi pengaduan
+   tampil sebagai HTML mentah `<p>...</p>` bukan teks biasa. Ditelusuri:
+   editor rich text proyek ini adalah **Quill 1.3.7** (`layouts/dashboard.blade.php`,
+   helper `sippmInitRichText()`) — field `description` (baik Activity
+   maupun Complaint) SELALU disimpan sebagai HTML mentah oleh Quill,
+   sehingga SETIAP tempat yang menampilkannya wajib eksplisit pilih
+   `{!! !!}` (render HTML, untuk halaman detail) atau `strip_tags()`
+   (untuk ringkasan/tabel/PDF) — ditemukan satu lokasi yang lupa keduanya:
+   `resources/views/dashboard/laporan/export-pdf.blade.php:179` kolom
+   "Uraian Laporan" pakai `{{ $complaint->description }}` polos (escaped),
+   jadi tag HTML tampil literal di sel tabel PDF. Diperbaiki jadi
+   `{{ strip_tags($complaint->description) }}`, konsisten dengan pola yang
+   sudah dipakai di `public/home.blade.php:323` dan
+   `public/activities.blade.php:51`. Lokasi lain (`complaints/show.blade.php`,
+   `dashboard/complaints/show.blade.php`, `public/activities.blade.php:77`)
+   sudah benar pakai `{!! !!}`.
+3. **Fitur baru**: Kominfo bisa menarik kembali kegiatan yang sudah
+   `dipublikasikan` ke status `draft` (sebelumnya transisi status Activity
+   cuma satu arah maju: draft→diverifikasi/ditolak→dipublikasikan, tidak
+   ada jalan mundur sama sekali). Ditambahkan mengikuti pola
+   `PublishActivityUseCase`/`VerifyActivityUseCase` yang sudah ada (guard
+   status hardcoded di UseCase, Activity tidak punya `StatusTransitionGuard`
+   whitelist terpisah seperti Complaint):
+   - `App\Application\UseCases\Activity\UnpublishActivityUseCase` (baru):
+     guard `status !== DIPUBLIKASIKAN` → `DomainException`, lalu
+     `updateStatus(..., ActivityStatus::DRAFT)`.
+   - `ActivityPolicy::unpublish()` (baru): kominfo-only, sama seperti
+     `publish()`/`verify()`.
+   - `ActivityDashboardController::unpublish()` (baru) + route
+     `POST /dashboard/activities/{activity}/unpublish` di grup
+     `role:kominfo` (`routes/web.php`, setelah rute `/publish`).
+   - Tombol baru "Tarik ke Draft" di `dashboard/activities/index.blade.php`
+     (kondisi `@elseif($activity->status->value === 'dipublikasikan')`,
+     sebelumnya tidak ada cabang UI untuk status ini sama sekali) — dengan
+     `data-confirm` SweetAlert2 mengingatkan bahwa kegiatan akan hilang
+     dari feed publik (halaman `/kegiatan` query langsung status
+     `dipublikasikan` dari DB, jadi otomatis hilang tanpa perlu broadcast
+     event tambahan — TIDAK dibuat `ActivityUnpublished` event, beda dari
+     `ActivityPublished` yang memang dipakai untuk toast notifikasi
+     "kegiatan baru" real-time di halaman publik).
+   - Sengaja balik ke `DRAFT`, bukan ke `DIVERIFIKASI` — sesuai permintaan
+     eksplisit user ("kembali menjadi draft"), meski secara BR-08 kegiatan
+     draft normalnya belum pernah diverifikasi; artinya kegiatan yang
+     ditarik ini harus diverifikasi ulang dari nol sebelum dipublikasikan
+     lagi (bukan langsung publish ulang tanpa verifikasi).
+   - 3 test baru di `ActivityWorkflowTest`: lifecycle penuh diperluas
+     dengan unpublish (assert status balik `draft` + hilang dari `/kegiatan`),
+     guard cuma status `dipublikasikan` yang bisa ditarik, dan non-kominfo
+     ditolak 403.
+
 **2026-07-12** — Bug HTTP 500 di situs live (`silapgawat.madina.go.id`)
 dianalisis dari screenshot File Manager CWP yang dikirim user (bukan akses
 langsung ke server — sesi ini tetap tidak punya SSH/terminal ke hosting).

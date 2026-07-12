@@ -71,6 +71,11 @@
                                 @csrf
                                 <button class="btn btn-sm btn-sippm" type="submit">Publikasikan</button>
                             </form>
+                        @elseif($activity->status->value === 'dipublikasikan')
+                            <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/unpublish') }}" class="d-inline" data-confirm="Tarik kembali kegiatan &quot;{{ $activity->title }}&quot; ke draft? Kegiatan akan hilang dari feed publik.">
+                                @csrf
+                                <button class="btn btn-sm btn-outline-secondary" type="submit">Tarik ke Draft</button>
+                            </form>
                         @endif
                     </td>
                     @endif

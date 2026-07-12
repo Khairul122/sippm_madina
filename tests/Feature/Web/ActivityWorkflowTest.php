@@ -61,6 +61,54 @@ class ActivityWorkflowTest extends TestCase
 
         $this->assertSame(['status' => 'diverifikasi'], $publishLog->old_data);
         $this->assertSame(['status' => 'dipublikasikan'], $publishLog->new_data);
+
+        // Kominfo dapat menarik kembali kegiatan yang sudah dipublikasikan
+        // ke draft (mis. untuk memperbaiki data sebelum dipublikasikan ulang).
+        $this->actingAs($kominfo)->post("/dashboard/activities/{$activity->id}/unpublish")
+            ->assertRedirect();
+        $this->assertSame('draft', $activity->fresh()->status->value);
+        $this->get('/kegiatan')->assertOk()->assertDontSee('Gotong Royong');
+    }
+
+    public function test_only_published_activity_can_be_unpublished(): void
+    {
+        $this->seed();
+
+        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $opd = Opd::query()->firstOrFail();
+        $activity = Activity::query()->create([
+            'title' => 'Kegiatan Draft',
+            'description' => 'Uraian kegiatan.',
+            'actor_type' => 'opd',
+            'actor_id' => $opd->id,
+            'date' => '2026-07-01',
+            'status' => 'draft',
+        ]);
+
+        $this->actingAs($kominfo)->post("/dashboard/activities/{$activity->id}/unpublish")
+            ->assertRedirect()
+            ->assertSessionHasErrors();
+        $this->assertSame('draft', $activity->fresh()->status->value);
+    }
+
+    public function test_non_kominfo_cannot_unpublish_activity(): void
+    {
+        $this->seed();
+
+        $camat = User::query()->where('email', 'camat@demo.test')->firstOrFail();
+        $opd = Opd::query()->firstOrFail();
+        $activity = Activity::query()->create([
+            'title' => 'Kegiatan Terpublikasi',
+            'description' => 'Uraian kegiatan.',
+            'actor_type' => 'opd',
+            'actor_id' => $opd->id,
+            'date' => '2026-07-01',
+            'status' => 'dipublikasikan',
+        ]);
+
+        $this->actingAs($camat)->post("/dashboard/activities/{$activity->id}/unpublish")
+            ->assertForbidden();
+        $this->assertSame('dipublikasikan', $activity->fresh()->status->value);
     }
 
     /**

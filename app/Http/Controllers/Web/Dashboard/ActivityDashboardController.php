@@ -8,6 +8,7 @@ use App\Application\DTOs\SubmitActivityDTO;
 use App\Application\DTOs\VerifyActivityDTO;
 use App\Application\UseCases\Activity\PublishActivityUseCase;
 use App\Application\UseCases\Activity\SubmitActivityUseCase;
+use App\Application\UseCases\Activity\UnpublishActivityUseCase;
 use App\Application\UseCases\Activity\VerifyActivityUseCase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Activity\SubmitActivityRequest;
@@ -27,6 +28,7 @@ class ActivityDashboardController extends Controller
         private readonly SubmitActivityUseCase $submitActivity,
         private readonly VerifyActivityUseCase $verifyActivity,
         private readonly PublishActivityUseCase $publishActivity,
+        private readonly UnpublishActivityUseCase $unpublishActivity,
     ) {
     }
 
@@ -147,5 +149,19 @@ class ActivityDashboardController extends Controller
         }
 
         return back()->with('status', 'Kegiatan berhasil dipublikasikan.');
+    }
+
+    public function unpublish(Request $request, int $activity): RedirectResponse
+    {
+        $model = Activity::query()->findOrFail($activity);
+        $this->authorize('unpublish', $model);
+
+        try {
+            $this->unpublishActivity->execute($activity);
+        } catch (DomainException|InvalidArgumentException $e) {
+            return back()->withErrors($e->getMessage());
+        }
+
+        return back()->with('status', 'Kegiatan ditarik kembali ke draft.');
     }
 }

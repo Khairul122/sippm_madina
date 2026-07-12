@@ -127,6 +127,7 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         Route::post('/complaints/{complaint}/respond', [ComplaintDashboardController::class, 'respond']);
         Route::post('/activities/{activity}/verify', [ActivityDashboardController::class, 'verify']);
         Route::post('/activities/{activity}/publish', [ActivityDashboardController::class, 'publish']);
+        Route::post('/activities/{activity}/unpublish', [ActivityDashboardController::class, 'unpublish']);
 
         Route::get('/users', [UserManagementController::class, 'index']);
         Route::get('/users/create', [UserManagementController::class, 'create']);

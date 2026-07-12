@@ -176,7 +176,7 @@
                         {{ ucfirst($complaint->target_type) }}
                     @endif
                 </td>
-                <td>{{ $complaint->description }}</td>
+                <td>{{ strip_tags($complaint->description) }}</td>
                 <td>{{ $complaint->created_at?->translatedFormat('l, d F Y') }}</td>
             </tr>
         @empty

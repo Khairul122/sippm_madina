@@ -48,6 +48,11 @@ class ActivityPolicy
         return $user->hasRole('kominfo');
     }
 
+    public function unpublish(User $user, Activity $activity): bool
+    {
+        return $user->hasRole('kominfo');
+    }
+
     public function update(User $user, Activity $activity): bool
     {
         if ($user->hasRole('opd')) {
