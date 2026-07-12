@@ -12,6 +12,89 @@ end-to-end secara manual. Sisa pekerjaan bersifat pengerasan produksi
 
 ## Update Terakhir
 
+**2026-07-12** — Bug HTTP 500 di situs live (`silapgawat.madina.go.id`)
+dianalisis dari screenshot File Manager CWP yang dikirim user (bukan akses
+langsung ke server — sesi ini tetap tidak punya SSH/terminal ke hosting).
+**Akar masalah ditemukan**: exclude pattern di step "Deploy app core"
+(`.github/workflows/deploy.yml`) — `**/storage/framework/cache/**`,
+`**/storage/framework/sessions/**`, `**/storage/framework/views/**`,
+`**/storage/logs/**` — sengaja dipasang supaya file session/cache/log yang
+sedang dipakai server tidak tertimpa tiap deploy, TAPI pola `**` itu juga
+mencocokkan file placeholder `.gitignore` yang ada di git
+(`storage/framework/cache/.gitignore`, `storage/framework/sessions/.gitignore`,
+dst — dikonfirmasi via `git ls-files`) yang seharusnya membuat folder itu
+otomatis ada di server. Akibatnya folder-folder ini **tidak pernah tercipta
+sama sekali** di server sejak deploy pertama — Laravel wajib bisa menulis ke
+folder ini di SETIAP request (session, view cache, config cache, log), jadi
+crash sebelum sempat render apa pun → HTTP 500 kosong. Ini konsisten dengan
+catatan "belum selesai" di entri 2026-07-11 di bawah.
+Perbaikan: step baru "Ensure required storage/cache directories exist on
+server" ditambahkan di `deploy.yml` (setelah step "Deploy app core"),
+memakai `curl --ftp-create-dirs -T /dev/null ftp://.../folder/.keep` untuk
+tiap folder yang kena masalah ini (`storage/framework/cache/data`,
+`storage/framework/sessions`, `storage/framework/views`, `storage/logs`,
+`bootstrap/cache`) — idempotent, aman dijalankan ulang tiap deploy tanpa
+error walau foldernya sudah ada. Pendekatan ini dipilih ketimbang mengubah
+exclude pattern jadi negasi (`!**/.gitignore`) karena tidak yakin
+FTP-Deploy-Action (`SamKirkland/FTP-Deploy-Action@v4.3.5`) mendukung sintaks
+negasi glob-nya seperti `.gitignore` asli — `curl --ftp-create-dirs` adalah
+mekanisme independen yang pasti berhasil terlepas dari cara kerja action
+tsb. **Belum diverifikasi** run Actions berikutnya benar-benar membuat
+folder ini di server & situs kembali online — perlu dicek setelah push.
+
+**2026-07-11** — Setup CI/CD deploy FTP-only ke shared hosting CWP
+(`silapgawat.madina.go.id`), atas permintaan user. Perubahan &
+temuan:
+- `.github/workflows/deploy.yml`: job `deploy` sekarang dua step FTP
+  terpisah — app core (semua source Laravel kecuali `.git`,
+  `node_modules`, `tests`, `.github`, `public/`, `vendor/`, cache/log
+  runtime, `.env`) ke `/laravel_app/`, dan isi `public/` (kecuali
+  `index.php`) ke `/public_html/`. `vendor/` & `node_modules/` sengaja
+  di-skip permanen — user deploy manual.
+- `deploy-tools/artisan-run.php` + `deploy-tools/README.md` (baru):
+  script darurat untuk jalankan artisan command (`key:generate`,
+  `migrate`, `storage:link`, `config:cache`, dst) lewat browser karena
+  CWP user tidak punya akses terminal/SSH. Ditaruh di luar `public/`
+  supaya tidak ikut ter-deploy otomatis ke `public_html` (aman
+  menetap permanen di `laravel_app/deploy-tools/`); harus dicopy
+  manual ke `public_html/` saat dipakai, lalu dihapus lagi setelah
+  selesai.
+- **Bug ditemukan & diperbaiki** selama proses deploy live:
+  1. `artisan-run.php` awalnya salah panggil `$kernel->call('key:generate --force')`
+     (satu string) — Laravel mencari command literal itu, gagal,
+     exception tidak tertangkap → HTTP 500 kosong. Diperbaiki jadi
+     `$kernel->call('key:generate', ['--force' => true])` + try/catch
+     supaya pesan error tampil, bukan 500 polos.
+  2. Karena `public/` dan app core dipisah ke dua folder berbeda
+     (`public_html/` vs `laravel_app/`), Laravel secara default masih
+     mengira "public path" adalah `laravel_app/public` (yang sengaja
+     kosong/tidak ada di server) — merusak `storage:link`, `asset()`,
+     pemuatan `public/build/` hasil Vite. Diperbaiki dengan
+     `$app->usePublicPath(__DIR__)` di **kedua** tempat:
+     `public_html/index.php` dan `deploy-tools/artisan-run.php`
+     (keduanya selalu dieksekusi dari dalam `public_html/`).
+  3. `public_html/index.php` user masih versi default Laravel
+     (`../vendor/autoload.php`, bukan `../laravel_app/vendor/...`) —
+     penyebab utama 500 di situs utama; instruksi diberikan untuk
+     ditimpa dengan versi yang path & `usePublicPath`-nya sudah benar.
+- **Isu keamanan ditemukan**: user memakai string yang sama persis
+  sebagai `DB_PASSWORD` dan sebagai token URL `artisan-run.php`
+  (`?token=...`), padahal token URL tercatat di access log server/
+  browser history — user diminta rotate `DB_PASSWORD` dan ganti token
+  ke string berbeda yang tidak pernah dipakai di URL manapun. Juga
+  disarankan generate ulang `APP_KEY` karena isi `.env` lengkap
+  (termasuk `APP_KEY` & password DB asli) sempat tertulis penuh di
+  chat.
+- **Belum selesai / masih berjalan saat sesi berakhir**: `laravel_app/
+  storage/` dan `laravel_app/bootstrap/cache/` dilaporkan user tidak
+  ada sama sekali di server meski `bootstrap/cache/{services,packages}.php`
+  tidak di-exclude workflow — penyebab belum dipastikan (kemungkinan
+  step "Deploy app core" belum pernah sukses penuh); user diminta cek
+  log run Actions terakhir dan/atau buat folder itu manual +
+  permission 755/775 sebagai stopgap. `storage:link` sempat gagal
+  `symlink(): No such file or directory` karena bug #2 di atas — sudah
+  dikirim fix, belum dikonfirmasi berhasil oleh user.
+
 **2026-07-09 (lanjutan 12)** — User minta laporan testing PDF resmi;
 dijelaskan saya tidak bisa eksekusi live (tidak ada PHP CLI di sesi ini),
 lalu diarahkan ulang: TULIS unit test tambahan untuk celah yang saya
