@@ -10,6 +10,7 @@ use App\Domain\Complaint\ValueObjects\TargetType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Complaint\SubmitComplaintRequest;
 use App\Infrastructure\Persistence\Eloquent\Models\Complaint;
+use App\Infrastructure\Persistence\Eloquent\Models\ComplaintCategory;
 use App\Infrastructure\Persistence\Eloquent\Models\Kecamatan;
 use App\Infrastructure\Persistence\Eloquent\Models\Opd;
 use Illuminate\Contracts\View\View;
@@ -48,6 +49,7 @@ class MyComplaintController extends Controller
             'targetTypes' => TargetType::cases(),
             'opds' => Opd::query()->orderBy('name')->get(),
             'kecamatans' => Kecamatan::query()->orderBy('name')->get(),
+            'categories' => ComplaintCategory::query()->orderBy('name')->get(),
         ]);
     }
 

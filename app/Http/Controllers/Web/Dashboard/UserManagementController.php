@@ -58,8 +58,10 @@ class UserManagementController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'is_active' => true,
-            'opd_id' => $data['opd_id'] ?? null,
-            'kecamatan_id' => $data['kecamatan_id'] ?? null,
+            'opd_id' => $data['role'] === 'opd' ? ($data['opd_id'] ?? null) : null,
+            'kecamatan_id' => $data['role'] === 'camat' ? ($data['kecamatan_id'] ?? null) : null,
+            'phone' => $data['phone'] ?? null,
+            'nik' => $data['nik'] ?? null,
         ]);
 
         $user->assignRole($data['role']);
@@ -70,6 +72,8 @@ class UserManagementController extends Controller
             'role' => $data['role'],
             'opd_id' => $user->opd_id,
             'kecamatan_id' => $user->kecamatan_id,
+            'phone' => $user->phone,
+            'nik' => $user->nik,
         ]);
 
         return redirect('/dashboard/users')->with('status', 'Pengguna berhasil dibuat.');
@@ -93,14 +97,45 @@ class UserManagementController extends Controller
         $model = User::query()->findOrFail($user);
         $this->authorize('update', $model);
 
-        $auditFields = ['name', 'email', 'is_active', 'opd_id', 'kecamatan_id'];
+        $data = $request->validated();
+        if (isset($data['password']) && !empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        // Clean up role relationships if they change
+        if ($model->hasRole('opd')) {
+            $data['kecamatan_id'] = null;
+        } elseif ($model->hasRole('camat')) {
+            $data['opd_id'] = null;
+        } else {
+            $data['opd_id'] = null;
+            $data['kecamatan_id'] = null;
+        }
+
+        $auditFields = ['name', 'email', 'is_active', 'opd_id', 'kecamatan_id', 'phone', 'nik'];
         $oldData = $model->only($auditFields);
 
-        $model->update($request->validated());
+        $model->update($data);
 
         $this->recordUserAudit('user_updated', $model->id, $oldData, $model->only($auditFields));
 
         return redirect('/dashboard/users')->with('status', 'Pengguna berhasil diperbarui.');
+    }
+
+    public function destroy(int $user): RedirectResponse
+    {
+        $model = User::query()->findOrFail($user);
+        $this->authorize('delete', $model);
+
+        $oldData = $model->only(['name', 'email', 'is_active', 'opd_id', 'kecamatan_id', 'phone', 'nik']);
+
+        $model->delete();
+
+        $this->recordUserAudit('user_deleted', $user, $oldData, []);
+
+        return redirect('/dashboard/users')->with('status', 'Pengguna berhasil dihapus.');
     }
 
     public function toggleActive(int $user): RedirectResponse

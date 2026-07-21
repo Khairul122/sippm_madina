@@ -254,7 +254,13 @@
                         
                         <!-- Footer -->
                         <div class="notification-footer">
-                            <a href="{{ url('/dashboard/complaints') }}" class="text-decoration-none text-sippm">Lihat Semua Pengaduan</a>
+                            @if(auth()->user()->hasRole('masyarakat'))
+                                <a href="{{ url('/pengaduan') }}" class="text-decoration-none text-sippm">Lihat Semua Pengaduan</a>
+                            @elseif(auth()->user()->hasAnyRole(['bupati', 'wakil_bupati', 'sekda']))
+                                <a href="{{ url('/dashboard/laporan') }}" class="text-decoration-none text-sippm">Lihat Semua Pengaduan</a>
+                            @else
+                                <a href="{{ url('/dashboard/complaints') }}" class="text-decoration-none text-sippm">Lihat Semua Pengaduan</a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -433,18 +439,35 @@
             async handleClick(item) {
                 await this.markRead(item);
                 
-                const canViewComplaints = window.SIPPM_USER.roles.some(r => ['kominfo', 'opd', 'camat'].includes(r));
-                if (!canViewComplaints) {
-                    // Bupati / Wakil Bupati / Sekda don't have /complaints access
+                const roles = window.SIPPM_USER.roles || [];
+                const isMasyarakat = roles.includes('masyarakat');
+                const isPimpinan = roles.some(r => ['bupati', 'wakil_bupati', 'sekda'].includes(r));
+                
+                const textToSearch = `${item.title} ${item.message}`;
+                const ticketMatch = textToSearch.match(/PGD-\d{4}-\d{6}/);
+                const ticket = ticketMatch ? ticketMatch[0] : null;
+
+                if (isMasyarakat) {
+                    if (ticket) {
+                        window.location.href = `{{ url('/lacak') }}?ticket_number=${ticket}`;
+                    } else {
+                        window.location.href = `{{ url('/pengaduan') }}`;
+                    }
                     return;
                 }
 
-                // Extract ticket number from either message or title
-                const textToSearch = `${item.title} ${item.message}`;
-                const ticketMatch = textToSearch.match(/PGD-\d{4}-\d{6}/);
-                
-                if (ticketMatch) {
-                    window.location.href = `{{ url('/dashboard/complaints') }}?search=${ticketMatch[0]}`;
+                if (isPimpinan) {
+                    if (ticket) {
+                        window.location.href = `{{ url('/dashboard/laporan') }}?search=${ticket}`;
+                    } else {
+                        window.location.href = `{{ url('/dashboard/laporan') }}`;
+                    }
+                    return;
+                }
+
+                // Default (Kominfo, OPD, Camat)
+                if (ticket) {
+                    window.location.href = `{{ url('/dashboard/complaints') }}?search=${ticket}`;
                 } else {
                     window.location.href = `{{ url('/dashboard/complaints') }}`;
                 }

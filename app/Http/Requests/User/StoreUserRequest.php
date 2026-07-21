@@ -31,6 +31,8 @@ class StoreUserRequest extends FormRequest
             'role' => ['required', 'string', Rule::in(array_map(fn (Role $r) => $r->value, Role::cases()))],
             'opd_id' => ['nullable', 'integer', 'exists:opds,id', 'required_if:role,opd'],
             'kecamatan_id' => ['nullable', 'integer', 'exists:kecamatans,id', 'required_if:role,camat'],
+            'phone' => ['nullable', 'string', 'max:20', 'unique:users,phone'],
+            'nik' => ['nullable', 'string', 'max:30', 'unique:users,nik'],
         ];
     }
 }

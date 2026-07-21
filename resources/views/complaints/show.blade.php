@@ -29,11 +29,13 @@
         <div class="sippm-card p-4">
             <h3 class="h6 mb-3">Riwayat Status</h3>
             <ul class="list-unstyled small">
-                @foreach($complaint->statusHistories->sortByDesc('created_at') as $history)
+                @foreach($complaint->statusHistories->sortBy('id') as $history)
                     <li class="mb-3 pb-2 border-bottom">
                         <span class="badge badge-status-{{ $history->status->value }}">{{ $history->status->label() }}</span>
                         <div class="text-muted mt-1">{{ $history->created_at->translatedFormat('d F Y, H:i') }}</div>
-                        @if($history->note)<div class="mt-1">{{ $history->note }}</div>@endif
+                        @if($history->note && in_array($history->status->value, ['selesai', 'ditolak']))
+                            <div class="mt-1 text-secondary small">{{ strip_tags($history->note) }}</div>
+                        @endif
                     </li>
                 @endforeach
             </ul>

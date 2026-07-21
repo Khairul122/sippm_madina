@@ -166,9 +166,9 @@
                     </div>
                     <p class="mb-3">Sistem Informasi Pengaduan Masyarakat dan Pelaporan Kegiatan Kabupaten Mandailing Natal — layanan satu pintu melalui Dinas Komunikasi dan Informatika.</p>
                     <div class="d-flex gap-2">
-                        <a href="#" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="social-icon" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.facebook.com/kominfomadina" target="_blank" rel="noopener" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://www.instagram.com/kominfomadina" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.youtube.com/@kominfomadina" target="_blank" rel="noopener" class="social-icon" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3">

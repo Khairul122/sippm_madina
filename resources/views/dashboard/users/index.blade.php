@@ -25,6 +25,13 @@
                                     {{ $u->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
                                 </button>
                             </form>
+                            <form method="post" action="{{ url('/dashboard/users/'.$u->id) }}" class="d-inline" data-confirm="Hapus akun {{ $u->name }} secara permanen?">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-outline-danger" type="submit">
+                                    Hapus
+                                </button>
+                            </form>
                             @endif
                         @endunless
                     </td>

@@ -46,7 +46,7 @@
     @if($user->hasRole('kominfo'))
         {{-- Administrasi Dropdown --}}
         @php
-            $isAdministrasiActive = str_starts_with($path, 'dashboard/users') || str_starts_with($path, 'dashboard/audit-log') || str_starts_with($path, 'dashboard/laporan');
+            $isAdministrasiActive = str_starts_with($path, 'dashboard/users') || str_starts_with($path, 'dashboard/audit-log');
         @endphp
         <a class="nav-link d-flex align-items-center justify-content-between {{ $isAdministrasiActive ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#administrasiCollapse" role="button" aria-expanded="{{ $isAdministrasiActive ? 'true' : 'false' }}">
             <span><i class="bi bi-gear me-2"></i>Administrasi</span>
@@ -56,13 +56,12 @@
             <div class="d-flex flex-column">
                 <a class="nav-link {{ str_starts_with($path,'dashboard/users') ? 'active' : '' }}" href="{{ url('/dashboard/users') }}"><i class="bi bi-people me-2"></i>Kelola Pengguna</a>
                 <a class="nav-link {{ str_starts_with($path,'dashboard/audit-log') ? 'active' : '' }}" href="{{ url('/dashboard/audit-log') }}"><i class="bi bi-journal-text me-2"></i>Audit Log</a>
-                <a class="nav-link {{ str_starts_with($path,'dashboard/laporan') ? 'active' : '' }}" href="{{ url('/dashboard/laporan') }}"><i class="bi bi-printer me-2"></i>Laporan</a>
             </div>
         </div>
 
         {{-- Data Wilayah Dropdown --}}
         @php
-            $isWilayahActive = str_starts_with($path, 'dashboard/opd') || str_starts_with($path, 'dashboard/kecamatan') || str_starts_with($path, 'dashboard/desa');
+            $isWilayahActive = str_starts_with($path, 'dashboard/opd') || str_starts_with($path, 'dashboard/kecamatan') || str_starts_with($path, 'dashboard/desa') || str_starts_with($path, 'dashboard/categories');
         @endphp
         <a class="nav-link d-flex align-items-center justify-content-between {{ $isWilayahActive ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#wilayahCollapse" role="button" aria-expanded="{{ $isWilayahActive ? 'true' : 'false' }}">
             <span><i class="bi bi-geo-alt me-2"></i>Data Wilayah</span>
@@ -73,11 +72,13 @@
                 <a class="nav-link {{ str_starts_with($path,'dashboard/opd') ? 'active' : '' }}" href="{{ url('/dashboard/opd') }}"><i class="bi bi-building me-2"></i>Data OPD</a>
                 <a class="nav-link {{ str_starts_with($path,'dashboard/kecamatan') ? 'active' : '' }}" href="{{ url('/dashboard/kecamatan') }}"><i class="bi bi-signpost-2 me-2"></i>Data Kecamatan</a>
                 <a class="nav-link {{ str_starts_with($path,'dashboard/desa') ? 'active' : '' }}" href="{{ url('/dashboard/desa') }}"><i class="bi bi-houses me-2"></i>Data Desa</a>
+                <a class="nav-link {{ str_starts_with($path,'dashboard/categories') ? 'active' : '' }}" href="{{ url('/dashboard/categories') }}"><i class="bi bi-tags me-2"></i>Kategori Pengaduan</a>
             </div>
         </div>
     @endif
 
     @if($user->hasAnyRole(['kominfo','bupati','wakil_bupati','sekda']))
+        <a class="nav-link {{ str_starts_with($path,'dashboard/laporan') ? 'active' : '' }}" href="{{ url('/dashboard/laporan') }}"><i class="bi bi-printer me-2"></i>Laporan</a>
         <a class="nav-link {{ $path === 'dashboard/kinerja' ? 'active' : '' }}" href="{{ url('/dashboard/kinerja') }}"><i class="bi bi-graph-up-arrow me-2"></i>Kinerja OPD/Kecamatan</a>
     @endif
 

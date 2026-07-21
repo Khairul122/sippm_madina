@@ -55,6 +55,10 @@ class ActivityPolicy
 
     public function update(User $user, Activity $activity): bool
     {
+        if ($user->hasRole('kominfo')) {
+            return true;
+        }
+
         if ($user->hasRole('opd')) {
             return $activity->actor_type === 'opd' && $activity->actor_id === $user->opd_id;
         }

@@ -27,6 +27,9 @@ class UpdateUserRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean'],
             'opd_id' => ['nullable', 'integer', 'exists:opds,id'],
             'kecamatan_id' => ['nullable', 'integer', 'exists:kecamatans,id'],
+            'phone' => ['nullable', 'string', 'max:20', Rule::unique('users', 'phone')->ignore($userId)],
+            'nik' => ['nullable', 'string', 'max:30', Rule::unique('users', 'nik')->ignore($userId)],
+            'password' => ['nullable', 'string', 'min:8'],
         ];
     }
 }

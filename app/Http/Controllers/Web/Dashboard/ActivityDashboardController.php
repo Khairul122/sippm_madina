@@ -164,4 +164,83 @@ class ActivityDashboardController extends Controller
 
         return back()->with('status', 'Kegiatan ditarik kembali ke draft.');
     }
+
+    public function show(int $id): View
+    {
+        $activity = Activity::query()->with(['documentations'])->findOrFail($id);
+        $this->authorize('view', $activity);
+
+        return view('dashboard.activities.show', [
+            'title' => 'Detail Kegiatan',
+            'activity' => $activity,
+        ]);
+    }
+
+    public function edit(int $id): View
+    {
+        $activity = Activity::query()->with(['documentations'])->findOrFail($id);
+        $this->authorize('update', $activity);
+
+        return view('dashboard.activities.edit', [
+            'title' => 'Ubah Kegiatan',
+            'activity' => $activity,
+        ]);
+    }
+
+    public function update(SubmitActivityRequest $request, int $id): RedirectResponse
+    {
+        $activity = Activity::query()->with(['documentations'])->findOrFail($id);
+        $this->authorize('update', $activity);
+
+        $data = $request->validated();
+
+        // 1. Handle deletion of documentations if checked
+        if ($request->filled('delete_documentations')) {
+            $deleteIds = $request->input('delete_documentations');
+            foreach ($activity->documentations as $doc) {
+                if (in_array((string) $doc->id, array_map('strval', $deleteIds))) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($doc->file_path);
+                    $doc->delete();
+                }
+            }
+        }
+
+        // Reload documentation count
+        $activity->load('documentations');
+        $currentPhotosCount = $activity->documentations->count();
+        $newFiles = $request->file('documentations', []);
+        $newFilesCount = count($newFiles);
+
+        if (($currentPhotosCount + $newFilesCount) > 5) {
+            return back()->withInput()->withErrors('Total foto dokumentasi tidak boleh melebihi 5 foto (saat ini sudah ada ' . $currentPhotosCount . ' foto, dan Anda mencoba mengunggah ' . $newFilesCount . ' foto baru).');
+        }
+
+        // 2. Update basic fields
+        $activity->update([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'date' => $data['date'],
+            'location' => $data['location'] ?? null,
+        ]);
+
+        // 3. Store new uploaded files
+        foreach ($newFiles as $file) {
+            $filePath = $file->store('activity-documentations', 'public');
+            $activity->documentations()->create([
+                'file_path' => $filePath,
+            ]);
+        }
+
+        return redirect('/dashboard/activities/' . $activity->id)->with('status', 'Kegiatan berhasil diperbarui.');
+    }
+
+    public function destroy(int $id): RedirectResponse
+    {
+        $activity = Activity::query()->findOrFail($id);
+        $this->authorize('delete', $activity);
+
+        $activity->delete();
+
+        return redirect('/dashboard/activities')->with('status', 'Kegiatan berhasil dihapus.');
+    }
 }

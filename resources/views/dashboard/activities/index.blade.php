@@ -50,7 +50,7 @@
 
     <div class="table-responsive">
         <table class="table table-hover align-middle">
-            <thead><tr><th>Judul</th><th>Tanggal</th><th>Lokasi</th><th>Status</th>@if($user->hasRole('kominfo'))<th></th>@endif</tr></thead>
+            <thead><tr><th>Judul</th><th>Tanggal</th><th>Lokasi</th><th>Status</th><th class="text-end">Aksi</th></tr></thead>
             <tbody>
             @forelse($activities as $activity)
                 <tr>
@@ -58,27 +58,41 @@
                     <td>{{ $activity->date->translatedFormat('d M Y') }}</td>
                     <td>{{ $activity->location ?? '-' }}</td>
                     <td><span class="sippm-badge sippm-badge-{{ $activity->status->value === 'dipublikasikan' ? 'green' : ($activity->status->value === 'ditolak' ? 'red' : 'amber') }}">{{ $activity->status->label() }}</span></td>
-                    @if($user->hasRole('kominfo'))
-                    <td class="text-nowrap">
-                        @if($activity->status->value === 'draft')
-                            <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/verify') }}" class="d-inline" data-confirm="Verifikasi kegiatan &quot;{{ $activity->title }}&quot; sebagai valid?">
-                                @csrf
-                                <input type="hidden" name="is_valid" value="1">
-                                <button class="btn btn-sm btn-outline-success" type="submit">Verifikasi</button>
-                            </form>
-                        @elseif($activity->status->value === 'diverifikasi')
-                            <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/publish') }}" class="d-inline" data-confirm="Publikasikan kegiatan &quot;{{ $activity->title }}&quot; ke feed publik?">
-                                @csrf
-                                <button class="btn btn-sm btn-sippm" type="submit">Publikasikan</button>
-                            </form>
-                        @elseif($activity->status->value === 'dipublikasikan')
-                            <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/unpublish') }}" class="d-inline" data-confirm="Tarik kembali kegiatan &quot;{{ $activity->title }}&quot; ke draft? Kegiatan akan hilang dari feed publik.">
-                                @csrf
-                                <button class="btn btn-sm btn-outline-secondary" type="submit">Tarik ke Draft</button>
-                            </form>
+                    <td class="text-nowrap text-end">
+                        <a href="{{ url('/dashboard/activities/'.$activity->id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Detail</a>
+                        
+                        @can('update', $activity)
+                            <a href="{{ url('/dashboard/activities/'.$activity->id.'/edit') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil-square"></i> Ubah</a>
+                        @endcan
+                        
+                        @if($user->hasRole('kominfo'))
+                            @if($activity->status->value === 'draft')
+                                <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/verify') }}" class="d-inline" data-confirm="Verifikasi kegiatan &quot;{{ $activity->title }}&quot; sebagai valid?">
+                                    @csrf
+                                    <input type="hidden" name="is_valid" value="1">
+                                    <button class="btn btn-sm btn-outline-success" type="submit">Verifikasi</button>
+                                </form>
+                            @elseif($activity->status->value === 'diverifikasi')
+                                <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/publish') }}" class="d-inline" data-confirm="Publikasikan kegiatan &quot;{{ $activity->title }}&quot; ke feed publik?">
+                                    @csrf
+                                    <button class="btn btn-sm btn-sippm" type="submit">Publikasikan</button>
+                                </form>
+                            @elseif($activity->status->value === 'dipublikasikan')
+                                <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/unpublish') }}" class="d-inline" data-confirm="Tarik kembali kegiatan &quot;{{ $activity->title }}&quot; ke draft? Kegiatan akan hilang dari feed publik.">
+                                    @csrf
+                                    <button class="btn btn-sm btn-outline-secondary" type="submit">Tarik ke Draft</button>
+                                </form>
+                            @endif
                         @endif
+
+                        @can('delete', $activity)
+                            <form method="post" action="{{ url('/dashboard/activities/'.$activity->id) }}" class="d-inline" data-confirm="Hapus kegiatan secara permanen?">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button>
+                            </form>
+                        @endcan
                     </td>
-                    @endif
                 </tr>
             @empty
                 <tr><td colspan="5" class="text-center text-muted py-4">Belum ada kegiatan.</td></tr>

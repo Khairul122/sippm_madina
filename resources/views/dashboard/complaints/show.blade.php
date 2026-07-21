@@ -33,6 +33,35 @@
             @endif
         </div>
 
+        @if($complaint->handlings->isNotEmpty())
+        <div class="sippm-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-wrench me-1"></i>Laporan Tindak Lanjut dari OPD / Kecamatan</h3>
+            @foreach($complaint->handlings->sortBy('created_at') as $handling)
+                <div class="mb-3 p-3 border rounded-3 bg-light" style="background-color: #fcfbf9 !important; border: 1px solid var(--sippm-border) !important;">
+                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                        <div>
+                            <span class="fw-semibold text-sippm small"><i class="bi bi-person-fill text-secondary"></i> {{ $handling->handledBy?->name ?? 'Petugas' }}</span>
+                            @if($handling->handledBy?->opd)
+                                <span class="badge bg-secondary ms-1 small">{{ $handling->handledBy->opd->name }}</span>
+                            @elseif($handling->handledBy?->kecamatan)
+                                <span class="badge bg-secondary ms-1 small">Kec. {{ $handling->handledBy->kecamatan->name }}</span>
+                            @endif
+                        </div>
+                        <span class="text-muted small font-monospace"><i class="bi bi-calendar3"></i> {{ $handling->created_at->translatedFormat('d F Y, H:i') }} WIB</span>
+                    </div>
+                    <div class="rich-text-content small mb-2">{!! $handling->description !!}</div>
+                    @if($handling->attachment_path)
+                        <div class="border-top pt-2">
+                            <a href="{{ asset('storage/'.$handling->attachment_path) }}" target="_blank" class="btn btn-xs btn-outline-primary py-1 px-2 text-decoration-none small" style="font-size: 0.75rem;">
+                                <i class="bi bi-paperclip"></i> Lihat Bukti Dukung (Lampiran)
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+        @endif
+
         {{-- Kominfo: verifikasi (status diajukan) --}}
         @if($user->hasRole('kominfo') && $complaint->status->value === 'diajukan')
         <div class="sippm-card p-4 mb-4">
@@ -147,7 +176,7 @@
                 @csrf
                 <div class="mb-3">
                     <label class="form-label">Tanggapan/Jawaban Resmi</label>
-                    <textarea name="response_text" class="form-control" rows="4" placeholder="Tuliskan draf tanggapan formal kepada pengadu..." required></textarea>
+                    <textarea name="response_text" class="form-control" rows="4" placeholder="Tuliskan draf tanggapan formal kepada pengadu..." required>{{ old('response_text', strip_tags($complaint->handlings->last()?->description ?? '')) }}</textarea>
                 </div>
                 <button class="btn btn-sippm btn-sm px-4 py-2" type="submit">Kirim Jawaban Resmi &amp; Selesaikan</button>
             </form>
@@ -166,11 +195,13 @@
         <div class="sippm-card p-4">
             <h3 class="h6 mb-3">Riwayat Status</h3>
             <ul class="list-unstyled small">
-                @foreach($complaint->statusHistories->sortByDesc('created_at') as $history)
+                @foreach($complaint->statusHistories->sortBy('id') as $history)
                     <li class="mb-3 pb-2 border-bottom">
                         <span class="badge badge-status-{{ $history->status->value }}">{{ $history->status->label() }}</span>
                         <div class="text-muted mt-1">{{ $history->created_at->translatedFormat('d F Y, H:i') }} @if($history->changedBy) &middot; {{ $history->changedBy->name }} @endif</div>
-                        @if($history->note)<div class="mt-1">{{ $history->note }}</div>@endif
+                        @if($history->note)
+                            <div class="mt-1 text-secondary small">{{ strip_tags($history->note) }}</div>
+                        @endif
                     </li>
                 @endforeach
             </ul>

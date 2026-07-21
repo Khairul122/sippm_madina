@@ -70,14 +70,14 @@
                             </div>
                         @endif
                         
-                        @if($user->opd)
+                        @if($user->hasRole('opd') && $user->opd)
                             <div class="d-flex align-items-center justify-content-between mb-3 px-2">
                                 <span class="text-muted small"><i class="bi bi-building me-2"></i>OPD</span>
                                 <span class="fw-semibold small text-dark text-end" style="max-width: 70%; word-break: break-word;">{{ $user->opd->name }}</span>
                             </div>
                         @endif
 
-                        @if($user->kecamatan)
+                        @if($user->hasRole('camat') && $user->kecamatan)
                             <div class="d-flex align-items-center justify-content-between mb-3 px-2">
                                 <span class="text-muted small"><i class="bi bi-geo-alt me-2"></i>Kecamatan</span>
                                 <span class="fw-semibold small text-dark">{{ $user->kecamatan->name }}</span>

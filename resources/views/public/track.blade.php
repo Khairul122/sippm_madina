@@ -99,7 +99,7 @@
                         <!-- Vertical Timeline -->
                         <div class="timeline-track">
                             @php
-                                $histories = $complaint->statusHistories->sortBy('created_at');
+                                $histories = $complaint->statusHistories->sortBy('id');
                                 $currentStatus = $complaint->status->value;
                             @endphp
 
@@ -117,9 +117,9 @@
                                             <span class="badge badge-status-{{ $history->status->value }}">{{ $history->status->label() }}</span>
                                             <span class="small text-muted font-monospace">{{ $history->created_at->translatedFormat('d F Y, H:i') }}</span>
                                         </div>
-                                        @if($history->note)
+                                        @if($history->note && in_array($history->status->value, ['selesai', 'ditolak']))
                                             <p class="small text-secondary mb-0 mt-2 bg-light p-2 rounded border border-light font-medium" style="line-height: 1.4;">
-                                                <i class="bi bi-chat-left-text me-1 text-muted"></i>{{ $history->note }}
+                                                <i class="bi bi-chat-left-text me-1 text-muted"></i>{{ strip_tags($history->note) }}
                                             </p>
                                         @endif
                                     </div>

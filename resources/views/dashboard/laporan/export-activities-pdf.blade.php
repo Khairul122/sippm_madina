@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <title>Laporan Pengaduan</title>
+    <title>Laporan Kegiatan</title>
     <style>
         @page {
             margin: 40px 40px 60px 40px;
@@ -35,8 +35,7 @@
             font-size: 20px;
             font-weight: bold;
             margin: 15px 0 5px;
-            text-transform: capitalize;
-            font-family: 'Times New Roman', Times, serif;
+            text-transform: uppercase;
         }
         .filter-summary {
             text-align: center;
@@ -53,7 +52,6 @@
             text-align: right;
             font-size: 8px;
             color: #666;
-            font-family: 'Times New Roman', Times, serif;
         }
         table.data {
             width: 100%;
@@ -110,8 +108,9 @@
 <body>
     <!-- Info Cetak Kanan Bawah Kertas (Footer) -->
     <div class="footer">
-        Dicetak: {{ $generatedAt->translatedFormat('d F Y, H:i') }} WIB &middot; Total data: {{ $complaints->count() }}
+        Dicetak: {{ $generatedAt->translatedFormat('d F Y, H:i') }} WIB &middot; Total data: {{ $activities->count() }}
     </div>
+
     <!-- Kop Surat Resmi (Centered, Double Border with Logo) -->
     <table class="kop-table">
         <tr>
@@ -130,7 +129,7 @@
     <div class="kop-line"></div>
 
     <!-- Judul Dokumen -->
-    <h2 class="judul">Laporan Pengaduan</h2>
+    <h2 class="judul">Laporan Publikasi Kegiatan</h2>
     
     @if(count($filters) > 0)
         <p class="filter-summary">
@@ -138,47 +137,35 @@
         </p>
     @endif
 
-    <!-- Tabel Data Pengaduan (Sesuai Struktur Gambar 1) -->
+    <!-- Tabel Data Kegiatan -->
     <table class="data">
         <thead>
             <tr>
                 <th style="width: 5%;">No</th>
-                <th style="width: 15%;">No Tiket</th>
-                <th style="width: 13%;">Nama Pelapor</th>
-                <th style="width: 13%;">Nama Desa</th>
-                <th style="width: 13%;">Nama Kecamatan</th>
-                <th style="width: 8%;">Tujuan</th>
-                <th style="width: 20%;">Uraian Laporan</th>
-                <th style="width: 13%;">Tanggal</th>
+                <th style="width: 35%;">Judul Kegiatan</th>
+                <th style="width: 25%;">Penerbit (OPD/Kecamatan)</th>
+                <th style="width: 15%;">Lokasi</th>
+                <th style="width: 12%;">Tanggal</th>
+                <th style="width: 8%;">Status</th>
             </tr>
         </thead>
         <tbody>
-        @forelse($complaints as $index => $complaint)
+        @forelse($activities as $index => $activity)
             <tr>
                 <td class="center">{{ $index + 1 }}</td>
-                <td>{{ $complaint->ticket_number }}</td>
-                <td>{{ $complaint->user?->name ?? '-' }}</td>
-                <td>{{ $complaint->user?->kecamatan?->desas?->first()?->name ?? '-' }}</td>
-                <td>{{ $complaint->user?->kecamatan?->name ?? '-' }}</td>
-                <td>
-                    @if($complaint->target_type === 'opd')
-                        OPD
-                    @elseif($complaint->target_type === 'camat')
-                        Kecamatan
-                    @else
-                        {{ ucfirst($complaint->target_type) }}
-                    @endif
-                </td>
-                <td>{{ strip_tags($complaint->description) }}</td>
-                <td>{{ $complaint->created_at?->translatedFormat('l, d F Y') }}</td>
+                <td>{{ $activity->title }}</td>
+                <td>{{ $activity->actor ? $activity->actor->name : '-' }}</td>
+                <td>{{ $activity->location ?? '-' }}</td>
+                <td>{{ $activity->date->translatedFormat('d M Y') }}</td>
+                <td class="center">{{ $activity->status->label() }}</td>
             </tr>
         @empty
-            <tr><td colspan="8" class="center">Tidak ada data pengaduan.</td></tr>
+            <tr><td colspan="6" class="center">Tidak ada data kegiatan.</td></tr>
         @endforelse
         </tbody>
     </table>
 
-    <!-- Blok Tanda Tangan Resmi (Rata Kiri, Posisi Kanan) -->
+    <!-- Blok Tanda Tangan Resmi -->
     <div class="ttd-wrap">
         <div class="ttd-block">
             <p>Panyabungan, {{ $generatedAt->translatedFormat('d F Y') }}</p>

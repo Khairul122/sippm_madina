@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             OpdSeeder::class,
             KecamatanSeeder::class,
+            ComplaintCategorySeeder::class,
             DemoUserSeeder::class,
             AdminUserSeeder::class,
             DummyReportSeeder::class,

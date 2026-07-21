@@ -121,7 +121,12 @@
             <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold"><i class="bi bi-card-list me-1"></i>Langkah 1: Kategori &amp; Tujuan</h3>
             <div class="mb-3">
                 <label class="form-label">Kategori Laporan</label>
-                <input type="text" name="category" class="form-control" x-model="category" placeholder="Contoh: Infrastruktur, Jalan Raya, Kebersihan..." required>
+                <select name="category" class="form-select" x-model="category" required>
+                    <option value="">-- Pilih Kategori Pengaduan --</option>
+                    @foreach($categories as $categoryOption)
+                        <option value="{{ $categoryOption->name }}">{{ $categoryOption->name }}</option>
+                    @endforeach
+                </select>
             </div>
             
             <div class="mb-3">
@@ -252,6 +257,7 @@
                     <p class="text-muted small mb-0">Format: JPG, PNG, PDF (Maks. 5MB per berkas)</p>
                     <input type="file" name="attachments[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf" @change="handleFileChange($event)">
                 </div>
+                <div class="form-text mt-1 text-muted small"><i class="bi bi-info-circle-fill"></i> <strong>Catatan Video:</strong> Anda tidak dapat mengunggah file video secara langsung. Silakan sertakan link video (misal YouTube atau Google Drive) di dalam kolom deskripsi laporan pada Langkah 2.</div>
                 
                 <!-- File Preview List -->
                 <div class="mt-3" x-show="files.length > 0">

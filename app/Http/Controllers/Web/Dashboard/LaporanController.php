@@ -9,6 +9,7 @@ use App\Exports\LaporanPengaduanExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Laporan\UpdateTtdRequest;
 use App\Infrastructure\Persistence\Eloquent\Models\Complaint;
+use App\Infrastructure\Persistence\Eloquent\Models\Activity;
 use App\Infrastructure\Persistence\Eloquent\Models\Kecamatan;
 use App\Infrastructure\Persistence\Eloquent\Models\Opd;
 use App\Infrastructure\Persistence\Eloquent\Models\TtdSignature;
@@ -61,6 +62,7 @@ class LaporanController extends Controller
 
         return view('dashboard.laporan.index', [
             'title' => 'Laporan Pengaduan',
+            'activeTab' => 'complaints',
             'complaints' => $complaints,
             'opds' => Opd::query()->orderBy('name')->get(),
             'kecamatans' => Kecamatan::query()->orderBy('name')->get(),
@@ -184,6 +186,123 @@ class LaporanController extends Controller
 
         if ($request->filled('tahun')) {
             $summary['Tahun'] = (string) $request->integer('tahun');
+        }
+
+        if ($request->filled('search')) {
+            $summary['Pencarian'] = (string) $request->string('search');
+        }
+
+        return $summary;
+    }
+
+    public function activitiesIndex(Request $request): View
+    {
+        $baseQuery = $this->filteredActivities($request);
+
+        // Hitung statistik kegiatan
+        $stats = [
+            'total' => $baseQuery->clone()->count(),
+            'dipublikasikan' => $baseQuery->clone()->where('status', 'dipublikasikan')->count(),
+            'draft' => $baseQuery->clone()->where('status', 'draft')->count(),
+            'diverifikasi' => $baseQuery->clone()->where('status', 'diverifikasi')->count(),
+        ];
+
+        $activities = $baseQuery
+            ->orderByDesc('date')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('dashboard.laporan.index', [
+            'title' => 'Laporan Kegiatan',
+            'activeTab' => 'activities',
+            'activities' => $activities,
+            'opds' => Opd::query()->orderBy('name')->get(),
+            'kecamatans' => Kecamatan::query()->orderBy('name')->get(),
+            'ttd' => TtdSignature::query()->find(1),
+            'stats' => $stats,
+        ]);
+    }
+
+    public function exportActivitiesPdf(Request $request): Response
+    {
+        $activities = $this->filteredActivities($request)->orderBy('date')->get();
+
+        $pdf = Pdf::loadView('dashboard.laporan.export-activities-pdf', [
+            'activities' => $activities,
+            'filters' => $this->filterActivitiesSummary($request),
+            'ttd' => TtdSignature::query()->find(1),
+            'generatedAt' => now(),
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('laporan-kegiatan-'.now()->format('Ymd-His').'.pdf');
+    }
+
+    public function exportActivitiesExcel(Request $request): BinaryFileResponse
+    {
+        $activities = $this->filteredActivities($request)->orderBy('date')->get();
+
+        return Excel::download(
+            new \App\Exports\LaporanKegiatanExport($activities),
+            'laporan-kegiatan-'.now()->format('Ymd-His').'.xlsx',
+        );
+    }
+
+    private function filteredActivities(Request $request): Builder
+    {
+        $query = Activity::query()->with('documentations');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->string('status'));
+        }
+
+        if ($request->filled('target') && str_contains((string) $request->string('target'), ':')) {
+            [$actorType, $actorId] = explode(':', (string) $request->string('target'), 2);
+            $query->where('actor_type', $actorType)->where('actor_id', (int) $actorId);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('date', '>=', $request->date('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('date', '<=', $request->date('date_to'));
+        }
+
+        if ($request->filled('search')) {
+            $search = (string) $request->string('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function filterActivitiesSummary(Request $request): array
+    {
+        $summary = [];
+
+        if ($request->filled('status')) {
+            $summary['Status'] = ucfirst((string) $request->string('status'));
+        }
+
+        if ($request->filled('target') && str_contains((string) $request->string('target'), ':')) {
+            [$actorType, $actorId] = explode(':', (string) $request->string('target'), 2);
+            $summary['Penerbit'] = $actorType === 'opd'
+                ? Opd::query()->find((int) $actorId)?->name ?? '-'
+                : Kecamatan::query()->find((int) $actorId)?->name ?? '-';
+        }
+
+        if ($request->filled('date_from')) {
+            $summary['Dari Tanggal'] = $request->string('date_from');
+        }
+
+        if ($request->filled('date_to')) {
+            $summary['Sampai Tanggal'] = $request->string('date_to');
         }
 
         if ($request->filled('search')) {

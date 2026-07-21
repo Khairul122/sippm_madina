@@ -13,6 +13,7 @@ use App\Http\Controllers\Web\Dashboard\NotificationWebController;
 use App\Http\Controllers\Web\Dashboard\OpdManagementController;
 use App\Http\Controllers\Web\Dashboard\StatisticsController;
 use App\Http\Controllers\Web\Dashboard\UserManagementController;
+use App\Http\Controllers\Web\Dashboard\ComplaintCategoryManagementController;
 use App\Http\Controllers\Web\ManualBookController;
 use App\Http\Controllers\Web\MyComplaintController;
 use App\Http\Controllers\Web\ProfileController;
@@ -106,6 +107,9 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
     Route::middleware('role:kominfo|opd|camat')->group(function () {
         Route::get('/complaints', [ComplaintDashboardController::class, 'index']);
         Route::get('/complaints/{complaint}', [ComplaintDashboardController::class, 'show']);
+        Route::get('/activities/{activity}/edit', [ActivityDashboardController::class, 'edit']);
+        Route::put('/activities/{activity}', [ActivityDashboardController::class, 'update']);
+        Route::delete('/activities/{activity}', [ActivityDashboardController::class, 'destroy']);
     });
 
     // Kegiatan: "Lihat Laporan Kegiatan" (PRD 4.2) is granted to EVERY
@@ -114,6 +118,7 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
     // vs the PRD matrix). "Input Kegiatan" stays OPD/Camat-only.
     Route::middleware('role:kominfo|opd|camat|bupati|wakil_bupati|sekda')->group(function () {
         Route::get('/activities', [ActivityDashboardController::class, 'index']);
+        Route::get('/activities/{activity}', [ActivityDashboardController::class, 'show']);
     });
 
     Route::middleware('role:opd|camat')->group(function () {
@@ -134,14 +139,16 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         Route::post('/users', [UserManagementController::class, 'store']);
         Route::get('/users/{user}/edit', [UserManagementController::class, 'edit']);
         Route::put('/users/{user}', [UserManagementController::class, 'update']);
+        Route::delete('/users/{user}', [UserManagementController::class, 'destroy']);
         Route::post('/users/{user}/toggle-active', [UserManagementController::class, 'toggleActive']);
 
         Route::get('/audit-log', [AuditLogController::class, 'index']);
 
-        Route::get('/laporan', [LaporanController::class, 'index']);
         Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf']);
         Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel']);
         Route::post('/laporan/ttd', [LaporanController::class, 'updateTtd']);
+        Route::get('/laporan/activities/export-pdf', [LaporanController::class, 'exportActivitiesPdf']);
+        Route::get('/laporan/activities/export-excel', [LaporanController::class, 'exportActivitiesExcel']);
 
         // Data referensi wilayah (OPD/Kecamatan/Desa).
         Route::get('/opd', [OpdManagementController::class, 'index']);
@@ -164,6 +171,14 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         Route::get('/desa/{desa}/edit', [DesaManagementController::class, 'edit']);
         Route::put('/desa/{desa}', [DesaManagementController::class, 'update']);
         Route::delete('/desa/{desa}', [DesaManagementController::class, 'destroy']);
+
+        // Kelola Kategori Pengaduan.
+        Route::get('/categories', [ComplaintCategoryManagementController::class, 'index']);
+        Route::get('/categories/create', [ComplaintCategoryManagementController::class, 'create']);
+        Route::post('/categories', [ComplaintCategoryManagementController::class, 'store']);
+        Route::get('/categories/{category}/edit', [ComplaintCategoryManagementController::class, 'edit']);
+        Route::put('/categories/{category}', [ComplaintCategoryManagementController::class, 'update']);
+        Route::delete('/categories/{category}', [ComplaintCategoryManagementController::class, 'destroy']);
     });
 
     Route::middleware('role:opd|camat')->group(function () {
@@ -171,6 +186,8 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
     });
 
     Route::middleware('role:kominfo|bupati|wakil_bupati|sekda')->group(function () {
+        Route::get('/laporan', [LaporanController::class, 'index']);
+        Route::get('/laporan/activities', [LaporanController::class, 'activitiesIndex']);
         Route::get('/kinerja', [StatisticsController::class, 'performance']);
     });
 });

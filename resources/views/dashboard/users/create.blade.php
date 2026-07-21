@@ -12,6 +12,16 @@
             <label class="form-label">Nama</label>
             <input type="text" name="name" class="form-control" value="{{ old('name') }}" required placeholder="Nama lengkap staf/pejabat...">
         </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Nomor Telepon</label>
+                <input type="text" name="phone" class="form-control" value="{{ old('phone') }}" placeholder="Contoh: 081234567890">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">NIP / NIK</label>
+                <input type="text" name="nik" class="form-control" value="{{ old('nik') }}" placeholder="Masukkan NIP atau NIK...">
+            </div>
+        </div>
         <div class="mb-3">
             <label class="form-label">Email</label>
             <input type="email" name="email" class="form-control" value="{{ old('email') }}" required placeholder="Contoh: dinas@madina.go.id">
