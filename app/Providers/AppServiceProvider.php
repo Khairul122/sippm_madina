@@ -50,6 +50,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (str_starts_with(config('app.url'), 'https://')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Tailwind was removed from this project (Bootstrap 5 only), but
         // Laravel's default pagination views are Tailwind-based unless
         // told otherwise — every `->links()` call needs Bootstrap markup.
