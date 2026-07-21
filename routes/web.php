@@ -191,3 +191,46 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         Route::get('/kinerja', [StatisticsController::class, 'performance']);
     });
 });
+
+// Helper routes for hosting environments (CWP) without SSH access
+Route::get('/sys/clear', function () {
+    if (request('token') !== 'uwVW5Kx3Xfmv') {
+        abort(403);
+    }
+    Illuminate\Support\Facades\Artisan::call('config:clear');
+    Illuminate\Support\Facades\Artisan::call('cache:clear');
+    Illuminate\Support\Facades\Artisan::call('view:clear');
+    Illuminate\Support\Facades\Artisan::call('route:clear');
+    return '<pre>Cache cleared successfully!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+});
+
+Route::get('/sys/link', function () {
+    if (request('token') !== 'uwVW5Kx3Xfmv') {
+        abort(403);
+    }
+    
+    // Determine public_html directory path
+    $publicPath = realpath(base_path('../public_html'));
+    if (!$publicPath || !file_exists($publicPath)) {
+        $publicPath = public_path();
+    }
+    
+    app()->usePublicPath($publicPath);
+
+    // Delete existing link if exists
+    $link = $publicPath . '/storage';
+    if (file_exists($link) || is_link($link)) {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            @exec('rd /s /q ' . escapeshellarg($link));
+        } else {
+            @unlink($link);
+        }
+    }
+
+    try {
+        Illuminate\Support\Facades\Artisan::call('storage:link');
+        return '<pre>Symlink created at: ' . $link . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+    } catch (\Throwable $e) {
+        return '<pre>Failed to create symlink: ' . $e->getMessage() . '</pre>';
+    }
+});
