@@ -98,10 +98,6 @@
     <div class="sippm-topbar-identity py-2 d-none d-md-block">
         <div class="container d-flex justify-content-between align-items-center flex-wrap">
             <span class="fw-medium"><i class="bi bi-geo-alt-fill me-1 text-secondary"></i>Pemerintah Kabupaten Mandailing Natal</span>
-            <div class="d-flex gap-3">
-                <span><i class="bi bi-envelope-fill me-1 text-secondary"></i>diskominfo@madina.go.id</span>
-                <span><i class="bi bi-telephone-fill me-1 text-secondary"></i>(0636) 000000</span>
-            </div>
         </div>
     </div>
 
@@ -183,8 +179,6 @@
                     <div class="footer-col-title">Kontak</div>
                     <ul class="list-unstyled small mb-0">
                         <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>Pemerintah Kabupaten Mandailing Natal</li>
-                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>diskominfo@madina.go.id</li>
-                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>(0636) 000000</li>
                     </ul>
                 </div>
             </div>
