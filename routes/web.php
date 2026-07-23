@@ -217,11 +217,13 @@ Route::get('/sys/link', function () {
     
     app()->usePublicPath($publicPath);
 
-    // Delete existing link if exists
+    // Delete or rename existing link/directory if exists
     $link = $publicPath . '/storage';
     if (file_exists($link) || is_link($link)) {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            @exec('rd /s /q ' . escapeshellarg($link));
+        if (is_link($link)) {
+            @unlink($link);
+        } elseif (is_dir($link)) {
+            @rename($link, $link . '_old_' . time());
         } else {
             @unlink($link);
         }
@@ -232,5 +234,29 @@ Route::get('/sys/link', function () {
         return '<pre>Symlink created at: ' . $link . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
     } catch (\Throwable $e) {
         return '<pre>Failed to create symlink: ' . $e->getMessage() . '</pre>';
+    }
+});
+
+Route::get('/sys/migrate', function () {
+    if (request('token') !== 'uwVW5Kx3Xfmv') {
+        abort(403);
+    }
+    try {
+        Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        return '<pre>Migration successful!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+    } catch (\Throwable $e) {
+        return '<pre>Migration failed: ' . $e->getMessage() . '</pre>';
+    }
+});
+
+Route::get('/sys/seed', function () {
+    if (request('token') !== 'uwVW5Kx3Xfmv') {
+        abort(403);
+    }
+    try {
+        Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        return '<pre>Seeding successful!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+    } catch (\Throwable $e) {
+        return '<pre>Seeding failed: ' . $e->getMessage() . '</pre>';
     }
 });

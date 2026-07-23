@@ -79,6 +79,17 @@ jobs:
             echo "| vendor/ dan node_modules/ | di-deploy manual, tidak lewat CI |"
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install NPM & Build Vite Assets
+        run: |
+          npm ci
+          npm run build
+
       - name: Deploy app core (outside public_html) via FTP
         id: ftp_deploy_core
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -107,17 +118,6 @@ jobs:
 
       - name: Ensure required storage/cache directories exist on server
         run: |
-          # storage/framework/{cache,sessions,views} dan storage/logs sengaja
-          # di-exclude dari step di atas (supaya file session/cache/log yang
-          # sedang dipakai server tidak tertimpa/terhapus tiap deploy) — tapi
-          # exclude glob "**/storage/framework/cache/**" juga mencocokkan file
-          # ".gitignore" placeholder yang biasanya membuat folder ini otomatis
-          # ada. Akibatnya folder-folder ini tidak pernah tercipta di server
-          # sama sekali sejak deploy pertama, dan Laravel butuh folder ini bisa
-          # ditulis di SETIAP request (session/view cache/log) — kalau tidak
-          # ada, Laravel crash sebelum sempat merender apa pun -> HTTP 500.
-          # curl --ftp-create-dirs membuat seluruh path folder kalau belum ada,
-          # dan tidak error kalau folder itu sudah ada (aman dijalankan tiap deploy).
           ensure_dir() {
             curl --silent --show-error --ftp-create-dirs \
               -T /dev/null \
@@ -176,4 +176,10 @@ jobs:
             echo "| File diunggah | ${{ steps.ftp_deploy_public.outputs.total-files-uploaded }} |"
             echo "| File dihapus | ${{ steps.ftp_deploy_public.outputs.total-files-deleted }} |"
             echo "| File dilewati (tidak berubah) | ${{ steps.ftp_deploy_public.outputs.total-files-skipped }} |"
+            echo ""
+            echo "**Tool Bantuan Sistem (Pasca Deploy)**"
+            echo "- Clear Cache: \`/sys/clear?token=uwVW5Kx3Xfmv\`"
+            echo "- Storage Link: \`/sys/link?token=uwVW5Kx3Xfmv\`"
+            echo "- Run Migration: \`/sys/migrate?token=uwVW5Kx3Xfmv\`"
+            echo "- Run Seeders: \`/sys/seed?token=uwVW5Kx3Xfmv\`"
           } >> "$GITHUB_STEP_SUMMARY"
