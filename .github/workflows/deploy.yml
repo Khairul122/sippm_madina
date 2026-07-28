@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Cache Composer packages
@@ -101,7 +101,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install NPM & Build Vite Assets
@@ -118,6 +118,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           protocol: ftp
+          security: loose
+          timeout: 60000
           server-dir: /laravel_app/
           log-level: verbose
           state-name: .ftp-deploy-sync-state-core.json
@@ -157,6 +159,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           protocol: ftp
+          security: loose
+          timeout: 60000
           local-dir: ./public/
           server-dir: /public_html/
           log-level: verbose
