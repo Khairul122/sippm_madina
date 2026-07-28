@@ -1,34 +1,47 @@
-# artisan-run.php — jalankan artisan command tanpa terminal (CWP)
+# Tools Deployment (Shared Hosting / CWP tanpa SSH)
 
-Alat sementara untuk shared hosting (CWP) yang tidak menyediakan akses terminal/SSH.
-File ini TIDAK ikut ter-deploy ke `public_html` oleh CI — hanya ikut ke `laravel_app/deploy-tools/`
-(folder itu tidak diakses lewat browser, jadi aman berada di sana secara permanen sebagai cadangan).
+Folder ini berisi kumpulan script bantu untuk mengelola aplikasi Laravel di hosting tanpa akses SSH terminal.
 
-## Cara pakai
+---
 
-1. Buka file ini di File Manager CWP: `laravel_app/deploy-tools/artisan-run.php`.
-2. Edit baris `$token = '...'` — ganti dengan string random panjang (minimal 32 karakter, bebas kombinasi huruf/angka).
-   Jangan pakai contoh apa pun yang pernah dibagikan di chat/dokumentasi manapun.
-3. Salin file yang sudah diedit ke `public_html/artisan-run.php` (lewat File Manager, copy-paste atau upload manual).
-4. Jalankan lewat browser, satu command per URL, berurutan sesuai kebutuhan:
+## 1. Fast Vendor Unzipper (`vendor-unzip.php` / `public_html/sys-unzip.php`)
 
+Digunakan untuk melakukan **Up Vendor Super Cepat (< 30 detik)** tanpa mengunggah puluhan ribu file `vendor/` secara manual satu per satu via FTP.
+
+### ⚡ Cara Kerja Otomatis (GitHub Actions CI/CD)
+1. Workflow `.github/workflows/deploy.yml` akan menjalankan `composer install --no-dev --optimize-autoloader` di runner.
+2. Seluruh folder `vendor/` dikompres menjadi **1 file tunggal `vendor.zip`**.
+3. `vendor.zip` diunggah via FTP ke `/laravel_app/vendor.zip` (proses upload hanya butuh ~10 detik).
+4. GitHub Actions memanggil URL `https://domainanda.com/sys-unzip.php?token=uwVW5Kx3Xfmv`.
+5. Script di server mengekstrak `vendor.zip` secara otomatis dalam 1–2 detik dan menghapus file zip setelah selesai.
+
+### 🛠️ Cara Kerja Manual (Jika Tanpa CI/CD)
+1. Di komputer lokal, jalankan:
+   ```bash
+   composer install --no-dev --prefer-dist --optimize-autoloader
    ```
-   https://domainkamu.go.id/artisan-run.php?token=TOKEN_KAMU&cmd=key
+2. Kompres folder `vendor` di lokal menjadi `vendor.zip`.
+3. Unggah file `vendor.zip` tersebut ke folder `laravel_app/` di server via CWP File Manager atau FileZilla.
+4. Akses URL berikut di browser:
+   ```
+   https://domainanda.com/sys-unzip.php?token=uwVW5Kx3Xfmv
+   ```
+5. Vendor berhasil diekstrak dan `vendor.zip` akan terhapus otomatis!
+
+---
+
+## 2. Artisan Command Runner (`artisan-run.php`)
+
+Alat sementara untuk mengeksekusi artisan command tanpa terminal (seperti `migrate`, `storage:link`, `config:cache`).
+
+### Cara Pakai:
+1. Buka file di CWP File Manager: `laravel_app/deploy-tools/artisan-run.php`.
+2. Ganti nilai `$token = '...'` dengan token rahasia Anda.
+3. Salin file tersebut ke `public_html/artisan-run.php`.
+4. Jalankan lewat browser:
+   ```
    https://domainkamu.go.id/artisan-run.php?token=TOKEN_KAMU&cmd=migrate
    https://domainkamu.go.id/artisan-run.php?token=TOKEN_KAMU&cmd=link
    https://domainkamu.go.id/artisan-run.php?token=TOKEN_KAMU&cmd=config
    ```
-
-   Command yang tersedia: `key`, `migrate`, `link`, `config`, `route`, `view`, `clear`.
-
-5. **Setelah selesai, HAPUS `public_html/artisan-run.php` dari server.** Jangan biarkan file ini
-   menetap di `public_html` — siapa pun yang tahu URL dan token bisa menjalankan artisan command
-   di server produksi selama file itu ada.
-
-## Urutan command yang biasanya dibutuhkan saat setup pertama kali
-
-1. `key` — generate `APP_KEY` di `.env` (jalankan sekali saja, lewati kalau `APP_KEY` sudah terisi)
-2. `migrate` — jalankan migration database
-3. `link` — buat symlink `public/storage` → `storage/app/public`
-4. `config` — cache konfigurasi untuk performa (jalankan ulang tiap kali `.env` berubah, karena
-   selama config di-cache, perubahan `.env` tidak akan terbaca sampai kamu jalankan `clear` atau `config` lagi)
+5. **Setelah selesai, HAPUS `public_html/artisan-run.php` dari server.**
