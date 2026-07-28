@@ -1,5 +1,8 @@
 name: CI/CD
 
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: 'true'
+
 on:
   push:
     branches: [main]
@@ -53,7 +56,7 @@ jobs:
         run: php artisan test
 
   deploy:
-    name: Deploy via FTP
+    name: Deploy via FTP/SFTP
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -73,7 +76,7 @@ jobs:
             echo "| Branch | \`${GITHUB_REF_NAME}\` |"
             echo "| Trigger oleh | ${GITHUB_ACTOR} |"
             echo "| Waktu (UTC) | $(date -u '+%Y-%m-%d %H:%M:%S') |"
-            echo "| Target server | \`${{ secrets.FTP_SERVER }}:21\` |"
+            echo "| Target server | \`${{ secrets.FTP_SERVER }}\` |"
             echo "| Target folder (app inti) | \`/laravel_app/\` |"
             echo "| Target folder (isi public/) | \`/public_html/\` |"
             echo "| vendor/ | otomatis di-upload via vendor.zip & di-unzip |"
@@ -109,17 +112,17 @@ jobs:
           npm ci
           npm run build
 
-      - name: Deploy app core (outside public_html) via FTP
+      - name: Deploy app core (outside public_html) via FTP/SFTP
         id: ftp_deploy_core
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
+          port: ${{ secrets.FTP_PORT || 21 }}
+          protocol: ${{ secrets.FTP_PROTOCOL || 'ftp' }}
           security: loose
-          timeout: 60000
+          timeout: 120000
           server-dir: /laravel_app/
           log-level: verbose
           state-name: .ftp-deploy-sync-state-core.json
@@ -142,7 +145,7 @@ jobs:
           ensure_dir() {
             curl --silent --show-error --ftp-create-dirs \
               -T /dev/null \
-              "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}/laravel_app/$1/.keep"
+              "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}/laravel_app/$1/.keep" || true
           }
           ensure_dir "storage/framework/cache/data"
           ensure_dir "storage/framework/sessions"
@@ -150,17 +153,17 @@ jobs:
           ensure_dir "storage/logs"
           ensure_dir "bootstrap/cache"
 
-      - name: Deploy public assets (public/) to public_html via FTP
+      - name: Deploy public assets (public/) to public_html via FTP/SFTP
         id: ftp_deploy_public
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
+          port: ${{ secrets.FTP_PORT || 21 }}
+          protocol: ${{ secrets.FTP_PROTOCOL || 'ftp' }}
           security: loose
-          timeout: 60000
+          timeout: 120000
           local-dir: ./public/
           server-dir: /public_html/
           log-level: verbose
