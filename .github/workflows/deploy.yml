@@ -80,6 +80,8 @@ jobs:
             echo "| Target folder (app inti) | \`/laravel_app/\` |"
             echo "| Target folder (isi public/) | \`/public_html/\` |"
             echo "| vendor/ | otomatis di-upload via vendor.zip & di-unzip |"
+            echo "| .env | dibuat otomatis dari secret \`ENV_PRODUCTION\` & diunggah |"
+            echo "| storage:link | dijalankan otomatis pasca-deploy |"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Setup PHP
@@ -100,6 +102,15 @@ jobs:
         run: |
           composer install --no-dev --prefer-dist --optimize-autoloader --no-progress
           zip -q -r vendor.zip vendor/
+
+      - name: Generate .env for deployment
+        run: |
+          if [ -z "${{ secrets.ENV_PRODUCTION }}" ]; then
+            echo "::error::Secret ENV_PRODUCTION belum diatur (Settings > Secrets and variables > Actions). Deploy dibatalkan karena .env tidak bisa dibuat."
+            exit 1
+          fi
+          printf '%s\n' "${{ secrets.ENV_PRODUCTION }}" > .env
+          echo "File .env berhasil dibuat dari secret ENV_PRODUCTION untuk diunggah ke server."
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -138,7 +149,6 @@ jobs:
             **/storage/framework/sessions/**
             **/storage/framework/views/**
             **/storage/logs/**
-            **/.env
 
       - name: Ensure required storage/cache directories exist on server
         run: |
@@ -175,10 +185,18 @@ jobs:
             index.php
 
       - name: Trigger Auto-Unzip vendor on server
+        id: trigger_unzip
         if: steps.ftp_deploy_core.outcome == 'success'
         run: |
           echo "Eksekusi auto-unzip vendor di server..."
           curl --silent --show-error "https://${{ secrets.FTP_SERVER }}/sys-unzip.php?token=uwVW5Kx3Xfmv" || true
+
+      - name: Trigger storage:link on server (folder gambar publik)
+        id: trigger_storage_link
+        if: steps.ftp_deploy_core.outcome == 'success'
+        run: |
+          echo "Membuat symlink public/storage -> storage/app/public di server (dipakai untuk avatar, bukti dukung, foto hero, dsb.)..."
+          curl --silent --show-error "https://${{ secrets.FTP_SERVER }}/sys/link?token=uwVW5Kx3Xfmv" || true
 
       - name: Deploy result summary
         if: always()
@@ -209,10 +227,13 @@ jobs:
             echo "| File dihapus | ${{ steps.ftp_deploy_public.outputs.total-files-deleted }} |"
             echo "| File dilewati (tidak berubah) | ${{ steps.ftp_deploy_public.outputs.total-files-skipped }} |"
             echo ""
-            echo "**Tool Bantuan Sistem (Pasca Deploy)**"
-            echo "- Unzip Vendor: \`/sys-unzip.php?token=uwVW5Kx3Xfmv\`"
+            echo "**Otomatis dijalankan setiap deploy**"
+            echo "- \`.env\` dibuat dari secret \`ENV_PRODUCTION\` lalu diunggah ke \`/laravel_app/.env\`"
+            echo "- Unzip Vendor: \`/sys-unzip.php?token=uwVW5Kx3Xfmv\` — status: ${{ steps.trigger_unzip.outcome || 'skipped' }}"
+            echo "- Storage Link (folder gambar publik): \`/sys/link?token=uwVW5Kx3Xfmv\` — status: ${{ steps.trigger_storage_link.outcome || 'skipped' }}"
+            echo ""
+            echo "**Tool Bantuan Sistem (jalankan manual bila perlu)**"
             echo "- Clear Cache: \`/sys/clear?token=uwVW5Kx3Xfmv\`"
-            echo "- Storage Link: \`/sys/link?token=uwVW5Kx3Xfmv\`"
             echo "- Run Migration: \`/sys/migrate?token=uwVW5Kx3Xfmv\`"
             echo "- Run Seeders: \`/sys/seed?token=uwVW5Kx3Xfmv\`"
           } >> "$GITHUB_STEP_SUMMARY"
