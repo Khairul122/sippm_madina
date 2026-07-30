@@ -6,6 +6,7 @@ namespace App\Infrastructure\Notification\Listeners;
 
 use App\Infrastructure\Broadcasting\Events\ActivityPublished;
 use App\Infrastructure\Broadcasting\Events\ComplaintDisposed;
+use App\Infrastructure\Broadcasting\Events\ComplaintDispositionCancelled;
 use App\Infrastructure\Broadcasting\Events\ComplaintHandled;
 use App\Infrastructure\Broadcasting\Events\ComplaintResolved;
 use App\Infrastructure\Broadcasting\Events\ComplaintSubmitted;
@@ -41,6 +42,14 @@ class RecordAuditLog
                     'status' => $event->complaint->status->value,
                     'disposed_to_type' => $event->disposedToType->value,
                     'disposed_to_id' => $event->disposedToId,
+                ],
+            ],
+            $event instanceof ComplaintDispositionCancelled => ['complaint', $event->complaint->id,
+                $event->previousStatus ? ['status' => $event->previousStatus->value] : null,
+                [
+                    'status' => $event->complaint->status->value,
+                    'cancelled_target_type' => $event->cancelledTargetType->value,
+                    'cancelled_target_id' => $event->cancelledTargetId,
                 ],
             ],
             $event instanceof ComplaintHandled => ['complaint', $event->complaint->id,

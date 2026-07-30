@@ -58,14 +58,22 @@ class ComplaintPolicy
         return $user->hasRole('kominfo');
     }
 
+    public function cancelDisposition(User $user, Complaint $complaint): bool
+    {
+        return $user->hasRole('kominfo');
+    }
+
     public function handle(User $user, Complaint $complaint): bool
     {
+        // whereNull('cancelled_at'): sebuah disposisi yang sudah dibatalkan
+        // Kominfo (lihat CancelDispositionUseCase) TIDAK BOLEH lagi dipakai
+        // OPD/Camat untuk mengirim laporan penanganan.
         if ($user->hasRole('opd')) {
-            return $complaint->dispositions()->where('disposed_to_type', 'opd')->where('disposed_to_id', $user->opd_id)->exists();
+            return $complaint->dispositions()->where('disposed_to_type', 'opd')->where('disposed_to_id', $user->opd_id)->whereNull('cancelled_at')->exists();
         }
 
         if ($user->hasRole('camat')) {
-            return $complaint->dispositions()->where('disposed_to_type', 'camat')->where('disposed_to_id', $user->kecamatan_id)->exists();
+            return $complaint->dispositions()->where('disposed_to_type', 'camat')->where('disposed_to_id', $user->kecamatan_id)->whereNull('cancelled_at')->exists();
         }
 
         return false;

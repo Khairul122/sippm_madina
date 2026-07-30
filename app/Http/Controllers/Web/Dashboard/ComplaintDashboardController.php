@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web\Dashboard;
 
+use App\Application\DTOs\CancelDispositionDTO;
 use App\Application\DTOs\DisposeComplaintDTO;
 use App\Application\DTOs\HandleComplaintDTO;
 use App\Application\DTOs\ResolveComplaintDTO;
 use App\Application\DTOs\VerifyComplaintDTO;
+use App\Application\UseCases\Complaint\CancelDispositionUseCase;
 use App\Application\UseCases\Complaint\DisposeComplaintUseCase;
 use App\Application\UseCases\Complaint\HandleComplaintUseCase;
 use App\Application\UseCases\Complaint\ResolveComplaintUseCase;
 use App\Application\UseCases\Complaint\VerifyComplaintUseCase;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Complaint\CancelDispositionRequest;
 use App\Http\Requests\Complaint\DisposeComplaintRequest;
 use App\Http\Requests\Complaint\HandleComplaintRequest;
 use App\Http\Requests\Complaint\ResolveComplaintRequest;
@@ -37,6 +40,7 @@ class ComplaintDashboardController extends Controller
     public function __construct(
         private readonly VerifyComplaintUseCase $verifyComplaint,
         private readonly DisposeComplaintUseCase $disposeComplaint,
+        private readonly CancelDispositionUseCase $cancelDisposition,
         private readonly HandleComplaintUseCase $handleComplaint,
         private readonly ResolveComplaintUseCase $resolveComplaint,
     ) {
@@ -104,7 +108,7 @@ class ComplaintDashboardController extends Controller
     public function show(Request $request, int $complaint): View
     {
         $model = Complaint::query()
-            ->with(['user', 'attachments', 'statusHistories.changedBy', 'dispositions.disposedBy', 'handlings', 'response'])
+            ->with(['user', 'attachments', 'statusHistories.changedBy', 'dispositions.disposedBy', 'dispositions.cancelledBy', 'handlings', 'response'])
             ->findOrFail($complaint);
 
         $this->authorize('view', $model);
@@ -161,6 +165,33 @@ class ComplaintDashboardController extends Controller
         return back()->with('status', 'Pengaduan berhasil didisposisikan.');
     }
 
+    /**
+     * "Batal disposisi": Kominfo salah pilih target OPD/Camat saat
+     * disposisi, tarik kembali (-> DIVERIFIKASI) supaya bisa
+     * didisposisikan ulang. Hanya berlaku selama status masih DIPROSES —
+     * StatusTransitionGuard menolak begitu OPD/Camat sudah mengirim
+     * laporan penanganan (status DITINDAKLANJUTI).
+     */
+    public function cancelDisposition(CancelDispositionRequest $request, int $complaint): RedirectResponse
+    {
+        $model = Complaint::query()->findOrFail($complaint);
+        $this->authorize('cancelDisposition', $model);
+
+        $data = $request->validated();
+
+        try {
+            $this->cancelDisposition->execute(new CancelDispositionDTO(
+                complaintId: $complaint,
+                cancelledByUserId: $request->user()->id,
+                note: $data['note'] ?? null,
+            ));
+        } catch (DomainException|InvalidArgumentException $e) {
+            return back()->withErrors($e->getMessage());
+        }
+
+        return back()->with('status', 'Disposisi berhasil dibatalkan. Silakan disposisikan ulang ke target yang benar.');
+    }
+
     public function handle(HandleComplaintRequest $request, int $complaint): RedirectResponse
     {
         $model = Complaint::query()->findOrFail($complaint);
@@ -212,12 +243,15 @@ class ComplaintDashboardController extends Controller
 
     private function pendingDispositionFor(mixed $user, Complaint $complaint): ?int
     {
+        // cancelled_at === null: disposisi yang sudah dibatalkan Kominfo
+        // tidak boleh lagi dipakai OPD/Camat untuk mengirim penanganan
+        // (lihat juga ComplaintPolicy::handle()).
         if ($user->hasRole('opd') && $user->opd_id) {
-            return $complaint->dispositions->firstWhere(fn ($d) => $d->disposed_to_type === 'opd' && $d->disposed_to_id === $user->opd_id)?->id;
+            return $complaint->dispositions->firstWhere(fn ($d) => $d->disposed_to_type === 'opd' && $d->disposed_to_id === $user->opd_id && $d->cancelled_at === null)?->id;
         }
 
         if ($user->hasRole('camat') && $user->kecamatan_id) {
-            return $complaint->dispositions->firstWhere(fn ($d) => $d->disposed_to_type === 'camat' && $d->disposed_to_id === $user->kecamatan_id)?->id;
+            return $complaint->dispositions->firstWhere(fn ($d) => $d->disposed_to_type === 'camat' && $d->disposed_to_id === $user->kecamatan_id && $d->cancelled_at === null)?->id;
         }
 
         return null;

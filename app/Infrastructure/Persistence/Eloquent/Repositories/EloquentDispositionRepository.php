@@ -43,6 +43,18 @@ class EloquentDispositionRepository implements DispositionRepositoryInterface
         return $disposition ? $this->toArray($disposition) : null;
     }
 
+    public function cancelActiveForComplaint(int $complaintId, int $cancelledByUserId, ?string $note): int
+    {
+        return Disposition::query()
+            ->where('complaint_id', $complaintId)
+            ->whereNull('cancelled_at')
+            ->update([
+                'cancelled_at' => now(),
+                'cancelled_by' => $cancelledByUserId,
+                'cancel_note' => $note,
+            ]);
+    }
+
     private function toArray(Disposition $d): array
     {
         return [
@@ -53,6 +65,7 @@ class EloquentDispositionRepository implements DispositionRepositoryInterface
             'disposed_by' => $d->disposed_by,
             'note' => $d->note,
             'created_at' => (string) $d->created_at,
+            'cancelled_at' => $d->cancelled_at ? (string) $d->cancelled_at : null,
         ];
     }
 }

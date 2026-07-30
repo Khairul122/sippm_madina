@@ -17,6 +17,35 @@
             @endif
         </div>
 
+        @if($complaint->handlings->isNotEmpty())
+        <div class="sippm-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-wrench me-1"></i>Tindak Lanjut dari OPD / Kecamatan</h3>
+            @foreach($complaint->handlings->sortBy('created_at') as $handling)
+                <div class="mb-3 p-3 border rounded-3" style="background-color: #fcfbf9; border: 1px solid var(--sippm-border) !important;">
+                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                        <div>
+                            <span class="fw-semibold text-sippm small"><i class="bi bi-person-fill text-secondary"></i> {{ $handling->handledBy?->name ?? 'Petugas' }}</span>
+                            @if($handling->handledBy?->opd)
+                                <span class="badge bg-secondary ms-1 small">{{ $handling->handledBy->opd->name }}</span>
+                            @elseif($handling->handledBy?->kecamatan)
+                                <span class="badge bg-secondary ms-1 small">Kec. {{ $handling->handledBy->kecamatan->name }}</span>
+                            @endif
+                        </div>
+                        <span class="text-muted small font-monospace"><i class="bi bi-calendar3"></i> {{ $handling->created_at->translatedFormat('d F Y, H:i') }} WIB</span>
+                    </div>
+                    <div class="rich-text-content small mb-2">{!! $handling->description !!}</div>
+                    @if($handling->attachment_path)
+                        <div class="border-top pt-2">
+                            <a href="{{ asset('storage/'.$handling->attachment_path) }}" target="_blank" class="btn btn-sm btn-outline-primary py-1 px-2 text-decoration-none small">
+                                <i class="bi bi-paperclip"></i> Lihat Bukti Dukung (Lampiran)
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+        @endif
+
         @if($complaint->response)
         <div class="sippm-card p-4 mb-4 border-start border-4" style="border-color: var(--sippm-green) !important;">
             <h3 class="h6 mb-2"><i class="bi bi-check-circle text-success me-1"></i>Jawaban Resmi</h3>

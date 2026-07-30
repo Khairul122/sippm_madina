@@ -9,6 +9,7 @@ use App\Domain\Complaint\ValueObjects\ComplaintStatus;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Persistence\Eloquent\Models\Activity;
 use App\Infrastructure\Persistence\Eloquent\Models\Complaint;
+use App\Infrastructure\Persistence\Eloquent\Models\SiteSetting;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
@@ -17,6 +18,7 @@ class HomeController extends Controller
     {
         return view('public.home', [
             'title' => 'SIPPM Madina',
+            'siteSetting' => SiteSetting::query()->find(1),
             'totalComplaints' => Complaint::query()->count(),
             'resolvedComplaints' => Complaint::query()->where('status', ComplaintStatus::SELESAI->value)->count(),
             'publishedActivities' => Activity::query()->where('status', ActivityStatus::DIPUBLIKASIKAN->value)->count(),

@@ -116,6 +116,55 @@ class ComplaintWorkflowTest extends TestCase
         $this->assertSame(['status' => 'ditindaklanjuti'], $resolveLog->old_data);
     }
 
+    public function test_kominfo_can_cancel_wrong_disposition_and_redispose(): void
+    {
+        $this->seed();
+
+        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $opdUser = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $wrongOpd = Opd::query()->findOrFail($opdUser->opd_id);
+        $correctOpd = Opd::query()->where('id', '!=', $wrongOpd->id)->firstOrFail();
+
+        $this->actingAs($masyarakat)->post('/pengaduan', [
+            'title' => 'Salah Disposisi',
+            'category' => 'Infrastruktur',
+            'description' => 'Pengaduan untuk uji batal disposisi.',
+            'target_type' => 'opd',
+            'target_id' => $wrongOpd->id,
+        ]);
+
+        $complaint = Complaint::query()->firstOrFail();
+        $this->actingAs($kominfo)->post("/dashboard/complaints/{$complaint->id}/verify", ['is_valid' => '1']);
+
+        // Kominfo salah pilih target.
+        $this->actingAs($kominfo)->post("/dashboard/complaints/{$complaint->id}/dispose", [
+            'targets' => [['type' => 'opd', 'id' => $wrongOpd->id]],
+        ])->assertRedirect();
+        $this->assertSame('diproses', $complaint->fresh()->status->value);
+
+        // OPD yang salah tidak boleh lagi menangani setelah dibatalkan.
+        $this->actingAs($kominfo)->post("/dashboard/complaints/{$complaint->id}/cancel-disposition", [
+            'note' => 'salah pilih OPD tujuan',
+        ])->assertRedirect();
+
+        $complaint->refresh();
+        $this->assertSame('diverifikasi', $complaint->status->value);
+        $this->assertNotNull($complaint->dispositions()->first()->cancelled_at);
+
+        $this->actingAs($opdUser)->post("/dashboard/complaints/{$complaint->id}/handle", [
+            'disposition_id' => $complaint->dispositions()->first()->id,
+            'description' => 'Mencoba menangani disposisi yang sudah dibatalkan.',
+        ])->assertForbidden();
+
+        // Kominfo disposisikan ulang ke OPD yang benar.
+        $this->actingAs($kominfo)->post("/dashboard/complaints/{$complaint->id}/dispose", [
+            'targets' => [['type' => 'opd', 'id' => $correctOpd->id]],
+        ])->assertRedirect();
+        $this->assertSame('diproses', $complaint->fresh()->status->value);
+        $this->assertSame(2, $complaint->dispositions()->count());
+    }
+
     public function test_kominfo_cannot_dispose_directly_to_bupati(): void
     {
         $this->seed();

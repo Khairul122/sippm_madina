@@ -111,7 +111,14 @@
             </div>
             <div class="col-lg-5 d-none d-lg-block text-center">
                 <div class="reveal sippm-hero-frame d-inline-block" style="transition-delay: 240ms;">
-                    <img src="{{ asset('images/hero-illustration.png') }}" alt="Ilustrasi Pelayanan Publik SIPPM Madina" class="img-fluid rounded-4 shadow-raised" style="max-height: 380px; width: auto; border: 3px solid rgba(255,255,255,0.15);">
+                    @if($siteSetting?->hero_image_path)
+                        <img src="{{ Storage::disk('public')->url($siteSetting->hero_image_path) }}" alt="{{ $siteSetting->hero_caption ?? 'Foto Pimpinan Kabupaten Mandailing Natal' }}" class="img-fluid rounded-4 shadow-raised" style="max-height: 380px; width: auto; border: 3px solid rgba(255,255,255,0.15);">
+                    @else
+                        <img src="{{ asset('images/hero-illustration.png') }}" alt="Ilustrasi Pelayanan Publik SIPPM Madina" class="img-fluid rounded-4 shadow-raised" style="max-height: 380px; width: auto; border: 3px solid rgba(255,255,255,0.15);">
+                    @endif
+                    @if($siteSetting?->hero_caption)
+                        <p class="reveal small opacity-75 mt-2 mb-0">{{ $siteSetting->hero_caption }}</p>
+                    @endif
                 </div>
             </div>
         </div>

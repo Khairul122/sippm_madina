@@ -224,6 +224,14 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-sm-6 col-md-3">
+                            <label class="form-label text-sippm fw-semibold small">Dari Tanggal</label>
+                            <input type="date" name="date_from" class="form-control shadow-sm" value="{{ request('date_from') }}">
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <label class="form-label text-sippm fw-semibold small">Sampai Tanggal</label>
+                            <input type="date" name="date_to" class="form-control shadow-sm" value="{{ request('date_to') }}">
+                        </div>
 
                         <!-- Tombol Aksi Kelompok -->
                         <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-3 mt-3 pt-2 border-top border-2 border-white">
@@ -232,7 +240,7 @@
                                     <i class="bi bi-search"></i>
                                     <span>Cari Data</span>
                                 </button>
-                                @if(request()->anyFilled(['search','status','target','hari','bulan','tahun']))
+                                @if(request()->anyFilled(['search','status','target','hari','bulan','tahun','date_from','date_to']))
                                     <a href="{{ url('/dashboard/laporan') }}" class="btn btn-outline-secondary px-4 py-2 d-inline-flex align-items-center gap-2" style="border-radius: var(--sippm-radius-sm);">
                                         <i class="bi bi-arrow-counterclockwise"></i>
                                         <span>Reset</span>

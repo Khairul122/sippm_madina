@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['complaint_id', 'disposed_to_type', 'disposed_to_id', 'disposed_by', 'note'])]
+#[Fillable(['complaint_id', 'disposed_to_type', 'disposed_to_id', 'disposed_by', 'note', 'cancelled_at', 'cancelled_by', 'cancel_note'])]
 class Disposition extends Model
 {
+    protected $casts = [
+        'cancelled_at' => 'datetime',
+    ];
+
     /**
      * @return BelongsTo<Complaint, $this>
      */
@@ -24,6 +28,14 @@ class Disposition extends Model
     public function disposedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'disposed_by');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function cancelledBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
     }
 
     /**

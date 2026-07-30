@@ -162,9 +162,11 @@
                     </div>
                     <p class="mb-3">Sistem Informasi Pengaduan Masyarakat dan Pelaporan Kegiatan Kabupaten Mandailing Natal — layanan satu pintu melalui Dinas Komunikasi dan Informatika.</p>
                     <div class="d-flex gap-2">
-                        <a href="https://www.facebook.com/kominfomadina" target="_blank" rel="noopener" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="https://www.instagram.com/kominfomadina" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="https://www.youtube.com/@kominfomadina" target="_blank" rel="noopener" class="social-icon" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.facebook.com/PemkabMandailingNatal/" target="_blank" rel="noopener" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://www.instagram.com/diskominfo.madina" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@diskominfomadina2" target="_blank" rel="noopener" class="social-icon" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+                        <a href="https://www.youtube.com/@DISKOMINFOMADINA" target="_blank" rel="noopener" class="social-icon" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="https://madina.go.id/" target="_blank" rel="noopener" class="social-icon" aria-label="Website Resmi"><i class="bi bi-globe2"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3">
@@ -173,12 +175,17 @@
                         <li class="mb-2"><a href="{{ url('/') }}">Beranda</a></li>
                         <li class="mb-2"><a href="{{ url('/lacak') }}">Lacak Pengaduan</a></li>
                         <li class="mb-2"><a href="{{ url('/kegiatan') }}">Kegiatan</a></li>
+                        <li class="mb-2"><a href="https://madina.go.id/" target="_blank" rel="noopener">Website Resmi Pemkab</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-4">
                     <div class="footer-col-title">Kontak</div>
                     <ul class="list-unstyled small mb-0">
-                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>Pemerintah Kabupaten Mandailing Natal</li>
+                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>Komplek Perkantoran Payaloting Parbangunan Kec. Panyabungan Kode Pos 22978</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2"></i><a href="mailto:info@madina.go.id">info@madina.go.id</a></li>
+                        <li class="mb-2"><i class="bi bi-envelope-at me-2"></i><a href="mailto:diskominfo@mail.madina.go.id">diskominfo@mail.madina.go.id</a></li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>(0636) 326255, 326258</li>
+                        <li class="mb-2"><i class="bi bi-printer me-2"></i>Fax: (0636) 326254</li>
                     </ul>
                 </div>
             </div>

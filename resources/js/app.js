@@ -272,11 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (user.roles.includes('opd') && user.opd_id) {
         window.Echo.private(`channel-opd.${user.opd_id}`)
-            .listen('.complaint.disposed', (e) => notify('Disposisi baru', `${e.ticket_number} — ${e.title}`));
+            .listen('.complaint.disposed', (e) => notify('Disposisi baru', `${e.ticket_number} — ${e.title}`))
+            .listen('.complaint.disposition-cancelled', (e) => notify('Disposisi dibatalkan', `${e.ticket_number} — ${e.title}`));
     }
 
     if (user.roles.includes('camat') && user.kecamatan_id) {
         window.Echo.private(`channel-camat.${user.kecamatan_id}`)
-            .listen('.complaint.disposed', (e) => notify('Disposisi baru', `${e.ticket_number} — ${e.title}`));
+            .listen('.complaint.disposed', (e) => notify('Disposisi baru', `${e.ticket_number} — ${e.title}`))
+            .listen('.complaint.disposition-cancelled', (e) => notify('Disposisi dibatalkan', `${e.ticket_number} — ${e.title}`));
     }
 });

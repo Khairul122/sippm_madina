@@ -134,6 +134,49 @@
         </div>
         @endif
 
+        {{-- Kominfo: disposisi aktif + batal disposisi (status diproses, belum ditangani OPD/Camat) --}}
+        @if($user->hasRole('kominfo') && $complaint->status->value === 'diproses')
+        @php $activeDispositions = $complaint->dispositions->whereNull('cancelled_at'); @endphp
+        <div class="sippm-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-signpost-split me-1"></i>Disposisi Aktif</h3>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                @foreach($activeDispositions as $d)
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2">
+                        <i class="bi bi-{{ $d->disposed_to_type === 'opd' ? 'building' : 'geo-alt' }} me-1"></i>
+                        {{ $d->disposed_to_type === 'opd' ? ($opds->firstWhere('id', $d->disposed_to_id)?->name ?? '-') : ($kecamatans->firstWhere('id', $d->disposed_to_id)?->name ?? '-') }}
+                    </span>
+                @endforeach
+            </div>
+            <p class="text-muted small mb-3">Salah pilih target? Batalkan disposisi ini untuk mengirim ulang ke unit yang benar. Setelah unit terkait mengirim laporan penanganan, disposisi tidak bisa dibatalkan lagi.</p>
+            <form method="post" action="{{ url('/dashboard/complaints/'.$complaint->id.'/cancel-disposition') }}" data-confirm="Batalkan disposisi ini? Pengaduan akan kembali ke status Diverifikasi dan bisa didisposisikan ulang.">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label">Alasan Pembatalan (opsional)</label>
+                    <input type="text" name="note" class="form-control" placeholder="Contoh: salah pilih OPD tujuan" maxlength="500">
+                </div>
+                <button class="btn btn-outline-danger btn-sm px-4 py-2" type="submit"><i class="bi bi-x-circle me-1"></i>Batal Disposisi</button>
+            </form>
+        </div>
+        @endif
+
+        @if($complaint->dispositions->whereNotNull('cancelled_at')->isNotEmpty())
+        <div class="sippm-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-clock-history me-1"></i>Riwayat Disposisi Dibatalkan</h3>
+            @foreach($complaint->dispositions->whereNotNull('cancelled_at')->sortByDesc('cancelled_at') as $d)
+                <div class="mb-2 p-3 border rounded-3 bg-light small">
+                    <span class="text-decoration-line-through text-muted">
+                        <i class="bi bi-{{ $d->disposed_to_type === 'opd' ? 'building' : 'geo-alt' }} me-1"></i>
+                        {{ $d->disposed_to_type === 'opd' ? ($opds->firstWhere('id', $d->disposed_to_id)?->name ?? '-') : ($kecamatans->firstWhere('id', $d->disposed_to_id)?->name ?? '-') }}
+                    </span>
+                    <div class="text-muted mt-1">Dibatalkan {{ $d->cancelledBy?->name ?? '-' }} &middot; {{ $d->cancelled_at->translatedFormat('d F Y, H:i') }} WIB</div>
+                    @if($d->cancel_note)
+                        <div class="mt-1 text-secondary">Alasan: {{ $d->cancel_note }}</div>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+        @endif
+
         {{-- OPD/Camat: tangani (ada disposisi ke unit mereka & belum ditangani) --}}
         @if(($user->hasRole('opd') || $user->hasRole('camat')) && $myPendingDisposition && $complaint->status->value === 'diproses')
         <div class="sippm-card p-4 mb-4">

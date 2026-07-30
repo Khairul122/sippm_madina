@@ -14,6 +14,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\Opd;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -23,15 +24,36 @@ use Illuminate\Support\Facades\Hash;
  */
 class UserManagementController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', User::class);
 
-        $users = User::query()->with('roles')->orderBy('name')->paginate(15);
+        $query = User::query()->with('roles');
+
+        // Pencarian bebas (nama/email) + filter berdasarkan role
+        // (kominfo/opd/camat/masyarakat/dst) dan status aktif.
+        if ($request->filled('search')) {
+            $search = (string) $request->string('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->whereHas('roles', fn ($q) => $q->where('name', $request->string('role')));
+        }
+
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->string('status') === 'aktif');
+        }
+
+        $users = $query->orderBy('name')->paginate(15)->withQueryString();
 
         return view('dashboard.users.index', [
             'title' => 'Kelola Pengguna',
             'users' => $users,
+            'roles' => Role::cases(),
         ]);
     }
 

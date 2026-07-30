@@ -8,6 +8,7 @@ use App\Http\Policies\ComplaintPolicy;
 use App\Http\Policies\UserPolicy;
 use App\Infrastructure\Broadcasting\Events\ActivityPublished;
 use App\Infrastructure\Broadcasting\Events\ComplaintDisposed;
+use App\Infrastructure\Broadcasting\Events\ComplaintDispositionCancelled;
 use App\Infrastructure\Broadcasting\Events\ComplaintHandled;
 use App\Infrastructure\Broadcasting\Events\ComplaintResolved;
 use App\Infrastructure\Broadcasting\Events\ComplaintSubmitted;
@@ -50,7 +51,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (str_starts_with(config('app.url'), 'https://')) {
+        if (
+            str_starts_with(config('app.url'), 'https://') ||
+            request()->header('X-Forwarded-Proto') === 'https' ||
+            request()->server('HTTP_X_FORWARDED_PROTO') === 'https' ||
+            str_contains(request()->header('Host', ''), 'localto.net') ||
+            str_contains(request()->header('Host', ''), 'ngrok') ||
+            str_contains(request()->header('Host', ''), 'trycloudflare.com')
+        ) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
@@ -93,6 +101,7 @@ class AppServiceProvider extends ServiceProvider
             ComplaintSubmitted::class,
             ComplaintVerified::class,
             ComplaintDisposed::class,
+            ComplaintDispositionCancelled::class,
             ComplaintHandled::class,
             ComplaintResolved::class,
             ActivityPublished::class,
@@ -104,6 +113,7 @@ class AppServiceProvider extends ServiceProvider
             ComplaintSubmitted::class,
             ComplaintVerified::class,
             ComplaintDisposed::class,
+            ComplaintDispositionCancelled::class,
             ComplaintHandled::class,
             ComplaintResolved::class,
         ] as $event) {

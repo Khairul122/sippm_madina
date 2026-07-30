@@ -80,7 +80,7 @@ class MyComplaintController extends Controller
     public function show(Request $request, int $complaint): View
     {
         $model = Complaint::query()
-            ->with(['attachments', 'statusHistories', 'response'])
+            ->with(['attachments', 'statusHistories', 'response', 'handlings.handledBy.opd', 'handlings.handledBy.kecamatan'])
             ->findOrFail($complaint);
 
         $this->authorize('view', $model);

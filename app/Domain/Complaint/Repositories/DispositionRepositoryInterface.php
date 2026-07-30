@@ -32,9 +32,20 @@ interface DispositionRepositoryInterface
      *     disposed_by: int,
      *     note: ?string,
      *     created_at: string,
+     *     cancelled_at: ?string,
      * }>
      */
     public function listForComplaint(int $complaintId): array;
 
     public function findById(int $id): ?array;
+
+    /**
+     * Batal semua disposisi AKTIF (belum ditandai cancelled_at) milik satu
+     * pengaduan — dipakai saat Kominfo salah memilih target OPD/Camat.
+     * Baris disposisi tidak dihapus, hanya ditandai batal (soft-cancel)
+     * supaya riwayat tetap lengkap untuk audit.
+     *
+     * @return int jumlah baris disposisi yang dibatalkan
+     */
+    public function cancelActiveForComplaint(int $complaintId, int $cancelledByUserId, ?string $note): int;
 }
