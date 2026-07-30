@@ -30,7 +30,41 @@ Digunakan untuk melakukan **Up Vendor Super Cepat (< 30 detik)** tanpa mengungga
 
 ---
 
-## 2. Artisan Command Runner (`artisan-run.php`)
+## 2. File `.env` Otomatis dari GitHub Secret
+
+Workflow `.github/workflows/deploy.yml` sekarang membuat file `.env` secara
+otomatis di setiap deploy, lalu mengunggahnya ke `/laravel_app/.env` bersama
+file inti lainnya (sebelumnya `.env` selalu di-exclude dari upload, jadi
+harus diisi manual sekali via CWP File Manager).
+
+### Cara Setup (sekali saja)
+1. Buka **Settings > Secrets and variables > Actions** di GitHub repo ini.
+2. Buat secret baru bernama **`ENV_PRODUCTION`**.
+3. Isi value-nya dengan **seluruh isi file `.env` production** (bukan cuma
+   satu baris) — salin apa adanya dari `.env` yang sudah berjalan di server,
+   atau susun dari `.env.example` dengan nilai production (DB, APP_KEY,
+   REVERB_*, dll).
+4. Simpan. Setiap `git push` ke `main` selanjutnya akan otomatis membuat
+   `.env` dari secret ini dan mengunggahnya — tidak perlu lagi edit `.env`
+   manual di server.
+
+Jika secret `ENV_PRODUCTION` belum diisi, step "Generate .env for
+deployment" akan gagal dengan pesan error yang jelas dan deploy dibatalkan
+(supaya tidak pernah ada kondisi server kehilangan `.env`-nya).
+
+### Storage Link (folder gambar publik) Otomatis
+Step "Trigger storage:link on server" memanggil route `/sys/link` (lihat
+`routes/web.php`) setiap kali deploy berhasil — ini membuat symlink
+`public_html/storage` -> `storage/app/public` di server, tempat semua
+gambar yang di-upload user tersimpan (avatar, bukti dukung pengaduan, foto
+hero beranda, dokumentasi kegiatan, dll). Sebelumnya ini harus dijalankan
+manual lewat browser setelah tiap deploy; sekarang otomatis, jadi gambar
+yang baru di-upload user selalu langsung bisa diakses tanpa langkah manual
+tambahan.
+
+---
+
+## 3. Artisan Command Runner (`artisan-run.php`)
 
 Alat sementara untuk mengeksekusi artisan command tanpa terminal (seperti `migrate`, `storage:link`, `config:cache`).
 
