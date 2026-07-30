@@ -14,6 +14,13 @@ use DomainException;
  *  - DIAJUKAN        -> DIVERIFIKASI | DITOLAK   (role: kominfo)
  *  - DIVERIFIKASI    -> DIPROSES                  (role: kominfo)
  *  - DIPROSES        -> DITINDAKLANJUTI            (role: opd | camat)
+ *  - DIPROSES        -> DIVERIFIKASI               (role: kominfo) — "batal
+ *    disposisi": Kominfo salah pilih target OPD/Camat, tarik kembali
+ *    supaya bisa didisposisikan ulang. Hanya berlaku selama status masih
+ *    DIPROSES (belum ada laporan penanganan dari OPD/Camat) — begitu
+ *    status berpindah ke DITINDAKLANJUTI transisi ini otomatis tidak lagi
+ *    ada di whitelist, jadi tidak bisa dibatalkan setelah OPD/Camat
+ *    bertindak.
  *  - DITINDAKLANJUTI -> SELESAI                    (role: kominfo)
  *
  * Any other (from, to, role) combination is invalid and throws.
@@ -34,6 +41,7 @@ final class StatusTransitionGuard
         ],
         'diproses' => [
             'ditindaklanjuti' => ['opd', 'camat'],
+            'diverifikasi' => ['kominfo'],
         ],
         'ditindaklanjuti' => [
             'selesai' => ['kominfo'],

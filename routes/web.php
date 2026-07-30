@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\Dashboard\KecamatanManagementController;
 use App\Http\Controllers\Web\Dashboard\LaporanController;
 use App\Http\Controllers\Web\Dashboard\NotificationWebController;
 use App\Http\Controllers\Web\Dashboard\OpdManagementController;
+use App\Http\Controllers\Web\Dashboard\SiteSettingController;
 use App\Http\Controllers\Web\Dashboard\StatisticsController;
 use App\Http\Controllers\Web\Dashboard\UserManagementController;
 use App\Http\Controllers\Web\Dashboard\ComplaintCategoryManagementController;
@@ -116,19 +117,27 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
     // internal role, not just kominfo/opd/camat — Bupati/Wabup/Sekda must
     // be able to view this list too (previously missing, a real RBAC gap
     // vs the PRD matrix). "Input Kegiatan" stays OPD/Camat-only.
-    Route::middleware('role:kominfo|opd|camat|bupati|wakil_bupati|sekda')->group(function () {
-        Route::get('/activities', [ActivityDashboardController::class, 'index']);
-        Route::get('/activities/{activity}', [ActivityDashboardController::class, 'show']);
-    });
-
+    //
+    // IMPORTANT: "/activities/create" MUST be registered before
+    // "/activities/{activity}" — Laravel matches routes in registration
+    // order, so with {activity} first, GET /dashboard/activities/create
+    // was being captured by the show($id) route with $id = "create"
+    // (string), causing a TypeError since show() expects an int. Fixed by
+    // moving the literal "create" route ahead of the wildcard route.
     Route::middleware('role:opd|camat')->group(function () {
         Route::get('/activities/create', [ActivityDashboardController::class, 'create']);
         Route::post('/activities', [ActivityDashboardController::class, 'store']);
     });
 
+    Route::middleware('role:kominfo|opd|camat|bupati|wakil_bupati|sekda')->group(function () {
+        Route::get('/activities', [ActivityDashboardController::class, 'index']);
+        Route::get('/activities/{activity}', [ActivityDashboardController::class, 'show']);
+    });
+
     Route::middleware('role:kominfo')->group(function () {
         Route::post('/complaints/{complaint}/verify', [ComplaintDashboardController::class, 'verify']);
         Route::post('/complaints/{complaint}/dispose', [ComplaintDashboardController::class, 'dispose']);
+        Route::post('/complaints/{complaint}/cancel-disposition', [ComplaintDashboardController::class, 'cancelDisposition']);
         Route::post('/complaints/{complaint}/respond', [ComplaintDashboardController::class, 'respond']);
         Route::post('/activities/{activity}/verify', [ActivityDashboardController::class, 'verify']);
         Route::post('/activities/{activity}/publish', [ActivityDashboardController::class, 'publish']);
@@ -179,6 +188,11 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         Route::get('/categories/{category}/edit', [ComplaintCategoryManagementController::class, 'edit']);
         Route::put('/categories/{category}', [ComplaintCategoryManagementController::class, 'update']);
         Route::delete('/categories/{category}', [ComplaintCategoryManagementController::class, 'destroy']);
+
+        // Pengaturan beranda publik (foto hero/Bupati aktif, dsb).
+        Route::get('/pengaturan', [SiteSettingController::class, 'edit']);
+        Route::put('/pengaturan', [SiteSettingController::class, 'update']);
+        Route::delete('/pengaturan/hero-image', [SiteSettingController::class, 'destroyHeroImage']);
     });
 
     Route::middleware('role:opd|camat')->group(function () {

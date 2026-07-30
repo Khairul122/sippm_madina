@@ -135,6 +135,17 @@ class LaporanController extends Controller
             $query->whereMonth('created_at', (int) $request->integer('bulan'));
         }
 
+        // Pencarian per tanggal spesifik (rentang date_from..date_to),
+        // independen dari hari/bulan/tahun — supaya bisa mencari data pada
+        // tanggal tertentu langsung tanpa menebak kombinasi hari/bulan/tahun.
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date('date_to'));
+        }
+
         if ($request->filled('hari')) {
             // Filter "hari" = hari dalam seminggu (0=Senin..6=Minggu, sama
             // dengan urutan MySQL WEEKDAY()) — independen dari bulan/tahun,
@@ -186,6 +197,14 @@ class LaporanController extends Controller
 
         if ($request->filled('tahun')) {
             $summary['Tahun'] = (string) $request->integer('tahun');
+        }
+
+        if ($request->filled('date_from')) {
+            $summary['Dari Tanggal'] = (string) $request->string('date_from');
+        }
+
+        if ($request->filled('date_to')) {
+            $summary['Sampai Tanggal'] = (string) $request->string('date_to');
         }
 
         if ($request->filled('search')) {

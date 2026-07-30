@@ -75,6 +75,8 @@
                 <a class="nav-link {{ str_starts_with($path,'dashboard/categories') ? 'active' : '' }}" href="{{ url('/dashboard/categories') }}"><i class="bi bi-tags me-2"></i>Kategori Pengaduan</a>
             </div>
         </div>
+
+        <a class="nav-link {{ str_starts_with($path,'dashboard/pengaturan') ? 'active' : '' }}" href="{{ url('/dashboard/pengaturan') }}"><i class="bi bi-image me-2"></i>Pengaturan Beranda</a>
     @endif
 
     @if($user->hasAnyRole(['kominfo','bupati','wakil_bupati','sekda']))

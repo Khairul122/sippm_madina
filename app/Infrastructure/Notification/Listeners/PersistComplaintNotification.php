@@ -7,6 +7,7 @@ namespace App\Infrastructure\Notification\Listeners;
 use App\Domain\Notification\Entities\NotificationMessage;
 use App\Domain\Notification\Repositories\NotificationRepositoryInterface;
 use App\Infrastructure\Broadcasting\Events\ComplaintDisposed;
+use App\Infrastructure\Broadcasting\Events\ComplaintDispositionCancelled;
 use App\Infrastructure\Broadcasting\Events\ComplaintHandled;
 use App\Infrastructure\Broadcasting\Events\ComplaintResolved;
 use App\Infrastructure\Broadcasting\Events\ComplaintSubmitted;
@@ -43,6 +44,22 @@ class PersistComplaintNotification
                     $userId,
                     'Pengaduan baru didisposisikan',
                     "Pengaduan {$event->complaint->ticketNumber} didisposisikan ke unit Anda.",
+                    $event::class,
+                );
+            }
+
+            return;
+        }
+
+        if ($event instanceof ComplaintDispositionCancelled) {
+            $unitColumn = $event->cancelledTargetType->value === 'opd' ? 'opd_id' : 'kecamatan_id';
+            $userIds = User::query()->where($unitColumn, $event->cancelledTargetId)->pluck('id');
+
+            foreach ($userIds as $userId) {
+                $this->store(
+                    $userId,
+                    'Disposisi pengaduan dibatalkan',
+                    "Disposisi pengaduan {$event->complaint->ticketNumber} ke unit Anda telah dibatalkan oleh Kominfo.",
                     $event::class,
                 );
             }
