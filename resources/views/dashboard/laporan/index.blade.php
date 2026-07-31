@@ -19,13 +19,14 @@
     .ttd-jabatan-preview p, #jabatan-editor .ql-editor p {
         margin: 0 !important;
         padding: 0 !important;
-        line-height: 1.3 !important;
+        line-height: 1.35 !important;
+        font-weight: normal !important;
     }
     #jabatan-editor .ql-editor {
-        font-family: 'Times New Roman', Times, serif !important;
+        font-family: Arial, Helvetica, sans-serif !important;
         font-size: 0.95rem !important;
-        font-weight: bold !important;
-        line-height: 1.3 !important;
+        font-weight: normal !important;
+        line-height: 1.35 !important;
         color: #000000 !important;
         white-space: pre-wrap !important;
     }
@@ -571,21 +572,21 @@
                             <div class="card-body d-flex flex-column justify-content-center bg-white p-4" style="background-image: radial-gradient(rgba(22, 52, 92, 0.03) 1px, transparent 1px); background-size: 16px 16px;">
                                 <div class="mx-auto w-100 p-4 border rounded-3" style="max-width: 480px; background-color: #ffffff; box-shadow: var(--sippm-shadow-soft); position: relative;">
                                     
-                                    <div class="ms-auto" style="max-width: 360px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.3;">
+                                    <div class="ms-auto" style="max-width: 360px; text-align: left; font-family: Arial, Helvetica, sans-serif; color: #000; line-height: 1.35;">
                                         <!-- Jabatan Dinas (Render Rich Text HTML) -->
-                                        <div class="fw-bold ttd-jabatan-preview" style="font-size: 0.95rem;" x-html="jabatan || '<div><p>KEPALA DINAS KOMUNIKASI</p><p>Plt. DAN INFORMASI</p><p>KABUPATEN MANDAILING NATAL,</p></div>'"></div>
+                                        <div class="fw-normal ttd-jabatan-preview" style="font-size: 0.95rem;" x-html="jabatan || 'KEPALA DINAS KOMUNIKASI<br>Plt. DAN INFORMASI<br>KABUPATEN MANDAILING NATAL,'"></div>
                                         
-                                        <!-- Area Kosong Tanda Tangan -->
-                                        <div style="height: 60px;"></div>
+                                        <!-- Area Kosong Tanda Tangan (75px) -->
+                                        <div style="height: 75px;"></div>
                                         
-                                        <!-- Nama Pejabat -->
+                                        <!-- Nama Pejabat (Huruf Kapital & Tebal/Bold) -->
                                         <p class="fw-bold text-uppercase mb-0" style="font-size: 1rem;" x-text="nama || 'MUHAMMAD SYAIL LUBIS, ST, M.M.'"></p>
                                         
-                                        <!-- Pangkat / Golongan -->
-                                        <p class="mb-0" style="font-size: 0.9rem;" x-text="pangkat || 'Pembina'"></p>
+                                        <!-- Pangkat / Golongan (Title Case, Not Bold) -->
+                                        <p class="mb-0 fw-normal" style="font-size: 0.9rem;" x-text="pangkat || 'Pembina'"></p>
                                         
-                                        <!-- NIP -->
-                                        <p class="mb-0" style="font-size: 0.95rem;" x-text="'NIP:' + (formattedNip || '19793019 200502 1 002')"></p>
+                                        <!-- NIP (Not Bold, Font Size sama dengan Pangkat) -->
+                                        <p class="mb-0 fw-normal" style="font-size: 0.9rem;" x-text="'NIP:' + (formattedNip || '19793019 200502 1 002')"></p>
                                     </div>
                                 </div>
                             </div>

@@ -83,23 +83,27 @@
             width: 360px;
             float: right;
             text-align: left;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 11px;
-            line-height: 1.3;
+            line-height: 1.35;
+            color: #000000;
         }
         .ttd-block p {
             margin: 0;
+            padding: 0;
         }
         .ttd-space {
-            height: 60px;
+            height: 75px;
         }
         .ttd-jabatan {
-            font-weight: bold;
+            font-weight: normal;
             white-space: pre-wrap;
         }
         .ttd-jabatan p {
             margin: 0;
             padding: 0;
-            line-height: 1.3;
+            line-height: 1.35;
+            font-weight: normal;
         }
         .ttd-jabatan .ql-indent-1 { margin-left: 2em; }
         .ttd-jabatan .ql-indent-2 { margin-left: 4em; }
@@ -115,6 +119,7 @@
         }
         .ttd-nip {
             font-weight: normal;
+            font-size: 11px;
         }
         .clear {
             clear: both;
@@ -192,10 +197,10 @@
         </tbody>
     </table>
 
-    <!-- Blok Tanda Tangan Resmi (Tata Naskah Pemkab Mandailing Natal) -->
+    <!-- Blok Tanda Tangan Resmi (Sesuai Referensi Lampiran 2) -->
     <div class="ttd-wrap">
         <div class="ttd-block">
-            <div class="ttd-jabatan">{!! $ttd?->jabatan_penandatangan ?? "<p>KEPALA DINAS KOMUNIKASI</p><p>Plt. DAN INFORMASI</p><p>KABUPATEN MANDAILING NATAL,</p>" !!}</div>
+            <div class="ttd-jabatan">{!! $ttd?->jabatan_penandatangan ?? "KEPALA DINAS KOMUNIKASI<br>Plt. DAN INFORMASI<br>KABUPATEN MANDAILING NATAL," !!}</div>
             <div class="ttd-space"></div>
             
             <p class="ttd-name">{{ $ttd?->nama_penandatangan ?? 'MUHAMMAD SYAIL LUBIS, ST, M.M.' }}</p>
