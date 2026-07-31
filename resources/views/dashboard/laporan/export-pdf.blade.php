@@ -95,6 +95,11 @@
         .ttd-jabatan {
             font-weight: bold;
         }
+        .ttd-jabatan p {
+            margin: 0;
+            padding: 0;
+            line-height: 1.3;
+        }
         .ttd-name {
             font-weight: bold;
             text-transform: uppercase;
@@ -184,7 +189,7 @@
     <!-- Blok Tanda Tangan Resmi (Tata Naskah Pemkab Mandailing Natal) -->
     <div class="ttd-wrap">
         <div class="ttd-block">
-            <div class="ttd-jabatan">{!! nl2br(e($ttd?->jabatan_penandatangan ?? "KEPALA DINAS KOMUNIKASI\nPlt. DAN INFORMASI\nKABUPATEN MANDAILING NATAL,")) !!}</div>
+            <div class="ttd-jabatan">{!! $ttd?->jabatan_penandatangan ?? "<p><b>KEPALA DINAS KOMUNIKASI</b></p><p><b>Plt. DAN INFORMASI</b></p><p><b>KABUPATEN MANDAILING NATAL,</b></p>" !!}</div>
             <div class="ttd-space"></div>
             
             <p class="ttd-name">{{ $ttd?->nama_penandatangan ?? 'MUHAMMAD SYAIL LUBIS, ST, M.M.' }}</p>
