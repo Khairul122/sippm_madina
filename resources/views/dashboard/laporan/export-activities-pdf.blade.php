@@ -92,12 +92,18 @@
         }
         .ttd-jabatan {
             font-weight: bold;
+            white-space: pre-wrap;
         }
         .ttd-jabatan p {
             margin: 0;
             padding: 0;
             line-height: 1.3;
         }
+        .ttd-jabatan .ql-indent-1 { margin-left: 2em; }
+        .ttd-jabatan .ql-indent-2 { margin-left: 4em; }
+        .ttd-jabatan .ql-indent-3 { margin-left: 6em; }
+        .ttd-jabatan .ql-align-center { text-align: center; }
+        .ttd-jabatan .ql-align-right { text-align: right; }
         .ttd-name {
             font-weight: bold;
             text-transform: uppercase;

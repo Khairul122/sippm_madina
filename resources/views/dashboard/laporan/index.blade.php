@@ -13,6 +13,19 @@
     #laporanTabs .nav-link:hover:not(.active) {
         background-color: rgba(22, 52, 92, 0.05);
     }
+    .ttd-jabatan-preview {
+        white-space: pre-wrap;
+    }
+    .ttd-jabatan-preview p {
+        margin: 0;
+        padding: 0;
+        line-height: 1.3;
+    }
+    .ttd-jabatan-preview .ql-indent-1 { margin-left: 2em; }
+    .ttd-jabatan-preview .ql-indent-2 { margin-left: 4em; }
+    .ttd-jabatan-preview .ql-indent-3 { margin-left: 6em; }
+    .ttd-jabatan-preview .ql-align-center { text-align: center; }
+    .ttd-jabatan-preview .ql-align-right { text-align: right; }
 </style>
 @endpush
 
@@ -552,7 +565,7 @@
                                     
                                     <div class="ms-auto" style="max-width: 320px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.3;">
                                         <!-- Jabatan Dinas (Render Rich Text HTML) -->
-                                        <div class="fw-bold" style="font-size: 0.95rem;" x-html="jabatan || '<div><p><b>KEPALA DINAS KOMUNIKASI</b></p><p><b>Plt. DAN INFORMASI</b></p><p><b>KABUPATEN MANDAILING NATAL,</b></p></div>'"></div>
+                                        <div class="fw-bold ttd-jabatan-preview" style="font-size: 0.95rem;" x-html="jabatan || '<div><p><b>KEPALA DINAS KOMUNIKASI</b></p><p><b>Plt. DAN INFORMASI</b></p><p><b>KABUPATEN MANDAILING NATAL,</b></p></div>'"></div>
                                         
                                         <!-- Area Kosong Tanda Tangan -->
                                         <div style="height: 60px;"></div>
@@ -590,6 +603,7 @@ document.addEventListener('DOMContentLoaded', function () {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline'],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
                     [{ 'align': [] }],
                     [{ 'header': [1, 2, 3, false] }],
                     ['clean']
