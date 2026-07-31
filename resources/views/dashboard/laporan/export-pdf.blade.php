@@ -131,19 +131,20 @@
     <div class="footer">
         Dicetak: {{ $generatedAt->translatedFormat('d F Y, H:i') }} WIB &middot; Total data: {{ $complaints->count() }}
     </div>
-    <!-- Kop Surat Resmi (Centered, Double Border with Logo) -->
+    <!-- Kop Surat Resmi (Symmetrical 3-Column: Logo 12% - Text 76% - Spacer 12%) -->
     <table class="kop-table">
         <tr>
-            <td style="width: 12%; text-align: center;">
-                <img src="{{ public_path('images/logo-madina.png') }}" style="height: 70px; width: auto;">
+            <td style="width: 12%; text-align: center; vertical-align: middle;">
+                <img src="{{ public_path('images/logo-madina.png') }}" style="height: 72px; width: auto;">
             </td>
-            <td style="width: 88%; text-align: center; padding-right: 50px;">
-                <h3 style="margin: 0; font-size: 14pt; font-weight: normal; text-transform: uppercase;">PEMERINTAH KABUPATEN MANDAILING NATAL</h3>
-                <h2 style="margin: 2px 0 0; font-size: 18pt; font-weight: bold; text-transform: uppercase;">DINAS KOMUNIKASI DAN INFORMATIKA</h2>
+            <td style="width: 76%; text-align: center; vertical-align: middle;">
+                <h3 style="margin: 0; font-size: 13pt; font-weight: normal; text-transform: uppercase;">PEMERINTAH KABUPATEN MANDAILING NATAL</h3>
+                <h2 style="margin: 2px 0 0; font-size: 16pt; font-weight: bold; text-transform: uppercase;">DINAS KOMUNIKASI DAN INFORMATIKA</h2>
                 <p style="margin: 2px 0 0; font-size: 8pt; font-style: italic;">KOMPLEK PERKANTORAN PAYALOTING, PANYABUNGAN SUMATERA UTARA, KODE POS 22978</p>
                 <p style="margin: 1px 0 0; font-size: 8pt;">Telp. (0636) 326255, 326258 Fax: (0636) 326254</p>
                 <p style="margin: 1px 0 0; font-size: 8pt;">E-mail : diskominfo@madina.go.id &nbsp;&nbsp;&nbsp;&nbsp; Website : www.diskominfo.madina.go.id</p>
             </td>
+            <td style="width: 12%;"></td>
         </tr>
     </table>
     <div class="kop-line"></div>
