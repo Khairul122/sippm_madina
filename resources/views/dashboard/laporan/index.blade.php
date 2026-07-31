@@ -517,6 +517,25 @@
                         }
                         return digits.slice(0, 8) + ' ' + digits.slice(8, 14) + ' ' + digits.slice(14, 15) + ' ' + digits.slice(15, 18);
                     },
+                    get parsedJabatanRows() {
+                        const raw = this.jabatan || 'KEPALA DINAS KOMUNIKASI\nPlt. DAN INFORMASI\nKABUPATEN MANDAILING NATAL,';
+                        const clean = raw.replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n').replace(/<[^>]+>/g, '');
+                        const lines = clean.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                        if (!lines.length) {
+                            return [
+                                { prefix: '', content: 'KEPALA DINAS KOMUNIKASI' },
+                                { prefix: 'Plt.', content: 'DAN INFORMASI' },
+                                { prefix: '', content: 'KABUPATEN MANDAILING NATAL,' }
+                            ];
+                        }
+                        return lines.map(line => {
+                            const match = line.match(/^(Plt\.|Plh\.|Pj\.)\s*(.*)$/i);
+                            if (match) {
+                                return { prefix: match[1], content: match[2] };
+                            }
+                            return { prefix: '', content: line };
+                        });
+                    },
                 }">
                 <div class="row g-4">
                     <!-- Kolom Kiri: Form Pengisian -->
@@ -573,20 +592,30 @@
                                 <div class="mx-auto w-100 p-4 border rounded-3" style="max-width: 480px; background-color: #ffffff; box-shadow: var(--sippm-shadow-soft); position: relative;">
                                     
                                     <div class="ms-auto" style="max-width: 360px; text-align: left; font-family: Arial, Helvetica, sans-serif; color: #000; line-height: 1.35;">
-                                        <!-- Jabatan Dinas (Render Rich Text HTML) -->
-                                        <div class="fw-normal ttd-jabatan-preview" style="font-size: 0.95rem;" x-html="jabatan || 'KEPALA DINAS KOMUNIKASI<br>Plt. DAN INFORMASI<br>KABUPATEN MANDAILING NATAL,'"></div>
-                                        
-                                        <!-- Area Kosong Tanda Tangan (75px) -->
-                                        <div style="height: 75px;"></div>
-                                        
-                                        <!-- Nama Pejabat (Huruf Kapital & Tebal/Bold) -->
-                                        <p class="fw-bold text-uppercase mb-0" style="font-size: 1rem;" x-text="nama || 'MUHAMMAD SYAIL LUBIS, ST, M.M.'"></p>
-                                        
-                                        <!-- Pangkat / Golongan (Title Case, Not Bold) -->
-                                        <p class="mb-0 fw-normal" style="font-size: 0.9rem;" x-text="pangkat || 'Pembina'"></p>
-                                        
-                                        <!-- NIP (Not Bold, Font Size sama dengan Pangkat) -->
-                                        <p class="mb-0 fw-normal" style="font-size: 0.9rem;" x-text="'NIP:' + (formattedNip || '19793019 200502 1 002')"></p>
+                                        <!-- Jabatan Dinas (Render Hanging Indent Table) -->
+                                        <table style="width: 100%; border-collapse: collapse; border: none; font-family: Arial, Helvetica, sans-serif; font-size: 0.95rem; line-height: 1.35; color: #000;">
+                                            <template x-for="(row, index) in parsedJabatanRows" :key="index">
+                                                <tr>
+                                                    <td style="width: 38px; vertical-align: top; white-space: nowrap; padding: 0; font-weight: normal;" x-text="row.prefix"></td>
+                                                    <td style="vertical-align: top; padding: 0; font-weight: normal;" x-text="row.content"></td>
+                                                </tr>
+                                            </template>
+                                            <tr>
+                                                <td colspan="2" style="height: 75px; padding: 0;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 38px; padding: 0;"></td>
+                                                <td style="vertical-align: top; padding: 0; font-weight: bold; text-transform: uppercase; font-size: 1rem;" x-text="nama || 'MUHAMMAD SYAIL LUBIS, ST, M.M.'"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 38px; padding: 0;"></td>
+                                                <td style="vertical-align: top; padding: 0; font-weight: normal; font-size: 0.9rem;" x-text="pangkat || 'Pembina'"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width: 38px; padding: 0;"></td>
+                                                <td style="vertical-align: top; padding: 0; font-weight: normal; font-size: 0.9rem;" x-text="'NIP:' + (formattedNip || '19793019 200502 1 002')"></td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

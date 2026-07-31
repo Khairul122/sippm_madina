@@ -199,14 +199,16 @@
 
     <!-- Blok Tanda Tangan Resmi (Sesuai Referensi Lampiran 2) -->
     <div class="ttd-wrap">
-        <div class="ttd-block">
-            <div class="ttd-jabatan">{!! $ttd?->jabatan_penandatangan ?? "KEPALA DINAS KOMUNIKASI<br>Plt. DAN INFORMASI<br>KABUPATEN MANDAILING NATAL," !!}</div>
-            <div class="ttd-space"></div>
-            
-            <p class="ttd-name">{{ $ttd?->nama_penandatangan ?? 'MUHAMMAD SYAIL LUBIS, ST, M.M.' }}</p>
-            <p class="ttd-pangkat">{{ $ttd?->pangkat ?? 'Pembina' }}</p>
-            
+        <div style="width: 360px; float: right;">
             @php
+                $rawJabatan = $ttd?->jabatan_penandatangan ?? "KEPALA DINAS KOMUNIKASI\nPlt. DAN INFORMASI\nKABUPATEN MANDAILING NATAL,";
+                $cleanText = str_replace(['<br>', '<br/>', '<br />', '</p>', '</div>'], "\n", $rawJabatan);
+                $cleanText = strip_tags($cleanText);
+                $lines = array_values(array_filter(array_map('trim', explode("\n", $cleanText))));
+                if (empty($lines)) {
+                    $lines = ['KEPALA DINAS KOMUNIKASI', 'Plt. DAN INFORMASI', 'KABUPATEN MANDAILING NATAL,'];
+                }
+
                 $rawNip = str_replace([' ', '.', ':'], '', $ttd?->nip ?? '197930192005021002');
                 if (strlen($rawNip) === 18) {
                     $formattedNip = substr($rawNip, 0, 8) . ' ' . substr($rawNip, 8, 6) . ' ' . substr($rawNip, 14, 1) . ' ' . substr($rawNip, 15, 3);
@@ -214,7 +216,38 @@
                     $formattedNip = $ttd?->nip ?? '19793019 200502 1 002';
                 }
             @endphp
-            <p class="ttd-nip">NIP:{{ $formattedNip }}</p>
+
+            <table style="width: 100%; border-collapse: collapse; border: none; font-family: Arial, Helvetica, sans-serif; font-size: 11px; line-height: 1.35; color: #000000;">
+                @foreach($lines as $line)
+                    @php
+                        $prefix = '';
+                        $content = $line;
+                        if (preg_match('/^(Plt\.|Plh\.|Pj\.)\s*(.*)$/i', $line, $matches)) {
+                            $prefix = $matches[1];
+                            $content = $matches[2];
+                        }
+                    @endphp
+                    <tr>
+                        <td style="width: 38px; vertical-align: top; white-space: nowrap; padding: 0; font-weight: normal;">{{ $prefix }}</td>
+                        <td style="vertical-align: top; padding: 0; font-weight: normal;">{{ $content }}</td>
+                    </tr>
+                @endforeach
+                <tr>
+                    <td colspan="2" style="height: 75px; padding: 0;"></td>
+                </tr>
+                <tr>
+                    <td style="width: 38px; padding: 0;"></td>
+                    <td style="vertical-align: top; padding: 0; font-weight: bold; text-transform: uppercase; font-size: 11px;">{{ $ttd?->nama_penandatangan ?? 'MUHAMMAD SYAIL LUBIS, ST, M.M.' }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 38px; padding: 0;"></td>
+                    <td style="vertical-align: top; padding: 0; font-weight: normal;">{{ $ttd?->pangkat ?? 'Pembina' }}</td>
+                </tr>
+                <tr>
+                    <td style="width: 38px; padding: 0;"></td>
+                    <td style="vertical-align: top; padding: 0; font-weight: normal;">NIP:{{ $formattedNip }}</td>
+                </tr>
+            </table>
         </div>
         <div class="clear"></div>
     </div>
