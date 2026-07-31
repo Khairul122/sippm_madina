@@ -182,7 +182,7 @@
     <!-- Blok Tanda Tangan Resmi (Tata Naskah Pemkab Mandailing Natal) -->
     <div class="ttd-wrap">
         <div class="ttd-block">
-            <div class="ttd-jabatan">{!! $ttd?->jabatan_penandatangan ?? "<p><b>KEPALA DINAS KOMUNIKASI</b></p><p><b>Plt. DAN INFORMASI</b></p><p><b>KABUPATEN MANDAILING NATAL,</b></p>" !!}</div>
+            <div class="ttd-jabatan">{!! $ttd?->jabatan_penandatangan ?? "<p>KEPALA DINAS KOMUNIKASI</p><p>Plt. DAN INFORMASI</p><p>KABUPATEN MANDAILING NATAL,</p>" !!}</div>
             <div class="ttd-space"></div>
             
             <p class="ttd-name">{{ $ttd?->nama_penandatangan ?? 'MUHAMMAD SYAIL LUBIS, ST, M.M.' }}</p>
