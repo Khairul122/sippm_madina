@@ -518,7 +518,7 @@
                                     <div id="jabatan-editor" style="min-height: 130px;" class="bg-white rounded border shadow-sm"></div>
                                     <textarea name="jabatan_penandatangan" id="jabatan_penandatangan_input" class="d-none" x-model="jabatan" required></textarea>
                                     <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Gunakan toolbar Text Editor di atas untuk mengatur teks tebal/miring, perataan, dan susunan baris TTD secara leluasa.</small>
-                                    @error('jabatan_penandatangan')<div class="text-danger small mt-1">{{ $message }}</div>@error
+                                    @error('jabatan_penandatangan')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label text-sippm fw-semibold small">Pangkat / Golongan</label>
