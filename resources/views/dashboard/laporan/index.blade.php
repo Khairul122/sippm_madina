@@ -509,22 +509,23 @@
                                 @csrf
                                 <div class="mb-3">
                                     <label class="form-label text-sippm fw-semibold small">Nama Penandatangan</label>
-                                    <input type="text" name="nama_penandatangan" class="form-control bg-white shadow-sm" x-model="nama" required placeholder="Contoh: Drs. H. Dahlan Hasan Nasution">
+                                    <input type="text" name="nama_penandatangan" class="form-control bg-white shadow-sm" x-model="nama" required placeholder="Contoh: MUHAMMAD SYAIL LUBIS, ST, M.M.">
                                     @error('nama_penandatangan')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label text-sippm fw-semibold small">Jabatan Dinas</label>
-                                    <input type="text" name="jabatan_penandatangan" class="form-control bg-white shadow-sm" x-model="jabatan" required placeholder="Contoh: KEPALA DINAS KOMUNIKASI DAN INFORMATIKA">
+                                    <textarea name="jabatan_penandatangan" class="form-control bg-white shadow-sm" x-model="jabatan" rows="2" required placeholder="Contoh: KEPALA DINAS KOMUNIKASI&#10;Plt. DAN INFORMASI"></textarea>
+                                    <small class="text-muted" style="font-size: 0.75rem;">Tekan Enter jika ingin membagi nama jabatan menjadi 2 baris.</small>
                                     @error('jabatan_penandatangan')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label text-sippm fw-semibold small">Pangkat / Golongan</label>
-                                    <input type="text" name="pangkat" class="form-control bg-white shadow-sm" x-model="pangkat" placeholder="Contoh: Pembina Tk. I (IV/b)">
+                                    <input type="text" name="pangkat" class="form-control bg-white shadow-sm" x-model="pangkat" placeholder="Contoh: Pembina">
                                     @error('pangkat')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label text-sippm fw-semibold small">NIP</label>
-                                    <input type="text" name="nip" class="form-control bg-white shadow-sm" inputmode="numeric" x-model="nip" required placeholder="Contoh: 197208151998031003">
+                                    <input type="text" name="nip" class="form-control bg-white shadow-sm" inputmode="numeric" x-model="nip" required placeholder="Contoh: 197930192005021002">
                                     @error('nip')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <button type="submit" class="btn btn-sippm w-100 py-2.5 mt-2 d-flex align-items-center justify-content-center gap-2" style="background-color: var(--sippm-navy); border-color: var(--sippm-navy);">
@@ -541,30 +542,31 @@
                             <div class="card-header bg-light py-3 d-flex align-items-center justify-content-between" style="border-bottom: 1px solid var(--sippm-border);">
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="bi bi-eye-fill text-sippm"></i>
-                                    <span class="fw-semibold text-sippm">Preview TTD</span>
+                                    <span class="fw-semibold text-sippm">Preview TTD Tata Naskah</span>
                                 </div>
                             </div>
                             <div class="card-body d-flex flex-column justify-content-center bg-white p-4" style="background-image: radial-gradient(rgba(22, 52, 92, 0.03) 1px, transparent 1px); background-size: 16px 16px;">
                                 <div class="mx-auto w-100 p-4 border rounded-3" style="max-width: 480px; background-color: #ffffff; box-shadow: var(--sippm-shadow-soft); position: relative;">
                                     
-                                    <div class="ms-auto" style="max-width: 320px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.5;">
+                                    <div class="ms-auto" style="max-width: 320px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.35;">
                                         <!-- Tempat & Tanggal -->
-                                        <p class="fst-italic mb-3" style="font-size: 1rem;">Panyabungan, {{ now()->translatedFormat('F Y') }}</p>
+                                        <p class="mb-1" style="font-size: 0.95rem;">Panyabungan, {{ now()->translatedFormat('d F Y') }}</p>
                                         
                                         <!-- Jabatan Dinas -->
-                                        <p class="fw-bold text-uppercase mb-0" style="font-size: 0.95rem; min-height: 2.8em;" x-text="jabatan || 'JABATAN DINAS PENANDATANGAN'"></p>
+                                        <div class="fw-bold text-uppercase" style="font-size: 0.95rem; white-space: pre-line;" x-text="jabatan || 'KEPALA DINAS KOMUNIKASI\nPlt. DAN INFORMASI'"></div>
+                                        <div class="fw-bold text-uppercase mb-0" style="font-size: 0.95rem;">KABUPATEN MANDAILING NATAL,</div>
                                         
                                         <!-- Area Kosong Tanda Tangan -->
-                                        <div style="height: 80px;"></div>
+                                        <div style="height: 65px;"></div>
                                         
                                         <!-- Nama Pejabat -->
-                                        <p class="fw-bold text-uppercase mb-1" style="font-size: 1rem;" x-text="nama || 'NAMA PEJABAT PENANDATANGAN'"></p>
+                                        <p class="fw-bold text-uppercase mb-0" style="font-size: 1rem;" x-text="nama || 'MUHAMMAD SYAIL LUBIS, ST, M.M.'"></p>
                                         
                                         <!-- Pangkat / Golongan -->
-                                        <p class="fst-italic mb-1" style="font-size: 0.9rem;" x-text="pangkat || 'Pangkat / Golongan'"></p>
+                                        <p class="mb-0" style="font-size: 0.9rem;" x-text="pangkat || 'Pembina'"></p>
                                         
                                         <!-- NIP -->
-                                        <p class="mb-0" style="font-size: 0.95rem;" x-text="'NIP. ' + (formattedNip || 'NIP PEJABAT')"></p>
+                                        <p class="mb-0" style="font-size: 0.95rem;" x-text="'NIP:' + (formattedNip || '19793019 200502 1 002')"></p>
                                     </div>
                                 </div>
                             </div>
