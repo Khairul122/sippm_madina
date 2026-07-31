@@ -481,7 +481,7 @@
         </div>
 
         @if($user->hasRole('kominfo'))
-        <!-- Tab 2: Pengaturan TTD (Side-by-Side Layout) -->
+        <!-- Tab 2: Pengaturan TTD (Side-by-Side Layout dengan Rich Text Editor) -->
         <div class="tab-pane fade" id="ttd-tab-pane" role="tabpanel" aria-labelledby="ttd-tab" tabindex="0">
             <div x-data="{
                     nama: @js(old('nama_penandatangan', $ttd?->nama_penandatangan ?? '')),
@@ -505,7 +505,7 @@
                                 Konfigurasi Penandatangan
                             </h5>
                             
-                            <form method="post" action="{{ url('/dashboard/laporan/ttd') }}">
+                            <form method="post" action="{{ url('/dashboard/laporan/ttd') }}" id="form-ttd">
                                 @csrf
                                 <div class="mb-3">
                                     <label class="form-label text-sippm fw-semibold small">Nama Penandatangan</label>
@@ -513,10 +513,12 @@
                                     @error('nama_penandatangan')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-sippm fw-semibold small">Jabatan Dinas</label>
-                                    <textarea name="jabatan_penandatangan" class="form-control bg-white shadow-sm" x-model="jabatan" rows="2" required placeholder="Contoh: KEPALA DINAS KOMUNIKASI&#10;Plt. DAN INFORMASI"></textarea>
-                                    <small class="text-muted" style="font-size: 0.75rem;">Tekan Enter jika ingin membagi nama jabatan menjadi 2 baris.</small>
-                                    @error('jabatan_penandatangan')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                    <label class="form-label text-sippm fw-semibold small">Jabatan Dinas (Text Editor Layout TTD)</label>
+                                    <!-- Container Rich Text Editor Quill -->
+                                    <div id="jabatan-editor" style="min-height: 130px;" class="bg-white rounded border shadow-sm"></div>
+                                    <textarea name="jabatan_penandatangan" id="jabatan_penandatangan_input" class="d-none" x-model="jabatan" required></textarea>
+                                    <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Gunakan toolbar Text Editor di atas untuk mengatur teks tebal/miring, perataan, dan susunan baris TTD secara leluasa.</small>
+                                    @error('jabatan_penandatangan')<div class="text-danger small mt-1">{{ $message }}</div>@error
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label text-sippm fw-semibold small">Pangkat / Golongan</label>
@@ -549,8 +551,8 @@
                                 <div class="mx-auto w-100 p-4 border rounded-3" style="max-width: 480px; background-color: #ffffff; box-shadow: var(--sippm-shadow-soft); position: relative;">
                                     
                                     <div class="ms-auto" style="max-width: 320px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.3;">
-                                        <!-- Jabatan Dinas -->
-                                        <div class="fw-bold" style="font-size: 0.95rem; white-space: pre-line;" x-text="jabatan || 'KEPALA DINAS KOMUNIKASI\nPlt. DAN INFORMASI\nKABUPATEN MANDAILING NATAL,'"></div>
+                                        <!-- Jabatan Dinas (Render Rich Text HTML) -->
+                                        <div class="fw-bold" style="font-size: 0.95rem;" x-html="jabatan || '<div><p><b>KEPALA DINAS KOMUNIKASI</b></p><p><b>Plt. DAN INFORMASI</b></p><p><b>KABUPATEN MANDAILING NATAL,</b></p></div>'"></div>
                                         
                                         <!-- Area Kosong Tanda Tangan -->
                                         <div style="height: 60px;"></div>
@@ -574,4 +576,40 @@
         @endif
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const jabatanInput = document.getElementById('jabatan_penandatangan_input');
+    const container = document.getElementById('jabatan-editor');
+
+    if (container && typeof Quill !== 'undefined') {
+        const quillJabatan = new Quill('#jabatan-editor', {
+            theme: 'snow',
+            placeholder: 'Ketik susunan jabatan dinas di sini...',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'align': [] }],
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['clean']
+                ]
+            }
+        });
+
+        if (jabatanInput && jabatanInput.value) {
+            quillJabatan.root.innerHTML = jabatanInput.value;
+        }
+
+        quillJabatan.on('text-change', function () {
+            const html = quillJabatan.root.innerHTML;
+            if (jabatanInput) {
+                jabatanInput.value = html;
+                jabatanInput.dispatchEvent(new Event('input'));
+            }
+        });
+    }
+});
+</script>
+@endpush
 @endsection

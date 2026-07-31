@@ -20,7 +20,7 @@ class UpdateTtdRequest extends FormRequest
     {
         return [
             'nama_penandatangan' => ['required', 'string', 'max:255'],
-            'jabatan_penandatangan' => ['required', 'string', 'max:255'],
+            'jabatan_penandatangan' => ['required', 'string', 'max:2000'],
             'pangkat' => ['nullable', 'string', 'max:255'],
             'nip' => ['required', 'string', 'max:50'],
         ];
