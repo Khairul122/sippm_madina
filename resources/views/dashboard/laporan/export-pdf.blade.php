@@ -77,38 +77,33 @@
         }
         .ttd-wrap {
             width: 100%;
-            margin-top: 15px;
+            margin-top: 20px;
         }
         .ttd-block {
             width: 320px;
             float: right;
             text-align: left;
             font-size: 11px;
-            line-height: 1.35;
+            line-height: 1.3;
         }
         .ttd-block p {
             margin: 0;
         }
         .ttd-space {
-            height: 65px;
+            height: 60px;
         }
         .ttd-jabatan {
             font-weight: bold;
-            text-transform: uppercase;
-        }
-        .ttd-kab {
-            font-weight: bold;
-            text-transform: uppercase;
         }
         .ttd-name {
             font-weight: bold;
             text-transform: uppercase;
         }
         .ttd-pangkat {
-            /* Title case */
+            font-weight: normal;
         }
         .ttd-nip {
-            font-size: 11px;
+            font-weight: normal;
         }
         .clear {
             clear: both;
@@ -189,17 +184,11 @@
     <!-- Blok Tanda Tangan Resmi (Tata Naskah Pemkab Mandailing Natal) -->
     <div class="ttd-wrap">
         <div class="ttd-block">
-            <p style="margin-bottom: 2px;">Panyabungan, {{ $generatedAt->translatedFormat('d F Y') }}</p>
-            <div class="ttd-jabatan">{!! nl2br(e($ttd?->jabatan_penandatangan ?? "KEPALA DINAS KOMUNIKASI\nPlt. DAN INFORMASI")) !!}</div>
-            <p class="ttd-kab">KABUPATEN MANDAILING NATAL,</p>
+            <div class="ttd-jabatan">{!! nl2br(e($ttd?->jabatan_penandatangan ?? "KEPALA DINAS KOMUNIKASI\nPlt. DAN INFORMASI\nKABUPATEN MANDAILING NATAL,")) !!}</div>
             <div class="ttd-space"></div>
             
             <p class="ttd-name">{{ $ttd?->nama_penandatangan ?? 'MUHAMMAD SYAIL LUBIS, ST, M.M.' }}</p>
-            @if($ttd?->pangkat)
-                <p class="ttd-pangkat">{{ $ttd->pangkat }}</p>
-            @else
-                <p class="ttd-pangkat">Pembina</p>
-            @endif
+            <p class="ttd-pangkat">{{ $ttd?->pangkat ?? 'Pembina' }}</p>
             
             @php
                 $rawNip = str_replace([' ', '.', ':'], '', $ttd?->nip ?? '197930192005021002');
