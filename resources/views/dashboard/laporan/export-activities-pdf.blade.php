@@ -78,7 +78,7 @@
             margin-top: 20px;
         }
         .ttd-block {
-            width: 320px;
+            width: 360px;
             float: right;
             text-align: left;
             font-size: 11px;
