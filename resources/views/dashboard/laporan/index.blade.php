@@ -548,16 +548,12 @@
                             <div class="card-body d-flex flex-column justify-content-center bg-white p-4" style="background-image: radial-gradient(rgba(22, 52, 92, 0.03) 1px, transparent 1px); background-size: 16px 16px;">
                                 <div class="mx-auto w-100 p-4 border rounded-3" style="max-width: 480px; background-color: #ffffff; box-shadow: var(--sippm-shadow-soft); position: relative;">
                                     
-                                    <div class="ms-auto" style="max-width: 320px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.35;">
-                                        <!-- Tempat & Tanggal -->
-                                        <p class="mb-1" style="font-size: 0.95rem;">Panyabungan, {{ now()->translatedFormat('d F Y') }}</p>
-                                        
+                                    <div class="ms-auto" style="max-width: 320px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.3;">
                                         <!-- Jabatan Dinas -->
-                                        <div class="fw-bold text-uppercase" style="font-size: 0.95rem; white-space: pre-line;" x-text="jabatan || 'KEPALA DINAS KOMUNIKASI\nPlt. DAN INFORMASI'"></div>
-                                        <div class="fw-bold text-uppercase mb-0" style="font-size: 0.95rem;">KABUPATEN MANDAILING NATAL,</div>
+                                        <div class="fw-bold" style="font-size: 0.95rem; white-space: pre-line;" x-text="jabatan || 'KEPALA DINAS KOMUNIKASI\nPlt. DAN INFORMASI\nKABUPATEN MANDAILING NATAL,'"></div>
                                         
                                         <!-- Area Kosong Tanda Tangan -->
-                                        <div style="height: 65px;"></div>
+                                        <div style="height: 60px;"></div>
                                         
                                         <!-- Nama Pejabat -->
                                         <p class="fw-bold text-uppercase mb-0" style="font-size: 1rem;" x-text="nama || 'MUHAMMAD SYAIL LUBIS, ST, M.M.'"></p>
