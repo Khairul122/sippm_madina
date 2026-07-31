@@ -135,8 +135,12 @@
     <table class="kop-table">
         <tr>
             <td style="width: 12%; text-align: center; vertical-align: middle;">
-                @if(file_exists(public_path('images/logo-madina.png')))
-                    <img src="{{ public_path('images/logo-madina.png') }}" alt="Logo Pemerintah Kabupaten Mandailing Natal" style="height: 72px; width: auto; max-width: 100%; object-fit: contain;">
+                @php
+                    $logoPath = public_path('images/logo-madina.png');
+                    $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath)) : null;
+                @endphp
+                @if($logoBase64)
+                    <img src="{{ $logoBase64 }}" alt="Logo Pemerintah Kabupaten Mandailing Natal" style="height: 72px; width: auto; max-width: 100%;">
                 @else
                     <div style="width: 60px; height: 72px; border: 1px dashed #999; margin: 0 auto; line-height: 72px; text-align: center; font-size: 8pt; color: #666;">[Logo]</div>
                 @endif
