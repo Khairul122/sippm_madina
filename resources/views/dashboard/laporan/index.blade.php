@@ -573,7 +573,7 @@
                                     
                                     <div class="ms-auto" style="max-width: 360px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.3;">
                                         <!-- Jabatan Dinas (Render Rich Text HTML) -->
-                                        <div class="fw-bold ttd-jabatan-preview" style="font-size: 0.95rem;" x-html="jabatan || '<div><p><b>KEPALA DINAS KOMUNIKASI</b></p><p><b>Plt. DAN INFORMASI</b></p><p><b>KABUPATEN MANDAILING NATAL,</b></p></div>'"></div>
+                                        <div class="fw-bold ttd-jabatan-preview" style="font-size: 0.95rem;" x-html="jabatan || '<div><p>KEPALA DINAS KOMUNIKASI</p><p>Plt. DAN INFORMASI</p><p>KABUPATEN MANDAILING NATAL,</p></div>'"></div>
                                         
                                         <!-- Area Kosong Tanda Tangan -->
                                         <div style="height: 60px;"></div>
