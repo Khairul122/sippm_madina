@@ -16,16 +16,24 @@
     .ttd-jabatan-preview {
         white-space: pre-wrap;
     }
-    .ttd-jabatan-preview p {
-        margin: 0;
-        padding: 0;
-        line-height: 1.3;
+    .ttd-jabatan-preview p, #jabatan-editor .ql-editor p {
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.3 !important;
     }
-    .ttd-jabatan-preview .ql-indent-1 { margin-left: 2em; }
-    .ttd-jabatan-preview .ql-indent-2 { margin-left: 4em; }
-    .ttd-jabatan-preview .ql-indent-3 { margin-left: 6em; }
-    .ttd-jabatan-preview .ql-align-center { text-align: center; }
-    .ttd-jabatan-preview .ql-align-right { text-align: right; }
+    #jabatan-editor .ql-editor {
+        font-family: 'Times New Roman', Times, serif !important;
+        font-size: 0.95rem !important;
+        font-weight: bold !important;
+        line-height: 1.3 !important;
+        color: #000000 !important;
+        white-space: pre-wrap !important;
+    }
+    .ttd-jabatan-preview .ql-indent-1, #jabatan-editor .ql-editor .ql-indent-1 { margin-left: 2em; }
+    .ttd-jabatan-preview .ql-indent-2, #jabatan-editor .ql-editor .ql-indent-2 { margin-left: 4em; }
+    .ttd-jabatan-preview .ql-indent-3, #jabatan-editor .ql-editor .ql-indent-3 { margin-left: 6em; }
+    .ttd-jabatan-preview .ql-align-center, #jabatan-editor .ql-editor .ql-align-center { text-align: center; }
+    .ttd-jabatan-preview .ql-align-right, #jabatan-editor .ql-editor .ql-align-right { text-align: right; }
 </style>
 @endpush
 
@@ -563,7 +571,7 @@
                             <div class="card-body d-flex flex-column justify-content-center bg-white p-4" style="background-image: radial-gradient(rgba(22, 52, 92, 0.03) 1px, transparent 1px); background-size: 16px 16px;">
                                 <div class="mx-auto w-100 p-4 border rounded-3" style="max-width: 480px; background-color: #ffffff; box-shadow: var(--sippm-shadow-soft); position: relative;">
                                     
-                                    <div class="ms-auto" style="max-width: 320px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.3;">
+                                    <div class="ms-auto" style="max-width: 360px; text-align: left; font-family: 'Times New Roman', Times, serif; color: #000; line-height: 1.3;">
                                         <!-- Jabatan Dinas (Render Rich Text HTML) -->
                                         <div class="fw-bold ttd-jabatan-preview" style="font-size: 0.95rem;" x-html="jabatan || '<div><p><b>KEPALA DINAS KOMUNIKASI</b></p><p><b>Plt. DAN INFORMASI</b></p><p><b>KABUPATEN MANDAILING NATAL,</b></p></div>'"></div>
                                         
