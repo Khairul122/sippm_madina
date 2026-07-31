@@ -135,7 +135,11 @@
     <table class="kop-table">
         <tr>
             <td style="width: 12%; text-align: center; vertical-align: middle;">
-                <img src="{{ public_path('images/logo-madina.png') }}" style="height: 72px; width: auto;">
+                @if(file_exists(public_path('images/logo-madina.png')))
+                    <img src="{{ public_path('images/logo-madina.png') }}" alt="Logo Pemerintah Kabupaten Mandailing Natal" style="height: 72px; width: auto; max-width: 100%; object-fit: contain;">
+                @else
+                    <div style="width: 60px; height: 72px; border: 1px dashed #999; margin: 0 auto; line-height: 72px; text-align: center; font-size: 8pt; color: #666;">[Logo]</div>
+                @endif
             </td>
             <td style="width: 76%; text-align: center; vertical-align: middle;">
                 <h3 style="margin: 0; font-size: 13pt; font-weight: normal; text-transform: uppercase;">PEMERINTAH KABUPATEN MANDAILING NATAL</h3>
