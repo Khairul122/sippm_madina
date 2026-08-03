@@ -46,7 +46,7 @@
     @if($user->hasRole('kominfo'))
         {{-- Administrasi Dropdown --}}
         @php
-            $isAdministrasiActive = str_starts_with($path, 'dashboard/users') || str_starts_with($path, 'dashboard/audit-log');
+            $isAdministrasiActive = str_starts_with($path, 'dashboard/users') || str_starts_with($path, 'dashboard/audit-log') || str_starts_with($path, 'dashboard/backup');
         @endphp
         <a class="nav-link d-flex align-items-center justify-content-between {{ $isAdministrasiActive ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#administrasiCollapse" role="button" aria-expanded="{{ $isAdministrasiActive ? 'true' : 'false' }}">
             <span><i class="bi bi-gear me-2"></i>Administrasi</span>
@@ -56,6 +56,7 @@
             <div class="d-flex flex-column">
                 <a class="nav-link {{ str_starts_with($path,'dashboard/users') ? 'active' : '' }}" href="{{ url('/dashboard/users') }}"><i class="bi bi-people me-2"></i>Kelola Pengguna</a>
                 <a class="nav-link {{ str_starts_with($path,'dashboard/audit-log') ? 'active' : '' }}" href="{{ url('/dashboard/audit-log') }}"><i class="bi bi-journal-text me-2"></i>Audit Log</a>
+                <a class="nav-link {{ str_starts_with($path,'dashboard/backup') ? 'active' : '' }}" href="{{ url('/dashboard/backup') }}"><i class="bi bi-database-down me-2"></i>Backup Database</a>
             </div>
         </div>
 

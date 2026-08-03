@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\Auth\RegisterController;
 use App\Http\Controllers\Web\Dashboard\ActivityDashboardController;
 use App\Http\Controllers\Web\Dashboard\AuditLogController;
 use App\Http\Controllers\Web\Dashboard\ComplaintDashboardController;
+use App\Http\Controllers\Web\Dashboard\DatabaseBackupController;
 use App\Http\Controllers\Web\Dashboard\DashboardHomeController;
 use App\Http\Controllers\Web\Dashboard\DesaManagementController;
 use App\Http\Controllers\Web\Dashboard\KecamatanManagementController;
@@ -152,6 +153,12 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         Route::post('/users/{user}/toggle-active', [UserManagementController::class, 'toggleActive']);
 
         Route::get('/audit-log', [AuditLogController::class, 'index']);
+
+        // Backup Database.
+        Route::get('/backup', [DatabaseBackupController::class, 'index']);
+        Route::post('/backup/run', [DatabaseBackupController::class, 'run']);
+        Route::get('/backup/download/{filename}', [DatabaseBackupController::class, 'download']);
+        Route::delete('/backup/{filename}', [DatabaseBackupController::class, 'destroy']);
 
         Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf']);
         Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel']);
