@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <h1>SIPPM Madina — Statistik Pengaduan</h1>
+    <h1>SIPAPA Madina — Statistik Pengaduan</h1>
     <p class="meta">Dicetak: {{ $generatedAt->translatedFormat('d F Y, H:i') }} WIB · Pemerintah Kabupaten Mandailing Natal</p>
     <table>
         <thead><tr><th>Status</th><th>Jumlah</th></tr></thead>

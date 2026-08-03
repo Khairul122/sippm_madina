@@ -4,15 +4,15 @@
 @php $user = auth()->user(); @endphp
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="sippm-card p-4 mb-4">
+        <div class="sipapa-card p-4 mb-4">
             <div class="d-flex justify-content-between align-items-start mb-2">
                 <div>
-                    <span class="badge bg-gold text-dark fs-6 py-2 px-3 fw-bold mb-2" style="background-color: var(--sippm-gold) !important;">
+                    <span class="badge bg-gold text-dark fs-6 py-2 px-3 fw-bold mb-2" style="background-color: var(--sipapa-gold) !important;">
                         <i class="bi bi-activity me-1"></i>Kegiatan {{ $activity->actor ? $activity->actor->name : '-' }}
                     </span>
-                    <h2 class="h4 mb-0 fw-bold text-sippm" style="font-family: 'Poppins', sans-serif;">{{ $activity->title }}</h2>
+                    <h2 class="h4 mb-0 fw-bold text-sipapa" style="font-family: 'Poppins', sans-serif;">{{ $activity->title }}</h2>
                 </div>
-                <span class="sippm-badge sippm-badge-{{ $activity->status->value === 'dipublikasikan' ? 'green' : ($activity->status->value === 'ditolak' ? 'red' : 'amber') }}">{{ $activity->status->label() }}</span>
+                <span class="sipapa-badge sipapa-badge-{{ $activity->status->value === 'dipublikasikan' ? 'green' : ($activity->status->value === 'ditolak' ? 'red' : 'amber') }}">{{ $activity->status->label() }}</span>
             </div>
             
             <dl class="row small mb-0 mt-3">
@@ -33,8 +33,8 @@
         </div>
 
         <!-- Documentation Photos Card -->
-        <div class="sippm-card p-4 mb-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold"><i class="bi bi-images me-1"></i>Dokumentasi Foto (Maks. 5)</h3>
+        <div class="sipapa-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold"><i class="bi bi-images me-1"></i>Dokumentasi Foto (Maks. 5)</h3>
             @if($activity->documentations->isNotEmpty())
                 <div class="row g-3">
                     @foreach($activity->documentations as $doc)
@@ -58,15 +58,15 @@
 
     <!-- Right Column Actions -->
     <div class="col-lg-4">
-        <div class="sippm-card p-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold"><i class="bi bi-shield-lock me-1"></i>Aksi Kegiatan</h3>
+        <div class="sipapa-card p-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold"><i class="bi bi-shield-lock me-1"></i>Aksi Kegiatan</h3>
             
             <div class="d-flex flex-column gap-2">
                 @if($user->hasRole('kominfo'))
                     @if($activity->status->value === 'draft')
                         <!-- Verify Action -->
                         <div class="p-3 border rounded-3 bg-light mb-2">
-                            <h4 class="small fw-bold text-sippm mb-2">Verifikasi Kegiatan</h4>
+                            <h4 class="small fw-bold text-sipapa mb-2">Verifikasi Kegiatan</h4>
                             <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/verify') }}" class="m-0" data-confirm="Simpan hasil verifikasi ini?">
                                 @csrf
                                 <div class="mb-2">
@@ -86,7 +86,7 @@
                         <!-- Publish Action -->
                         <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/publish') }}" class="m-0" data-confirm="Publikasikan kegiatan ini ke feed publik?">
                             @csrf
-                            <button class="btn btn-sm btn-sippm w-100 py-2 fw-semibold" type="submit"><i class="bi bi-megaphone me-1"></i> Publikasikan Kegiatan</button>
+                            <button class="btn btn-sm btn-sipapa w-100 py-2 fw-semibold" type="submit"><i class="bi bi-megaphone me-1"></i> Publikasikan Kegiatan</button>
                         </form>
                     @elseif($activity->status->value === 'dipublikasikan')
                         <!-- Unpublish Action -->

@@ -8,7 +8,7 @@ use DateTimeImmutable;
 
 /**
  * Plain PHP representation of a user account, mirroring the `users` table
- * plus SIPPM-specific columns (nik, phone, is_active, consent_at, opd_id,
+ * plus SIPAPA-specific columns (nik, phone, is_active, consent_at, opd_id,
  * kecamatan_id). Role assignment itself lives in Spatie Permission's
  * model_has_roles pivot (Infrastructure concern), not here — the `roles`
  * property is a read projection populated by the repository for

@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Fast Vendor Unzipper Tool for SIPPM Madina
+ * Fast Vendor Unzipper Tool for SIPAPA Madina
  * Standalone PHP script to extract vendor.zip on server without requiring Composer or SSH.
  */
 

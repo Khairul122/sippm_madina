@@ -2,10 +2,10 @@
 
 @section('content')
 @php $user = auth()->user(); @endphp
-<div class="sippm-card p-4">
+<div class="sipapa-card p-4">
     @if($user->hasAnyRole(['opd','camat']))
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ url('/dashboard/activities/create') }}" class="btn btn-sippm"><i class="bi bi-plus-circle me-1"></i>Input Kegiatan</a>
+        <a href="{{ url('/dashboard/activities/create') }}" class="btn btn-sipapa"><i class="bi bi-plus-circle me-1"></i>Input Kegiatan</a>
     </div>
     @endif
 
@@ -57,7 +57,7 @@
                     <td>{{ $activity->title }}</td>
                     <td>{{ $activity->date->translatedFormat('d M Y') }}</td>
                     <td>{{ $activity->location ?? '-' }}</td>
-                    <td><span class="sippm-badge sippm-badge-{{ $activity->status->value === 'dipublikasikan' ? 'green' : ($activity->status->value === 'ditolak' ? 'red' : 'amber') }}">{{ $activity->status->label() }}</span></td>
+                    <td><span class="sipapa-badge sipapa-badge-{{ $activity->status->value === 'dipublikasikan' ? 'green' : ($activity->status->value === 'ditolak' ? 'red' : 'amber') }}">{{ $activity->status->label() }}</span></td>
                     <td class="text-nowrap text-end">
                         <a href="{{ url('/dashboard/activities/'.$activity->id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Detail</a>
                         
@@ -75,7 +75,7 @@
                             @elseif($activity->status->value === 'diverifikasi')
                                 <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/publish') }}" class="d-inline" data-confirm="Publikasikan kegiatan &quot;{{ $activity->title }}&quot; ke feed publik?">
                                     @csrf
-                                    <button class="btn btn-sm btn-sippm" type="submit">Publikasikan</button>
+                                    <button class="btn btn-sm btn-sipapa" type="submit">Publikasikan</button>
                                 </form>
                             @elseif($activity->status->value === 'dipublikasikan')
                                 <form method="post" action="{{ url('/dashboard/activities/'.$activity->id.'/unpublish') }}" class="d-inline" data-confirm="Tarik kembali kegiatan &quot;{{ $activity->title }}&quot; ke draft? Kegiatan akan hilang dari feed publik.">

@@ -22,7 +22,7 @@ class PublicPagesTest extends TestCase
     {
         $this->seed();
 
-        $this->get('/')->assertOk()->assertSee('SIPPM Madina');
+        $this->get('/')->assertOk()->assertSee('SIPAPA Madina');
     }
 
     public function test_activity_feed_page_is_accessible_without_login(): void

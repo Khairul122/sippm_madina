@@ -7,20 +7,20 @@
 
 <style>
     /* Chevron rotation transition */
-    .sippm-sidebar .nav-link[data-bs-toggle="collapse"] .bi-chevron-down {
+    .sipapa-sidebar .nav-link[data-bs-toggle="collapse"] .bi-chevron-down {
         transition: transform 0.2s ease;
     }
-    .sippm-sidebar .nav-link[data-bs-toggle="collapse"].collapsed .bi-chevron-down {
+    .sipapa-sidebar .nav-link[data-bs-toggle="collapse"].collapsed .bi-chevron-down {
         transform: rotate(-90deg);
     }
     /* Indentation and style for submenu items */
-    .sippm-sidebar .collapse .nav-link {
+    .sipapa-sidebar .collapse .nav-link {
         font-size: 0.88rem;
         padding-left: 1.75rem;
         opacity: 0.85;
     }
-    .sippm-sidebar .collapse .nav-link:hover,
-    .sippm-sidebar .collapse .nav-link.active {
+    .sipapa-sidebar .collapse .nav-link:hover,
+    .sipapa-sidebar .collapse .nav-link.active {
         opacity: 1;
     }
 </style>

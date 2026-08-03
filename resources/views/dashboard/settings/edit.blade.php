@@ -1,9 +1,9 @@
 @extends('layouts.dashboard')
 
 @section('content')
-    <div class="sippm-card-raised p-4 mb-4">
+    <div class="sipapa-card-raised p-4 mb-4">
         <div class="border-bottom pb-2 mb-4 d-flex align-items-center gap-2">
-            <i class="bi bi-image text-sippm fs-4"></i>
+            <i class="bi bi-image text-sipapa fs-4"></i>
             <h2 class="h5 mb-0 font-weight-bold" style="font-family: 'Poppins', sans-serif;">Pengaturan Beranda</h2>
         </div>
 
@@ -11,7 +11,7 @@
 
         <div class="row g-4">
             <div class="col-md-5">
-                <div class="text-center p-3" style="background: linear-gradient(135deg, var(--sippm-navy) 0%, #112746 100%); border-radius: var(--sippm-radius-sm);">
+                <div class="text-center p-3" style="background: linear-gradient(135deg, var(--sipapa-navy) 0%, #112746 100%); border-radius: var(--sipapa-radius-sm);">
                     @if($siteSetting?->hero_image_path)
                         <img src="{{ Storage::disk('public')->url($siteSetting->hero_image_path) }}" alt="Foto hero saat ini" class="img-fluid rounded-3" style="max-height: 260px;">
                     @else
@@ -50,7 +50,7 @@
                             <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-                    <button type="submit" class="btn btn-sippm px-4 rounded-3 fw-semibold">
+                    <button type="submit" class="btn btn-sipapa px-4 rounded-3 fw-semibold">
                         <i class="bi bi-save me-1"></i>Simpan
                     </button>
                 </form>

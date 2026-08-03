@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\User\ValueObjects;
 
 /**
- * The 7 RBAC roles of SIPPM Madina. slug() matches the Spatie Permission
+ * The 7 RBAC roles of SIPAPA Madina. slug() matches the Spatie Permission
  * role name seeded by database/seeders/RolePermissionSeeder.php.
  */
 enum Role: string

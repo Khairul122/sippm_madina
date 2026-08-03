@@ -5,7 +5,7 @@
     <!-- Title Page & Summary -->
     <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
         <div>
-            <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sippm-navy) !important;">Daftar Pengaduan</h1>
+            <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sipapa-navy) !important;">Daftar Pengaduan</h1>
             <p class="text-muted small mb-0">Kelola, verifikasi, dan tindak lanjuti laporan pengaduan dari masyarakat.</p>
         </div>
         @if($complaints->total() > 0)
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Spacious Filters Card -->
-    <div class="card border-0 shadow-sm mb-4" style="border-radius: var(--sippm-radius-lg); background: #ffffff;">
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: var(--sipapa-radius-lg); background: #ffffff;">
         <div class="card-body p-4">
             <form method="get" action="{{ url('/dashboard/complaints') }}">
                 <!-- Grid Row 1 -->
@@ -100,7 +100,7 @@
                                 <i class="bi bi-x-circle"></i> Reset Filter
                             </a>
                         @endif
-                        <button type="submit" class="btn btn-sippm px-4 py-2 rounded-3 fw-semibold text-white shadow-sm d-flex align-items-center gap-1" style="background-color: var(--sippm-navy); border: none; font-size: 0.9rem;">
+                        <button type="submit" class="btn btn-sipapa px-4 py-2 rounded-3 fw-semibold text-white shadow-sm d-flex align-items-center gap-1" style="background-color: var(--sipapa-navy); border: none; font-size: 0.9rem;">
                             <i class="bi bi-funnel"></i> Terapkan Pencarian
                         </button>
                     </div>
@@ -110,7 +110,7 @@
     </div>
 
     <!-- Table complaints list -->
-    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: var(--sippm-radius-lg); background: #ffffff;">
+    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: var(--sipapa-radius-lg); background: #ffffff;">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light text-secondary small uppercase tracking-wider" style="border-bottom: 2px solid rgba(22, 52, 92, 0.08);">
@@ -129,7 +129,7 @@
                     <tr class="complaint-row" style="transition: all 0.2s ease;">
                         <!-- Ticket number with custom design -->
                         <td class="py-3 px-4">
-                            <span class="font-monospace px-2.5 py-1 rounded bg-light border text-navy fw-semibold small" style="color: var(--sippm-navy) !important; font-size: 0.85rem;">
+                            <span class="font-monospace px-2.5 py-1 rounded bg-light border text-navy fw-semibold small" style="color: var(--sipapa-navy) !important; font-size: 0.85rem;">
                                 {{ $complaint->ticket_number }}
                             </span>
                         </td>
@@ -159,7 +159,7 @@
                         </td>
                         <!-- Action link -->
                         <td class="py-3 text-end px-4">
-                            <a href="{{ url('/dashboard/complaints/'.$complaint->id) }}" class="btn btn-sm px-3 rounded-pill fw-semibold text-white d-inline-flex align-items-center gap-1 shadow-sm transition-all" style="background-color: var(--sippm-navy); border: none; font-size: 0.8rem;">
+                            <a href="{{ url('/dashboard/complaints/'.$complaint->id) }}" class="btn btn-sm px-3 rounded-pill fw-semibold text-white d-inline-flex align-items-center gap-1 shadow-sm transition-all" style="background-color: var(--sipapa-navy); border: none; font-size: 0.8rem;">
                                 Detail <i class="bi bi-chevron-right small"></i>
                             </a>
                         </td>
@@ -198,10 +198,10 @@
     }
     .input-group:focus-within .input-group-text,
     .input-group:focus-within input {
-        border-color: var(--sippm-navy) !important;
+        border-color: var(--sipapa-navy) !important;
     }
     .form-select:focus {
-        border-color: var(--sippm-navy) !important;
+        border-color: var(--sipapa-navy) !important;
         box-shadow: 0 0 0 3px rgba(22, 52, 92, 0.15) !important;
     }
     .input-group-text, input, select {

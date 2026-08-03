@@ -1,13 +1,13 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="sippm-card p-4">
+<div class="sipapa-card p-4">
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <form method="get" class="d-flex gap-2">
             <input type="text" name="search" class="form-control form-control-sm" placeholder="Cari nama/kode OPD..." value="{{ request('search') }}">
-            <button type="submit" class="btn btn-sippm btn-sm"><i class="bi bi-search"></i></button>
+            <button type="submit" class="btn btn-sipapa btn-sm"><i class="bi bi-search"></i></button>
         </form>
-        <a href="{{ url('/dashboard/opd/create') }}" class="btn btn-sippm"><i class="bi bi-building-add me-1"></i>Tambah OPD</a>
+        <a href="{{ url('/dashboard/opd/create') }}" class="btn btn-sipapa"><i class="bi bi-building-add me-1"></i>Tambah OPD</a>
     </div>
 
     <div class="table-responsive">

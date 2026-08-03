@@ -4,7 +4,7 @@
 @php $user = auth()->user(); @endphp
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="sippm-card p-4 mb-4">
+        <div class="sipapa-card p-4 mb-4">
             <div class="d-flex justify-content-between align-items-start mb-2">
                 <div>
                     <span class="font-monospace text-muted small">{{ $complaint->ticket_number }}</span>
@@ -34,13 +34,13 @@
         </div>
 
         @if($complaint->handlings->isNotEmpty())
-        <div class="sippm-card p-4 mb-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-wrench me-1"></i>Laporan Tindak Lanjut dari OPD / Kecamatan</h3>
+        <div class="sipapa-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-wrench me-1"></i>Laporan Tindak Lanjut dari OPD / Kecamatan</h3>
             @foreach($complaint->handlings->sortBy('created_at') as $handling)
-                <div class="mb-3 p-3 border rounded-3 bg-light" style="background-color: #fcfbf9 !important; border: 1px solid var(--sippm-border) !important;">
+                <div class="mb-3 p-3 border rounded-3 bg-light" style="background-color: #fcfbf9 !important; border: 1px solid var(--sipapa-border) !important;">
                     <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
                         <div>
-                            <span class="fw-semibold text-sippm small"><i class="bi bi-person-fill text-secondary"></i> {{ $handling->handledBy?->name ?? 'Petugas' }}</span>
+                            <span class="fw-semibold text-sipapa small"><i class="bi bi-person-fill text-secondary"></i> {{ $handling->handledBy?->name ?? 'Petugas' }}</span>
                             @if($handling->handledBy?->opd)
                                 <span class="badge bg-secondary ms-1 small">{{ $handling->handledBy->opd->name }}</span>
                             @elseif($handling->handledBy?->kecamatan)
@@ -64,8 +64,8 @@
 
         {{-- Kominfo: verifikasi (status diajukan) --}}
         @if($user->hasRole('kominfo') && $complaint->status->value === 'diajukan')
-        <div class="sippm-card p-4 mb-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-shield-check me-1"></i>Verifikasi Pengaduan</h3>
+        <div class="sipapa-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-shield-check me-1"></i>Verifikasi Pengaduan</h3>
             <form method="post" action="{{ url('/dashboard/complaints/'.$complaint->id.'/verify') }}" x-data="{ valid: '1' }" :data-confirm="valid === '1' ? 'Konfirmasi pengaduan ini VALID dan lanjut ke disposisi?' : 'Konfirmasi TOLAK pengaduan ini?'">
                 @csrf
                 <div class="mb-3">
@@ -87,15 +87,15 @@
                         <input type="text" name="rejection_reason" class="form-control" placeholder="Tulis alasan penolakan secara jelas...">
                     </div>
                 </div>
-                <button class="btn btn-sippm btn-sm px-4 py-2" type="submit">Simpan Hasil Verifikasi</button>
+                <button class="btn btn-sipapa btn-sm px-4 py-2" type="submit">Simpan Hasil Verifikasi</button>
             </form>
         </div>
         @endif
 
         {{-- Kominfo: disposisi (status diverifikasi) --}}
         @if($user->hasRole('kominfo') && $complaint->status->value === 'diverifikasi')
-        <div class="sippm-card p-4 mb-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-arrow-right-circle me-1"></i>Disposisi ke OPD / Camat</h3>
+        <div class="sipapa-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-arrow-right-circle me-1"></i>Disposisi ke OPD / Camat</h3>
             <form method="post" action="{{ url('/dashboard/complaints/'.$complaint->id.'/dispose') }}" data-confirm="Kirim disposisi ke unit yang dipilih?">
                 @csrf
                 <div class="row g-3">
@@ -129,7 +129,7 @@
                     <label class="form-label">Catatan Disposisi</label>
                     <textarea name="note" class="form-control" placeholder="Instruksi penanganan khusus untuk instansi (opsional)" rows="2"></textarea>
                 </div>
-                <button class="btn btn-sippm btn-sm px-4 py-2" type="submit">Kirim Lembar Disposisi</button>
+                <button class="btn btn-sipapa btn-sm px-4 py-2" type="submit">Kirim Lembar Disposisi</button>
             </form>
         </div>
         @endif
@@ -137,8 +137,8 @@
         {{-- Kominfo: disposisi aktif + batal disposisi (status diproses, belum ditangani OPD/Camat) --}}
         @if($user->hasRole('kominfo') && $complaint->status->value === 'diproses')
         @php $activeDispositions = $complaint->dispositions->whereNull('cancelled_at'); @endphp
-        <div class="sippm-card p-4 mb-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-signpost-split me-1"></i>Disposisi Aktif</h3>
+        <div class="sipapa-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-signpost-split me-1"></i>Disposisi Aktif</h3>
             <div class="d-flex flex-wrap gap-2 mb-3">
                 @foreach($activeDispositions as $d)
                     <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2">
@@ -160,8 +160,8 @@
         @endif
 
         @if($complaint->dispositions->whereNotNull('cancelled_at')->isNotEmpty())
-        <div class="sippm-card p-4 mb-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-clock-history me-1"></i>Riwayat Disposisi Dibatalkan</h3>
+        <div class="sipapa-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-clock-history me-1"></i>Riwayat Disposisi Dibatalkan</h3>
             @foreach($complaint->dispositions->whereNotNull('cancelled_at')->sortByDesc('cancelled_at') as $d)
                 <div class="mb-2 p-3 border rounded-3 bg-light small">
                     <span class="text-decoration-line-through text-muted">
@@ -179,8 +179,8 @@
 
         {{-- OPD/Camat: tangani (ada disposisi ke unit mereka & belum ditangani) --}}
         @if(($user->hasRole('opd') || $user->hasRole('camat')) && $myPendingDisposition && $complaint->status->value === 'diproses')
-        <div class="sippm-card p-4 mb-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-wrench me-1"></i>Kirim Hasil Penanganan</h3>
+        <div class="sipapa-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-wrench me-1"></i>Kirim Hasil Penanganan</h3>
             <form method="post" action="{{ url('/dashboard/complaints/'.$complaint->id.'/handle') }}" enctype="multipart/form-data" data-confirm="Kirim hasil penanganan ini? Pastikan data sudah benar." x-data="{ files: [] }">
                 @csrf
                 <input type="hidden" name="disposition_id" value="{{ $myPendingDisposition }}">
@@ -193,7 +193,7 @@
                     <label class="form-label">Lampiran Bukti Penanganan</label>
                     <div class="file-upload-zone" style="padding: 1.2rem;">
                         <i class="bi bi-cloud-upload file-upload-icon" style="font-size: 1.6rem; margin-bottom: 0.2rem;"></i>
-                        <p class="mb-1 fw-semibold text-sippm small">Klik atau seret file bukti kegiatan</p>
+                        <p class="mb-1 fw-semibold text-sipapa small">Klik atau seret file bukti kegiatan</p>
                         <p class="text-muted small mb-0" style="font-size: 0.68rem;">Format: JPG, PNG, PDF (Maks. 5MB)</p>
                         <input type="file" name="attachment" class="form-control" accept=".jpg,.jpeg,.png,.pdf" @change="files = $event.target.files.length ? [{ name: $event.target.files[0].name, size: ($event.target.files[0].size / 1024 / 1024).toFixed(2) + ' MB' }] : []">
                     </div>
@@ -206,28 +206,28 @@
                         </template>
                     </div>
                 </div>
-                <button class="btn btn-sippm btn-sm px-4 py-2" type="submit">Kirim Laporan Penanganan</button>
+                <button class="btn btn-sipapa btn-sm px-4 py-2" type="submit">Kirim Laporan Penanganan</button>
             </form>
         </div>
         @endif
 
         {{-- Kominfo: jawaban resmi (status ditindaklanjuti) --}}
         @if($user->hasRole('kominfo') && $complaint->status->value === 'ditindaklanjuti')
-        <div class="sippm-card p-4 mb-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-chat-left-text me-1"></i>Jawaban Resmi ke Masyarakat</h3>
+        <div class="sipapa-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-chat-left-text me-1"></i>Jawaban Resmi ke Masyarakat</h3>
             <form method="post" action="{{ url('/dashboard/complaints/'.$complaint->id.'/respond') }}" data-confirm="Kirim jawaban resmi ini ke masyarakat? Pengaduan akan ditandai selesai.">
                 @csrf
                 <div class="mb-3">
                     <label class="form-label">Tanggapan/Jawaban Resmi</label>
                     <textarea name="response_text" class="form-control" rows="4" placeholder="Tuliskan draf tanggapan formal kepada pengadu..." required>{{ old('response_text', strip_tags($complaint->handlings->last()?->description ?? '')) }}</textarea>
                 </div>
-                <button class="btn btn-sippm btn-sm px-4 py-2" type="submit">Kirim Jawaban Resmi &amp; Selesaikan</button>
+                <button class="btn btn-sipapa btn-sm px-4 py-2" type="submit">Kirim Jawaban Resmi &amp; Selesaikan</button>
             </form>
         </div>
         @endif
 
         @if($complaint->response)
-        <div class="sippm-card p-4 mb-4">
+        <div class="sipapa-card p-4 mb-4">
             <h3 class="h6 mb-2">Jawaban Resmi</h3>
             <p class="mb-0">{{ $complaint->response->response_text }}</p>
         </div>
@@ -235,7 +235,7 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="sippm-card p-4">
+        <div class="sipapa-card p-4">
             <h3 class="h6 mb-3">Riwayat Status</h3>
             <ul class="list-unstyled small">
                 @foreach($complaint->statusHistories->sortBy('id') as $history)
@@ -256,7 +256,7 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        sippmInitRichText('description-editor', 'textarea[name="description"]');
+        sipapaInitRichText('description-editor', 'textarea[name="description"]');
     });
 </script>
 @endpush

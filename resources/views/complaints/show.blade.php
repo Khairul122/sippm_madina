@@ -3,7 +3,7 @@
 @section('content')
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="sippm-card p-4 mb-4">
+        <div class="sipapa-card p-4 mb-4">
             <div class="d-flex justify-content-between align-items-start mb-2">
                 <div>
                     <span class="font-monospace text-muted small">{{ $complaint->ticket_number }}</span>
@@ -18,13 +18,13 @@
         </div>
 
         @if($complaint->handlings->isNotEmpty())
-        <div class="sippm-card p-4 mb-4">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-wrench me-1"></i>Tindak Lanjut dari OPD / Kecamatan</h3>
+        <div class="sipapa-card p-4 mb-4">
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-wrench me-1"></i>Tindak Lanjut dari OPD / Kecamatan</h3>
             @foreach($complaint->handlings->sortBy('created_at') as $handling)
-                <div class="mb-3 p-3 border rounded-3" style="background-color: #fcfbf9; border: 1px solid var(--sippm-border) !important;">
+                <div class="mb-3 p-3 border rounded-3" style="background-color: #fcfbf9; border: 1px solid var(--sipapa-border) !important;">
                     <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
                         <div>
-                            <span class="fw-semibold text-sippm small"><i class="bi bi-person-fill text-secondary"></i> {{ $handling->handledBy?->name ?? 'Petugas' }}</span>
+                            <span class="fw-semibold text-sipapa small"><i class="bi bi-person-fill text-secondary"></i> {{ $handling->handledBy?->name ?? 'Petugas' }}</span>
                             @if($handling->handledBy?->opd)
                                 <span class="badge bg-secondary ms-1 small">{{ $handling->handledBy->opd->name }}</span>
                             @elseif($handling->handledBy?->kecamatan)
@@ -47,7 +47,7 @@
         @endif
 
         @if($complaint->response)
-        <div class="sippm-card p-4 mb-4 border-start border-4" style="border-color: var(--sippm-green) !important;">
+        <div class="sipapa-card p-4 mb-4 border-start border-4" style="border-color: var(--sipapa-green) !important;">
             <h3 class="h6 mb-2"><i class="bi bi-check-circle text-success me-1"></i>Jawaban Resmi</h3>
             <p class="mb-0">{{ $complaint->response->response_text }}</p>
         </div>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="sippm-card p-4">
+        <div class="sipapa-card p-4">
             <h3 class="h6 mb-3">Riwayat Status</h3>
             <ul class="list-unstyled small">
                 @foreach($complaint->statusHistories->sortBy('id') as $history)

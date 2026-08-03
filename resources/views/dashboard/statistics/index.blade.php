@@ -4,7 +4,7 @@
 <div class="container-fluid py-2">
     <!-- Welcome Header -->
     <div class="mb-4">
-        <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sippm-navy) !important;">Statistik & Monitoring</h1>
+        <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sipapa-navy) !important;">Statistik & Monitoring</h1>
         <p class="text-muted small mb-0">Selamat datang kembali, <strong>{{ auth()->user()->name }}</strong>. Berikut adalah ikhtisar laporan pengaduan masyarakat.</p>
     </div>
 
@@ -20,13 +20,13 @@
     <div class="row g-3 mb-4">
         <!-- Card 1: Total Pengaduan -->
         <div class="col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sippm-radius-lg); border-left: 4px solid var(--sippm-navy) !important;">
+            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sipapa-radius-lg); border-left: 4px solid var(--sipapa-navy) !important;">
                 <div class="card-body p-4 d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase tracking-wider">Total Pengaduan</span>
                         <h3 class="fw-bold mb-0 mt-1 text-dark" style="font-family: 'Poppins', sans-serif;">{{ number_format($totalComplaints) }}</h3>
                     </div>
-                    <div class="stat-icon-box bg-navy-subtle text-navy rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(22, 52, 92, 0.08); color: var(--sippm-navy);">
+                    <div class="stat-icon-box bg-navy-subtle text-navy rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(22, 52, 92, 0.08); color: var(--sipapa-navy);">
                         <i class="bi bi-chat-square-text-fill fs-4"></i>
                     </div>
                 </div>
@@ -35,13 +35,13 @@
 
         <!-- Card 2: Pengaduan Selesai -->
         <div class="col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sippm-radius-lg); border-left: 4px solid var(--sippm-green) !important;">
+            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sipapa-radius-lg); border-left: 4px solid var(--sipapa-green) !important;">
                 <div class="card-body p-4 d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase tracking-wider">Laporan Selesai</span>
                         <h3 class="fw-bold mb-0 mt-1 text-success" style="font-family: 'Poppins', sans-serif;">{{ number_format($resolvedComplaints) }}</h3>
                     </div>
-                    <div class="stat-icon-box bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(46, 125, 79, 0.08); color: var(--sippm-green);">
+                    <div class="stat-icon-box bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(46, 125, 79, 0.08); color: var(--sipapa-green);">
                         <i class="bi bi-patch-check-fill fs-4"></i>
                     </div>
                 </div>
@@ -50,13 +50,13 @@
 
         <!-- Card 3: Pengaduan Dalam Proses -->
         <div class="col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sippm-radius-lg); border-left: 4px solid var(--sippm-amber) !important;">
+            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sipapa-radius-lg); border-left: 4px solid var(--sipapa-amber) !important;">
                 <div class="card-body p-4 d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase tracking-wider">Sedang Diproses</span>
                         <h3 class="fw-bold mb-0 mt-1 text-warning" style="font-family: 'Poppins', sans-serif;">{{ number_format($inProgressComplaints) }}</h3>
                     </div>
-                    <div class="stat-icon-box bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(217, 142, 4, 0.08); color: var(--sippm-amber);">
+                    <div class="stat-icon-box bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(217, 142, 4, 0.08); color: var(--sipapa-amber);">
                         <i class="bi bi-hourglass-split fs-4"></i>
                     </div>
                 </div>
@@ -65,13 +65,13 @@
 
         <!-- Card 4: Total Kegiatan -->
         <div class="col-sm-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sippm-radius-lg); border-left: 4px solid var(--sippm-gold) !important;">
+            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sipapa-radius-lg); border-left: 4px solid var(--sipapa-gold) !important;">
                 <div class="card-body p-4 d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase tracking-wider">Total Kegiatan</span>
                         <h3 class="fw-bold mb-0 mt-1 text-secondary" style="font-family: 'Poppins', sans-serif;">{{ number_format($totalActivities) }}</h3>
                     </div>
-                    <div class="stat-icon-box bg-gold-subtle text-gold rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(201, 162, 39, 0.08); color: var(--sippm-gold);">
+                    <div class="stat-icon-box bg-gold-subtle text-gold rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: rgba(201, 162, 39, 0.08); color: var(--sipapa-gold);">
                         <i class="bi bi-calendar-check-fill fs-4"></i>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
     <div class="row g-4">
         <!-- Chart 1: Status Pengaduan -->
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100" style="border-radius: var(--sippm-radius-lg); background: #ffffff;">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: var(--sipapa-radius-lg); background: #ffffff;">
                 <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2">
                     <h3 class="h6 mb-0 fw-bold text-dark" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-pie-chart me-2 text-primary"></i>Status Pengaduan</h3>
                     <p class="text-muted small mb-0">Presentase pengaduan berdasarkan status penyelesaian.</p>
@@ -98,7 +98,7 @@
 
         <!-- Chart 2: Status Kegiatan -->
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100" style="border-radius: var(--sippm-radius-lg); background: #ffffff;">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: var(--sipapa-radius-lg); background: #ffffff;">
                 <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2">
                     <h3 class="h6 mb-0 fw-bold text-dark" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-pie-chart-fill me-2 text-success"></i>Status Kegiatan</h3>
                     <p class="text-muted small mb-0">Grafik penyusunan laporan kegiatan pejabat wilayah.</p>
@@ -113,7 +113,7 @@
 
         <!-- Chart 3: Distribusi Kategori -->
         <div class="col-12">
-            <div class="card border-0 shadow-sm" style="border-radius: var(--sippm-radius-lg); background: #ffffff;">
+            <div class="card border-0 shadow-sm" style="border-radius: var(--sipapa-radius-lg); background: #ffffff;">
                 <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2">
                     <h3 class="h6 mb-0 fw-bold text-dark" style="font-family: 'Poppins', sans-serif;"><i class="bi bi-bar-chart-steps me-2 text-warning"></i>Distribusi Pengaduan per Kategori</h3>
                     <p class="text-muted small mb-0">Jumlah laporan yang masuk dikelompokkan berdasarkan kategori bidang.</p>

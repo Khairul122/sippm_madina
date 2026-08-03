@@ -3,7 +3,7 @@
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-    #locationMap { height: 300px; border-radius: var(--sippm-radius-lg); box-shadow: var(--sippm-shadow-soft); border: 1px solid var(--sippm-border); }
+    #locationMap { height: 300px; border-radius: var(--sipapa-radius-lg); box-shadow: var(--sipapa-shadow-soft); border: 1px solid var(--sipapa-border); }
     
     /* Stepper Styling */
     .stepper-container {
@@ -12,9 +12,9 @@
         align-items: center;
         background: #fff;
         padding: 16px 20px;
-        border-radius: var(--sippm-radius-lg);
-        border: 1px solid var(--sippm-border);
-        box-shadow: var(--sippm-shadow-soft);
+        border-radius: var(--sipapa-radius-lg);
+        border: 1px solid var(--sipapa-border);
+        box-shadow: var(--sipapa-shadow-soft);
     }
     .stepper-step {
         flex: 1;
@@ -37,7 +37,7 @@
         transition: background-color 0.3s ease;
     }
     .stepper-step.completed:not(:last-child)::after {
-        background-color: var(--sippm-green);
+        background-color: var(--sipapa-green);
     }
     .stepper-icon {
         width: 40px;
@@ -51,18 +51,18 @@
         justify-content: center;
         font-weight: 700;
         transition: all 0.3s ease;
-        box-shadow: var(--sippm-shadow-soft);
+        box-shadow: var(--sipapa-shadow-soft);
     }
     .stepper-step.active .stepper-icon {
-        border-color: var(--sippm-navy);
-        color: var(--sippm-navy);
+        border-color: var(--sipapa-navy);
+        color: var(--sipapa-navy);
         background-color: #fff;
         transform: scale(1.1);
         box-shadow: 0 0 10px rgba(22, 52, 92, 0.2);
     }
     .stepper-step.completed .stepper-icon {
-        border-color: var(--sippm-green);
-        background-color: var(--sippm-green);
+        border-color: var(--sipapa-green);
+        background-color: var(--sipapa-green);
         color: #fff;
     }
     .stepper-label {
@@ -73,16 +73,16 @@
         transition: color 0.3s ease;
     }
     .stepper-step.active .stepper-label {
-        color: var(--sippm-navy);
+        color: var(--sipapa-navy);
     }
     .stepper-step.completed .stepper-label {
-        color: var(--sippm-green);
+        color: var(--sipapa-green);
     }
 </style>
 @endpush
 
 @section('content')
-<div class="sippm-card p-4 mb-4" x-data="complaintForm()">
+<div class="sipapa-card p-4 mb-4" x-data="complaintForm()">
     <!-- Step Progress Bar -->
     <div class="stepper-container mb-5">
         <div class="stepper-step" :class="{ active: step === 1, completed: step > 1 }">
@@ -118,7 +118,7 @@
         @csrf
 
         <div x-show="step === 1">
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold"><i class="bi bi-card-list me-1"></i>Langkah 1: Kategori &amp; Tujuan</h3>
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold"><i class="bi bi-card-list me-1"></i>Langkah 1: Kategori &amp; Tujuan</h3>
             <div class="mb-3">
                 <label class="form-label">Kategori Laporan</label>
                 <select name="category" class="form-select" x-model="category" required>
@@ -176,7 +176,7 @@
         </div>
 
         <div x-show="step === 3" x-cloak>
-            <h3 class="h6 mb-3 border-bottom pb-2 text-sippm fw-bold"><i class="bi bi-geo-alt-fill me-1"></i>Langkah 3: Lokasi Kejadian (opsional)</h3>
+            <h3 class="h6 mb-3 border-bottom pb-2 text-sipapa fw-bold"><i class="bi bi-geo-alt-fill me-1"></i>Langkah 3: Lokasi Kejadian (opsional)</h3>
 
             <!-- Dynamic class binding fixes empty red alert box from Bootstrap's !important d-flex -->
             <div class="alert alert-danger small align-items-center gap-2" :class="locationError ? 'd-flex' : 'd-none'" x-cloak>
@@ -188,7 +188,7 @@
                 <div class="col-lg-8">
                     <!-- Map Wrapper with Info Overlay -->
                     <div class="position-relative">
-                        <div id="locationMap" class="shadow-sm border rounded-3" style="height: 350px; border: 1px solid var(--sippm-border) !important;"></div>
+                        <div id="locationMap" class="shadow-sm border rounded-3" style="height: 350px; border: 1px solid var(--sipapa-border) !important;"></div>
                         <div class="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-50 text-white text-center py-1 small rounded-bottom" style="z-index: 1000; font-size: 0.72rem;">
                             <i class="bi bi-info-circle me-1"></i>Sentuh atau klik pada peta untuk menandai lokasi kejadian.
                         </div>
@@ -196,10 +196,10 @@
                 </div>
                 <div class="col-lg-4">
                     <!-- Location Info Card -->
-                    <div class="p-3 border rounded-3 bg-light h-100 d-flex flex-column justify-content-between" style="background-color: #fafaf9 !important; border: 1px solid var(--sippm-border) !important;">
+                    <div class="p-3 border rounded-3 bg-light h-100 d-flex flex-column justify-content-between" style="background-color: #fafaf9 !important; border: 1px solid var(--sipapa-border) !important;">
                         <div>
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <i class="bi bi-compass-fill text-sippm fs-5"></i>
+                                <i class="bi bi-compass-fill text-sipapa fs-5"></i>
                                 <h4 class="fs-6 fw-bold mb-0">Informasi Koordinat</h4>
                             </div>
                             <p class="small text-muted mb-3" style="line-height: 1.4;">Tentukan lokasi dengan mengklik langsung pada peta, atau tekan tombol GPS di bawah ini.</p>
@@ -227,7 +227,7 @@
                         </div>
                         
                         <div class="d-flex flex-column gap-2 mt-2">
-                            <button type="button" class="btn btn-sippm btn-sm w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 shadow-sm" @click="useMyLocation()" :disabled="locating">
+                            <button type="button" class="btn btn-sipapa btn-sm w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 shadow-sm" @click="useMyLocation()" :disabled="locating">
                                 <template x-if="!locating">
                                     <span class="d-flex align-items-center gap-1"><i class="bi bi-crosshair"></i> Gunakan Lokasi Saya</span>
                                 </template>
@@ -253,7 +253,7 @@
                 <label class="form-label">Foto / Dokumen Pendukung</label>
                 <div class="file-upload-zone">
                     <i class="bi bi-cloud-upload-fill file-upload-icon d-block text-secondary opacity-75"></i>
-                    <p class="mb-1 fw-semibold text-sippm">Seret berkas ke sini atau klik untuk memilih</p>
+                    <p class="mb-1 fw-semibold text-sipapa">Seret berkas ke sini atau klik untuk memilih</p>
                     <p class="text-muted small mb-0">Format: JPG, PNG, PDF (Maks. 5MB per berkas)</p>
                     <input type="file" name="attachments[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf" @change="handleFileChange($event)">
                 </div>
@@ -289,8 +289,8 @@
         <div class="d-flex justify-content-between mt-4">
             <button type="button" class="btn btn-outline-secondary" x-show="step > 1" @click="step--">Sebelumnya</button>
             <div class="ms-auto">
-                <button type="button" class="btn btn-sippm" x-show="step < 4" @click="step++">Selanjutnya</button>
-                <button type="submit" class="btn btn-sippm" x-show="step === 4" :disabled="submitting">
+                <button type="button" class="btn btn-sipapa" x-show="step < 4" @click="step++">Selanjutnya</button>
+                <button type="submit" class="btn btn-sipapa" x-show="step === 4" :disabled="submitting">
                     <span x-show="!submitting">Kirim Pengaduan</span>
                     <span x-show="submitting">Mengirim...</span>
                 </button>
@@ -324,7 +324,7 @@
                 this.$watch('step', (value) => {
                     if (value === 2 && !this.descriptionEditorInitialized) {
                         this.descriptionEditorInitialized = true;
-                        this.$nextTick(() => sippmInitRichText('description-editor', 'textarea[name="description"]'));
+                        this.$nextTick(() => sipapaInitRichText('description-editor', 'textarea[name="description"]'));
                     }
                     if (value === 3 && !this.mapInitialized) {
                         this.mapInitialized = true;

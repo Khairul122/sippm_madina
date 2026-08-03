@@ -6,8 +6,8 @@
        landing page "Kegiatan Terbaru" preview) — only modal-specific styling
        stays here. */
     .modal-content {
-        background-color: var(--sippm-surface);
-        border: 1px solid var(--sippm-border);
+        background-color: var(--sipapa-surface);
+        border: 1px solid var(--sipapa-border);
     }
 </style>
 @endpush
@@ -15,13 +15,13 @@
 @section('content')
 <div class="container py-5">
     <!-- Page Header Banner -->
-    <div class="sippm-card-raised p-4 mb-5 bg-white text-center text-md-start d-md-flex align-items-center justify-content-between gap-4 border-start border-4" style="border-color: var(--sippm-gold) !important;">
+    <div class="sipapa-card-raised p-4 mb-5 bg-white text-center text-md-start d-md-flex align-items-center justify-content-between gap-4 border-start border-4" style="border-color: var(--sipapa-gold) !important;">
         <div>
-            <h1 class="h3 fw-bold text-sippm mb-1"><i class="bi bi-calendar3 me-2 text-secondary"></i>Kegiatan Pemerintah Kabupaten Mandailing Natal</h1>
+            <h1 class="h3 fw-bold text-sipapa mb-1"><i class="bi bi-calendar3 me-2 text-secondary"></i>Kegiatan Pemerintah Kabupaten Mandailing Natal</h1>
             <p class="text-muted mb-0">Publikasi dokumentasi dan laporan kegiatan pembangunan oleh OPD dan Kecamatan setempat.</p>
         </div>
         <div class="mt-3 mt-md-0">
-            <span class="badge bg-gold text-dark fs-6 py-2 px-3 fw-bold" style="background-color: var(--sippm-gold) !important;">
+            <span class="badge bg-gold text-dark fs-6 py-2 px-3 fw-bold" style="background-color: var(--sipapa-gold) !important;">
                 <i class="bi bi-activity me-1"></i>Total: {{ $total }} Kegiatan
             </span>
         </div>
@@ -30,7 +30,7 @@
     <div class="row g-4">
         @forelse($activities as $activity)
             <div class="col-md-6 col-lg-4">
-                <div class="reveal sippm-card h-100 overflow-hidden activity-card" style="cursor: pointer; transition-delay: {{ ($loop->index % 3) * 80 }}ms;" data-bs-toggle="modal" data-bs-target="#activityModal{{ $activity->id }}">
+                <div class="reveal sipapa-card h-100 overflow-hidden activity-card" style="cursor: pointer; transition-delay: {{ ($loop->index % 3) * 80 }}ms;" data-bs-toggle="modal" data-bs-target="#activityModal{{ $activity->id }}">
                     <div class="activity-card-img-wrap">
                         @php($doc = $activity->documentations->first())
                         @if($doc)
@@ -47,13 +47,13 @@
                     
                     <div class="p-4 d-flex flex-column justify-content-between" style="min-height: 180px;">
                         <div>
-                            <h3 class="h5 fw-bold text-sippm mb-2" style="line-height: 1.4;">{{ $activity->title }}</h3>
+                            <h3 class="h5 fw-bold text-sipapa mb-2" style="line-height: 1.4;">{{ $activity->title }}</h3>
                             <p class="text-muted mb-3" style="line-height: 1.5;">{{ \Illuminate\Support\Str::limit(strip_tags($activity->description), 110) }}</p>
                         </div>
                         
                         @if($activity->actor)
                             <div>
-                                <span class="sippm-badge sippm-badge-navy small fw-semibold"><i class="bi bi-building me-1"></i>{{ $activity->actor->name }}</span>
+                                <span class="sipapa-badge sipapa-badge-navy small fw-semibold"><i class="bi bi-building me-1"></i>{{ $activity->actor->name }}</span>
                             </div>
                         @endif
                     </div>
@@ -63,7 +63,7 @@
             <!-- Activity Modal -->
             <div class="modal fade" id="activityModal{{ $activity->id }}" tabindex="-1" aria-labelledby="activityModalLabel{{ $activity->id }}" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content border-0 shadow-raised" style="border-radius: var(--sippm-radius-lg);">
+                    <div class="modal-content border-0 shadow-raised" style="border-radius: var(--sipapa-radius-lg);">
                         <div class="modal-header border-0 pb-0">
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
@@ -72,13 +72,13 @@
                                 <img src="{{ asset('storage/'.$doc->file_path) }}" alt="{{ $activity->title }}" class="w-100 rounded-3 mb-4 shadow-sm" style="max-height:380px; object-fit:cover;">
                             @endif
                             <div class="small text-muted mb-2 font-monospace"><i class="bi bi-calendar-event me-1"></i>{{ $activity->date->translatedFormat('d F Y') }}</div>
-                            <h2 class="h4 fw-bold text-sippm mb-3">{{ $activity->title }}</h2>
+                            <h2 class="h4 fw-bold text-sipapa mb-3">{{ $activity->title }}</h2>
                             <div class="rich-text-content mb-4" style="line-height:1.6; font-size:0.95rem;">
                                 {!! $activity->description !!}
                             </div>
                             @if($activity->actor)
                                 <div class="border-top pt-3 mt-3">
-                                    <span class="sippm-badge sippm-badge-navy"><i class="bi bi-building me-1"></i>{{ $activity->actor->name }}</span>
+                                    <span class="sipapa-badge sipapa-badge-navy"><i class="bi bi-building me-1"></i>{{ $activity->actor->name }}</span>
                                 </div>
                             @endif
                         </div>

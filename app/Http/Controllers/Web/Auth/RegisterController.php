@@ -37,6 +37,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect('/dashboard')->with('status', 'Pendaftaran berhasil! Selamat datang di SIPPM Madina.');
+        return redirect('/dashboard')->with('status', 'Pendaftaran berhasil! Selamat datang di SIPAPA Madina.');
     }
 }

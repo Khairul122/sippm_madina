@@ -17,7 +17,7 @@ class HomeController extends Controller
     public function index(): View
     {
         return view('public.home', [
-            'title' => 'SIPPM Madina',
+            'title' => 'SIPAPA Madina',
             'siteSetting' => SiteSetting::query()->find(1),
             'totalComplaints' => Complaint::query()->count(),
             'resolvedComplaints' => Complaint::query()->where('status', ComplaintStatus::SELESAI->value)->count(),

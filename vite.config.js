@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite';
+﻿import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 
-// Tailwind removed: SIPPM Madina uses Blade + Bootstrap 5 + Alpine.js (all via
+// Tailwind removed: SIPAPA Madina uses Blade + Bootstrap 5 + Alpine.js (all via
 // CDN, see resources/views layouts). Vite here only compiles the custom
 // "Bright Skeuomorphism" palette CSS (resources/css/app.css, which owns
 // typography — Inter via Google Fonts CDN) and the small app JS bundle

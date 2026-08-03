@@ -135,7 +135,7 @@
         <tr>
             <td style="width: 12%; text-align: center; vertical-align: middle;">
                 @php
-                    $logoPath = public_path('images/logo-madina.png');
+                    $logoPath = public_path('images/logo-sipapa.png');
                     $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath)) : null;
                 @endphp
                 @if($logoBase64)

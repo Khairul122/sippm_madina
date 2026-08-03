@@ -1,9 +1,9 @@
-// SIPPM Madina — app entry point (compiled by Vite).
+﻿// SIPAPA Madina — app entry point (compiled by Vite).
 //
 // Alpine.js is loaded via CDN in the Blade layouts, so it does not need to
 // be imported/bundled here. This file only wires up Laravel Echo over
 // Reverb (Fase 8) for the notification bell in layouts/dashboard.blade.php.
-// `window.SIPPM_USER` is set by an inline script in that layout before this
+// `window.SIPAPA_USER` is set by an inline script in that layout before this
 // module runs, so channel subscriptions can be scoped to the logged-in
 // user's id/roles/opd/kecamatan (see routes/channels.php for the matching
 // server-side authorization).
@@ -11,7 +11,7 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
-// Slim top-of-page loading bar (#sippmPageLoader, markup + static CSS in
+// Slim top-of-page loading bar (#sipapaPageLoader, markup + static CSS in
 // layouts/dashboard.blade.php / resources/css/app.css) shown while a
 // full-page navigation is in flight. This app is server-rendered (no SPA
 // router) so the JS context is fully torn down on every navigation — a
@@ -20,10 +20,10 @@ import Pusher from 'pusher-js';
 // should therefore animate to completion + fade on load, as opposed to a
 // fresh/direct load (typed URL, bookmark, login redirect) which should
 // stay invisible instead of flashing for no reason.
-const PAGE_LOADER_FLAG = 'sippm:page-loading';
+const PAGE_LOADER_FLAG = 'sipapa:page-loading';
 
 function showPageLoader() {
-    const bar = document.getElementById('sippmPageLoader');
+    const bar = document.getElementById('sipapaPageLoader');
     if (!bar) {
         return;
     }
@@ -44,7 +44,7 @@ function showPageLoader() {
 // was actually triggered by a click/submit in-app (see flag above) —
 // otherwise leave it untouched (invisible, per its default CSS).
 document.addEventListener('DOMContentLoaded', () => {
-    const bar = document.getElementById('sippmPageLoader');
+    const bar = document.getElementById('sipapaPageLoader');
     if (!bar || sessionStorage.getItem(PAGE_LOADER_FLAG) !== '1') {
         return;
     }
@@ -69,7 +69,7 @@ window.addEventListener('pageshow', (e) => {
     }
 
     sessionStorage.removeItem(PAGE_LOADER_FLAG);
-    const bar = document.getElementById('sippmPageLoader');
+    const bar = document.getElementById('sipapaPageLoader');
     if (bar) {
         bar.style.transition = 'none';
         bar.style.width = '0%';
@@ -87,7 +87,7 @@ document.addEventListener('click', (e) => {
     }
 
     const link = e.target.closest('a[href]');
-    if (!link || !document.getElementById('sippmPageLoader')) {
+    if (!link || !document.getElementById('sipapaPageLoader')) {
         return;
     }
 
@@ -245,7 +245,7 @@ window.Echo = new Echo({
 });
 
 function notify(title, message) {
-    window.dispatchEvent(new CustomEvent('sippm:notification', { detail: { title, message } }));
+    window.dispatchEvent(new CustomEvent('sipapa:notification', { detail: { title, message } }));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.Echo.channel('public-activities')
         .listen('.activity.published', (e) => notify('Kegiatan baru', e.title));
 
-    const user = window.SIPPM_USER;
+    const user = window.SIPAPA_USER;
     if (!user) {
         return;
     }

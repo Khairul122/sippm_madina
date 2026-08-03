@@ -1,9 +1,9 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="sippm-card p-4">
+<div class="sipapa-card p-4">
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ url('/dashboard/categories/create') }}" class="btn btn-sippm"><i class="bi bi-tag-fill me-1"></i>Tambah Kategori</a>
+        <a href="{{ url('/dashboard/categories/create') }}" class="btn btn-sipapa"><i class="bi bi-tag-fill me-1"></i>Tambah Kategori</a>
     </div>
 
     <div class="table-responsive">

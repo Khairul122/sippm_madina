@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Custom in-app notifications table for SIPPM Madina (NOT Laravel's
+     * Custom in-app notifications table for SIPAPA Madina (NOT Laravel's
      * built-in database notifications table — this project does not use
      * Notifiable::notify()/DatabaseNotification, it uses this simpler
      * custom schema driven by App\Domain\Notification\*).

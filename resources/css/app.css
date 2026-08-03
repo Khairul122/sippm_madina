@@ -1,5 +1,5 @@
-/*
- * SIPPM Madina — Bright Skeuomorphism palette & shared utilities.
+﻿/*
+ * SIPAPA Madina — Bright Skeuomorphism palette & shared utilities.
  *
  * Tailwind was removed from this project. Layout/grid/components come from
  * Bootstrap 5 + AdminLTE (loaded via CDN in Blade layouts, see Fase 7).
@@ -10,26 +10,26 @@
 
 :root {
     /* Brand palette */
-    --sippm-navy: #16345c;
-    --sippm-gold: #c9a227;
-    --sippm-green: #2e7d4f;
-    --sippm-amber: #d98e04;
-    --sippm-red: #b23a3a;
-    --sippm-cream: #f7f5ef;
-    --sippm-text: #2b2b2b;
+    --sipapa-navy: #16345c;
+    --sipapa-gold: #c9a227;
+    --sipapa-green: #2e7d4f;
+    --sipapa-amber: #d98e04;
+    --sipapa-red: #b23a3a;
+    --sipapa-cream: #f7f5ef;
+    --sipapa-text: #2b2b2b;
 
     /* Derived / supporting tones */
-    --sippm-navy-light: #274a78;
-    --sippm-surface: #ffffff;
-    --sippm-border: rgba(22, 52, 92, 0.12);
+    --sipapa-navy-light: #274a78;
+    --sipapa-surface: #ffffff;
+    --sipapa-border: rgba(22, 52, 92, 0.12);
 
     /* Skeuomorphic shadow (two-layer: soft ambient + tight contact shadow) */
-    --sippm-shadow-soft: 0 1px 2px rgba(43, 43, 43, 0.06), 0 8px 24px rgba(22, 52, 92, 0.08);
-    --sippm-shadow-raised: 0 2px 4px rgba(43, 43, 43, 0.08), 0 16px 32px rgba(22, 52, 92, 0.12);
-    --sippm-shadow-inset: inset 0 1px 2px rgba(22, 52, 92, 0.06);
+    --sipapa-shadow-soft: 0 1px 2px rgba(43, 43, 43, 0.06), 0 8px 24px rgba(22, 52, 92, 0.08);
+    --sipapa-shadow-raised: 0 2px 4px rgba(43, 43, 43, 0.08), 0 16px 32px rgba(22, 52, 92, 0.12);
+    --sipapa-shadow-inset: inset 0 1px 2px rgba(22, 52, 92, 0.06);
 
-    --sippm-radius-sm: 12px;
-    --sippm-radius-lg: 16px;
+    --sipapa-radius-sm: 12px;
+    --sipapa-radius-lg: 16px;
 }
 
 /* Sitewide type-scale — public pages previously ran on stock 16px Bootstrap
@@ -43,8 +43,8 @@ html {
 body {
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    background-color: var(--sippm-cream);
-    color: var(--sippm-text);
+    background-color: var(--sipapa-cream);
+    color: var(--sipapa-text);
     line-height: 1.65;
 }
 
@@ -57,105 +57,105 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
 
 /* Utility classes reused by Blade views (dashboard cards, badges, buttons) */
 
-.sippm-card {
-    background-color: var(--sippm-surface);
-    border: 1px solid var(--sippm-border);
-    border-radius: var(--sippm-radius-lg);
-    box-shadow: var(--sippm-shadow-soft);
+.sipapa-card {
+    background-color: var(--sipapa-surface);
+    border: 1px solid var(--sipapa-border);
+    border-radius: var(--sipapa-radius-lg);
+    box-shadow: var(--sipapa-shadow-soft);
 }
 
-.sippm-card-raised {
-    background-color: var(--sippm-surface);
-    border: 1px solid var(--sippm-border);
-    border-radius: var(--sippm-radius-lg);
-    box-shadow: var(--sippm-shadow-raised);
+.sipapa-card-raised {
+    background-color: var(--sipapa-surface);
+    border: 1px solid var(--sipapa-border);
+    border-radius: var(--sipapa-radius-lg);
+    box-shadow: var(--sipapa-shadow-raised);
 }
 
-.sippm-surface-inset {
-    border-radius: var(--sippm-radius-sm);
-    box-shadow: var(--sippm-shadow-inset);
+.sipapa-surface-inset {
+    border-radius: var(--sipapa-radius-sm);
+    box-shadow: var(--sipapa-shadow-inset);
 }
 
-.sippm-btn-navy {
-    background-color: var(--sippm-navy);
+.sipapa-btn-navy {
+    background-color: var(--sipapa-navy);
     color: #fff;
-    border-radius: var(--sippm-radius-sm);
-    box-shadow: var(--sippm-shadow-soft);
+    border-radius: var(--sipapa-radius-sm);
+    box-shadow: var(--sipapa-shadow-soft);
     border: none;
 }
 
-.sippm-btn-gold {
-    background-color: var(--sippm-gold);
-    color: var(--sippm-text);
-    border-radius: var(--sippm-radius-sm);
-    box-shadow: var(--sippm-shadow-soft);
+.sipapa-btn-gold {
+    background-color: var(--sipapa-gold);
+    color: var(--sipapa-text);
+    border-radius: var(--sipapa-radius-sm);
+    box-shadow: var(--sipapa-shadow-soft);
     border: none;
 }
 
 /* Status badges — mapped to ComplaintStatus / ActivityStatus values */
-.sippm-badge {
+.sipapa-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
     font-size: 0.8rem;
     font-weight: 600;
-    box-shadow: var(--sippm-shadow-soft);
+    box-shadow: var(--sipapa-shadow-soft);
 }
 
-.sippm-badge-navy {
-    background-color: var(--sippm-navy);
+.sipapa-badge-navy {
+    background-color: var(--sipapa-navy);
     color: #fff;
 }
 
-.sippm-badge-green {
-    background-color: var(--sippm-green);
+.sipapa-badge-green {
+    background-color: var(--sipapa-green);
     color: #fff;
 }
 
-.sippm-badge-amber {
-    background-color: var(--sippm-amber);
+.sipapa-badge-amber {
+    background-color: var(--sipapa-amber);
     color: #fff;
 }
 
-.sippm-badge-red {
-    background-color: var(--sippm-red);
+.sipapa-badge-red {
+    background-color: var(--sipapa-red);
     color: #fff;
 }
 
-.sippm-badge-gold {
-    background-color: var(--sippm-gold);
-    color: var(--sippm-text);
+.sipapa-badge-gold {
+    background-color: var(--sipapa-gold);
+    color: var(--sipapa-text);
 }
 
 /* Complaint status badges (ComplaintStatus enum values), shared by the
    dashboard and public layouts (e.g. public/track.blade.php). */
 .badge-status-diajukan { background-color: #2563eb; color: #fff; }
 .badge-status-diverifikasi { background-color: #0d9488; color: #fff; }
-.badge-status-diproses { background-color: var(--sippm-amber); color: #fff; }
+.badge-status-diproses { background-color: var(--sipapa-amber); color: #fff; }
 .badge-status-ditindaklanjuti { background-color: #7c3aed; color: #fff; }
-.badge-status-selesai { background-color: var(--sippm-green); color: #fff; }
-.badge-status-ditolak { background-color: var(--sippm-red); color: #fff; }
+.badge-status-selesai { background-color: var(--sipapa-green); color: #fff; }
+.badge-status-ditolak { background-color: var(--sipapa-red); color: #fff; }
 
 /* Public layout: two-tier header (identity bar + logo/search page-header)
    and expanded footer — see resources/views/layouts/app.blade.php. */
-.sippm-topbar-identity {
-    background-color: var(--sippm-navy);
+.sipapa-topbar-identity {
+    background-color: var(--sipapa-navy);
     color: rgba(255, 255, 255, .85);
     font-size: .8rem;
 }
 
-.sippm-topbar-identity a {
+.sipapa-topbar-identity a {
     color: rgba(255, 255, 255, .85);
     text-decoration: none;
 }
 
-.sippm-page-header {
-    background-color: var(--sippm-surface);
-    border-bottom: 1px solid var(--sippm-border);
+.sipapa-page-header {
+    background-color: var(--sipapa-surface);
+    border-bottom: 1px solid var(--sipapa-border);
 }
 
-.sippm-footer .footer-col-title {
-    color: var(--sippm-gold);
+.sipapa-footer .footer-col-title {
+    color: var(--sipapa-gold);
     font-family: 'Poppins', sans-serif;
     font-size: 1.05rem;
     font-weight: 600;
@@ -165,16 +165,16 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
     position: relative;
 }
 
-.sippm-footer a {
+.sipapa-footer a {
     color: rgba(255, 255, 255, .75);
     text-decoration: none;
 }
 
-.sippm-footer a:hover {
-    color: var(--sippm-gold);
+.sipapa-footer a:hover {
+    color: var(--sipapa-gold);
 }
 
-.sippm-footer .social-icon {
+.sipapa-footer .social-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -185,23 +185,23 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
     color: #fff;
 }
 
-.sippm-footer .social-icon:hover {
-    background-color: var(--sippm-gold);
-    color: var(--sippm-navy);
+.sipapa-footer .social-icon:hover {
+    background-color: var(--sipapa-gold);
+    color: var(--sipapa-navy);
 }
 
 /* Homepage stat counters (see public/home.blade.php). */
-.sippm-stat-number {
+.sipapa-stat-number {
     font-family: 'Poppins', sans-serif;
     font-size: 2rem;
     font-weight: 700;
-    color: var(--sippm-navy);
+    color: var(--sipapa-navy);
 }
 
 /* Fixed-height wrapper for Chart.js canvases (dashboard/statistics/*) so
    charts stay a sane, consistent size regardless of column width — paired
    with `maintainAspectRatio: false` in each chart's JS options. */
-.sippm-chart-box {
+.sipapa-chart-box {
     position: relative;
     height: 240px;
     width: 100%;
@@ -209,7 +209,7 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
 
 /* Custom premium form inputs */
 .form-control, .form-select {
-    border-radius: var(--sippm-radius-sm);
+    border-radius: var(--sipapa-radius-sm);
     border: 1px solid rgba(22, 52, 92, 0.18);
     padding: 0.85rem 1.1rem;
     font-size: 1.05rem;
@@ -218,15 +218,15 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: var(--sippm-navy);
-    box-shadow: 0 0 0 3px rgba(22, 52, 92, 0.15), var(--sippm-shadow-inset);
+    border-color: var(--sipapa-navy);
+    box-shadow: 0 0 0 3px rgba(22, 52, 92, 0.15), var(--sipapa-shadow-inset);
     background-color: #fff;
 }
 
 .form-label {
     font-weight: 600;
     font-size: 0.95rem;
-    color: var(--sippm-navy);
+    color: var(--sipapa-navy);
     margin-bottom: 0.4rem;
 }
 
@@ -237,13 +237,13 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
 }
 
 .form-check-input:checked {
-    background-color: var(--sippm-navy);
-    border-color: var(--sippm-navy);
+    background-color: var(--sipapa-navy);
+    border-color: var(--sipapa-navy);
     box-shadow: 0 0 0 3px rgba(22, 52, 92, 0.1);
 }
 
 .form-check-input:focus {
-    border-color: var(--sippm-navy);
+    border-color: var(--sipapa-navy);
     box-shadow: 0 0 0 3px rgba(22, 52, 92, 0.15);
 }
 
@@ -271,7 +271,7 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
     top: 18px;
     left: 0;
     height: 3px;
-    background-color: var(--sippm-navy);
+    background-color: var(--sipapa-navy);
     z-index: 2;
     transition: width 0.3s ease;
 }
@@ -290,17 +290,17 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
     z-index: 3;
     transition: all 0.3s ease;
     position: relative;
-    box-shadow: var(--sippm-shadow-soft);
+    box-shadow: var(--sipapa-shadow-soft);
 }
 .step-progress-node.active {
-    border-color: var(--sippm-navy);
-    color: var(--sippm-navy);
+    border-color: var(--sipapa-navy);
+    color: var(--sipapa-navy);
     background-color: #fff;
     transform: scale(1.1);
 }
 .step-progress-node.completed {
-    border-color: var(--sippm-green);
-    background-color: var(--sippm-green);
+    border-color: var(--sipapa-green);
+    background-color: var(--sipapa-green);
     color: #fff;
 }
 .step-progress-label {
@@ -315,16 +315,16 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
     transition: color 0.3s ease;
 }
 .step-progress-node.active .step-progress-label {
-    color: var(--sippm-navy);
+    color: var(--sipapa-navy);
 }
 .step-progress-node.completed .step-progress-label {
-    color: var(--sippm-green);
+    color: var(--sipapa-green);
 }
 
 /* File Upload Area */
 .file-upload-zone {
     border: 2px dashed rgba(22, 52, 92, 0.25);
-    border-radius: var(--sippm-radius-sm);
+    border-radius: var(--sipapa-radius-sm);
     padding: 1.8rem;
     text-align: center;
     background-color: #fafaf9;
@@ -333,7 +333,7 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
     position: relative;
 }
 .file-upload-zone:hover {
-    border-color: var(--sippm-navy);
+    border-color: var(--sipapa-navy);
     background-color: rgba(22, 52, 92, 0.02);
 }
 .file-upload-zone input[type="file"] {
@@ -347,20 +347,20 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
 }
 .file-upload-icon {
     font-size: 2.2rem;
-    color: var(--sippm-navy);
+    color: var(--sipapa-navy);
     opacity: 0.7;
     margin-bottom: 0.5rem;
 }
 .file-preview-card {
     background-color: #fff;
-    border: 1px solid var(--sippm-border);
-    border-radius: var(--sippm-radius-sm);
+    border: 1px solid var(--sipapa-border);
+    border-radius: var(--sipapa-radius-sm);
     padding: 8px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: 8px;
-    box-shadow: var(--sippm-shadow-soft);
+    box-shadow: var(--sipapa-shadow-soft);
     animation: slideInUp 0.2s ease;
 }
 @keyframes slideInUp {
@@ -389,23 +389,23 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
     }
 }
 
-/* Lightweight value-prop card for the "Kenapa SIPPM Madina" section on the
-   public landing page — intentionally plainer than .sippm-card-raised so it
+/* Lightweight value-prop card for the "Kenapa SIPAPA Madina" section on the
+   public landing page — intentionally plainer than .sipapa-card-raised so it
    doesn't visually compete with the "Layanan Utama" CTA cards. */
-.sippm-value-card {
+.sipapa-value-card {
     background: #fff;
-    border: 1px solid var(--sippm-border);
-    border-radius: var(--sippm-radius-sm);
+    border: 1px solid var(--sipapa-border);
+    border-radius: var(--sipapa-radius-sm);
     padding: 1.25rem 1rem;
     text-align: center;
     transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
 }
-.sippm-value-card:hover {
+.sipapa-value-card:hover {
     transform: translateY(-3px);
-    box-shadow: var(--sippm-shadow-soft);
-    border-color: var(--sippm-gold);
+    box-shadow: var(--sipapa-shadow-soft);
+    border-color: var(--sipapa-gold);
 }
-.sippm-value-icon {
+.sipapa-value-icon {
     width: 48px;
     height: 48px;
     display: inline-flex;
@@ -417,8 +417,8 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
 
 /* Gold halo frame around the landing-page hero illustration — reads as an
    official badge/frame rather than a floating image. */
-.sippm-hero-frame {
-    border-radius: var(--sippm-radius-lg);
+.sipapa-hero-frame {
+    border-radius: var(--sipapa-radius-lg);
     box-shadow: 0 0 0 8px rgba(201, 162, 39, 0.08);
 }
 
@@ -428,12 +428,12 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
    the same rules instead of duplicating them. */
 .activity-card {
     transition: all 0.3s ease;
-    border: 1px solid var(--sippm-border);
+    border: 1px solid var(--sipapa-border);
 }
 .activity-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--sippm-shadow-raised) !important;
-    border-color: var(--sippm-gold) !important;
+    box-shadow: var(--sipapa-shadow-raised) !important;
+    border-color: var(--sipapa-gold) !important;
 }
 .activity-card-img-wrap {
     overflow: hidden;
@@ -447,31 +447,31 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
 }
 
 /* Auth card — resources/views/auth/{login,register}.blade.php. */
-.sippm-auth-card {
-    border-radius: var(--sippm-radius-lg);
-    box-shadow: var(--sippm-shadow-raised);
+.sipapa-auth-card {
+    border-radius: var(--sipapa-radius-lg);
+    box-shadow: var(--sipapa-shadow-raised);
     overflow: hidden;
-    background-color: var(--sippm-surface);
+    background-color: var(--sipapa-surface);
 }
 
 /* Password show/hide toggle button inside an .input-group, wired up by
    the generic `data-toggle-password` handler in resources/js/app.js. */
-.sippm-password-toggle {
+.sipapa-password-toggle {
     background-color: #fff;
     border: 1px solid rgba(22, 52, 92, 0.18);
-    color: var(--sippm-navy);
+    color: var(--sipapa-navy);
     border-left: none !important;
 }
-.sippm-password-toggle:hover,
-.sippm-password-toggle:focus {
+.sipapa-password-toggle:hover,
+.sipapa-password-toggle:focus {
     background-color: #fff;
-    color: var(--sippm-navy);
+    color: var(--sipapa-navy);
 }
 
 /* Referenced across several redesigned views (auth/activities/complaints
    forms) but never defined — brand-navy text color utility. */
-.text-sippm {
-    color: var(--sippm-navy);
+.text-sipapa {
+    color: var(--sipapa-navy);
 }
 
 /* Slim top-of-page loading bar, shown during full-page navigation inside
@@ -480,16 +480,16 @@ h6, .h6 { font-size: 1rem; font-weight: 600; }
    server-rendered (no SPA router), so "loading" just means: give instant
    feedback the moment a link/form triggers a real navigation, since a
    full page load can take a beat. Driven entirely by
-   resources/js/app.js (#sippmPageLoader) — width/opacity toggled via
+   resources/js/app.js (#sipapaPageLoader) — width/opacity toggled via
    inline style, this block only defines the static look. */
-#sippmPageLoader {
+#sipapaPageLoader {
     position: fixed;
     top: 0;
     left: 0;
     height: 3px;
     width: 0%;
     opacity: 0;
-    background: linear-gradient(90deg, var(--sippm-gold) 0%, var(--sippm-navy) 100%);
+    background: linear-gradient(90deg, var(--sipapa-gold) 0%, var(--sipapa-navy) 100%);
     box-shadow: 0 0 8px rgba(201, 162, 39, 0.6);
     z-index: 2000;
     pointer-events: none;

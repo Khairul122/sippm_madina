@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="sippm-card p-4">
+<div class="sipapa-card p-4">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <form method="get" class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 650px;">
             <div class="input-group shadow-sm">
@@ -25,7 +25,7 @@
                 <input type="text" name="search" class="form-control border-start-0" placeholder="Cari nama/kode desa..." value="{{ request('search') }}" style="font-size: 0.875rem; border-left: 0;">
                 
                 <!-- Search Button -->
-                <button type="submit" class="btn btn-sippm px-3"><i class="bi bi-search me-1"></i> Cari</button>
+                <button type="submit" class="btn btn-sipapa px-3"><i class="bi bi-search me-1"></i> Cari</button>
             </div>
             
             @if(request('search') || request('kecamatan_id'))
@@ -34,7 +34,7 @@
                 </a>
             @endif
         </form>
-        <a href="{{ url('/dashboard/desa/create') }}" class="btn btn-sippm shadow-sm"><i class="bi bi-houses me-1"></i>Tambah Desa</a>
+        <a href="{{ url('/dashboard/desa/create') }}" class="btn btn-sipapa shadow-sm"><i class="bi bi-houses me-1"></i>Tambah Desa</a>
     </div>
 
     <div class="table-responsive">
