@@ -8,7 +8,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 /**
- * Seeds the 7 SIPPM Madina roles and the permission matrix from PRD 4.2
+ * Seeds the 7 SIPAPA Madina roles and the permission matrix from PRD 4.2
  * (14 features x 7 roles).
  */
 class RolePermissionSeeder extends Seeder

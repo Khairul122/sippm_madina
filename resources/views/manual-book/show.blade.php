@@ -1,14 +1,14 @@
 @extends('layouts.dashboard')
 
 @section('content')
-    <div class="sippm-card-raised p-4 mb-4">
+    <div class="sipapa-card-raised p-4 mb-4">
         <div class="border-bottom pb-2 mb-4 d-flex align-items-center gap-2">
-            <i class="bi bi-journal-richtext text-sippm fs-4"></i>
+            <i class="bi bi-journal-richtext text-sipapa fs-4"></i>
             <h2 class="h5 mb-0 font-weight-bold" style="font-family: 'Poppins', sans-serif;">Manual Book</h2>
         </div>
 
         @if($manualBook)
-            <div class="d-flex align-items-center gap-3 p-3 mb-4" style="background-color: rgba(22, 52, 92, 0.05); border-radius: var(--sippm-radius-sm);">
+            <div class="d-flex align-items-center gap-3 p-3 mb-4" style="background-color: rgba(22, 52, 92, 0.05); border-radius: var(--sipapa-radius-sm);">
                 <div class="d-flex align-items-center justify-content-center rounded-3 text-danger" style="width:56px; height:56px; background-color: rgba(178,58,58,0.1); flex-shrink:0;">
                     <i class="bi bi-file-earmark-pdf-fill fs-2"></i>
                 </div>
@@ -24,12 +24,12 @@
                         @endif
                     </div>
                 </div>
-                <a href="{{ url('/manual-book/download') }}" class="btn btn-sippm btn-sm px-4 rounded-3 fw-semibold flex-shrink-0">
+                <a href="{{ url('/manual-book/download') }}" class="btn btn-sipapa btn-sm px-4 rounded-3 fw-semibold flex-shrink-0">
                     <i class="bi bi-download me-1"></i>Unduh
                 </a>
             </div>
 
-            <div class="mb-4" style="border-radius: var(--sippm-radius-sm); overflow:hidden; border:1px solid rgba(22, 52, 92, 0.12);">
+            <div class="mb-4" style="border-radius: var(--sipapa-radius-sm); overflow:hidden; border:1px solid rgba(22, 52, 92, 0.12);">
                 <iframe src="{{ url('/manual-book/preview') }}" title="Preview Manual Book" style="width:100%; height:70vh; border:none; display:block;"></iframe>
             </div>
         @else
@@ -51,7 +51,7 @@
                         <input type="file" name="file" accept="application/pdf" class="form-control" required>
                         <div class="form-text">File PDF, maks 20 MB.</div>
                     </div>
-                    <button type="submit" class="btn btn-sippm btn-sm px-4 rounded-3 fw-semibold">
+                    <button type="submit" class="btn btn-sipapa btn-sm px-4 rounded-3 fw-semibold">
                         <i class="bi bi-upload me-1"></i>{{ $manualBook ? 'Ganti File' : 'Unggah' }}
                     </button>
                 </form>

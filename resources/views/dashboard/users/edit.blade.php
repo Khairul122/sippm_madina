@@ -1,9 +1,9 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="sippm-card-raised p-4 mb-4">
+<div class="sipapa-card-raised p-4 mb-4">
     <div class="border-bottom pb-2 mb-4 d-flex align-items-center gap-2">
-        <i class="bi bi-person-gear text-sippm fs-4"></i>
+        <i class="bi bi-person-gear text-sipapa fs-4"></i>
         <h2 class="h5 mb-0 font-weight-bold" style="font-family: 'Poppins', sans-serif;">Edit Pengguna</h2>
     </div>
     <form method="post" action="{{ url('/dashboard/users/'.$targetUser->id) }}">
@@ -54,7 +54,7 @@
         @endif
         <div class="border-top pt-3 d-flex justify-content-end gap-2">
             <a href="{{ url('/dashboard/users') }}" class="btn btn-light btn-sm px-3 rounded-3" style="border: 1px solid rgba(0,0,0,0.1);">Batal</a>
-            <button type="submit" class="btn btn-sippm btn-sm px-4 rounded-3 fw-semibold">Simpan Perubahan</button>
+            <button type="submit" class="btn btn-sipapa btn-sm px-4 rounded-3 fw-semibold">Simpan Perubahan</button>
         </div>
     </form>
 </div>

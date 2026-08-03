@@ -1,9 +1,9 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="sippm-card-raised p-4 mb-4" x-data="{ files: [] }">
+<div class="sipapa-card-raised p-4 mb-4" x-data="{ files: [] }">
     <div class="border-bottom pb-2 mb-4 d-flex align-items-center gap-2">
-        <i class="bi bi-pencil-square text-sippm fs-4"></i>
+        <i class="bi bi-pencil-square text-sipapa fs-4"></i>
         <h2 class="h5 mb-0 font-weight-bold" style="font-family: 'Poppins', sans-serif;">Ubah Kegiatan</h2>
     </div>
     
@@ -58,7 +58,7 @@
             <label class="form-label fw-semibold">Tambah Foto Dokumentasi</label>
             <div class="file-upload-zone">
                 <i class="bi bi-images file-upload-icon d-block text-secondary opacity-75"></i>
-                <p class="mb-1 fw-semibold text-sippm">Seret foto dokumentasi baru ke sini atau klik untuk memilih</p>
+                <p class="mb-1 fw-semibold text-sipapa">Seret foto dokumentasi baru ke sini atau klik untuk memilih</p>
                 <p class="text-muted small mb-0">Format: JPG, JPEG, PNG (Maks. total 5 foto)</p>
                 <input type="file" name="documentations[]" class="form-control" multiple accept=".jpg,.jpeg,.png" @change="files = Array.from($event.target.files).map(f => ({ name: f.name, size: (f.size / 1024 / 1024).toFixed(2) + ' MB' }))">
             </div>
@@ -88,7 +88,7 @@
 
         <div class="border-top pt-3 d-flex justify-content-end gap-2">
             <a href="{{ url('/dashboard/activities/'.$activity->id) }}" class="btn btn-light btn-sm px-3 rounded-3" style="border: 1px solid rgba(0,0,0,0.1);">Batal</a>
-            <button type="submit" class="btn btn-sippm btn-sm px-4 rounded-3 fw-semibold">Simpan Perubahan</button>
+            <button type="submit" class="btn btn-sipapa btn-sm px-4 rounded-3 fw-semibold">Simpan Perubahan</button>
         </div>
     </form>
 </div>
@@ -96,7 +96,7 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        sippmInitRichText('description-editor', 'textarea[name="description"]');
+        sipapaInitRichText('description-editor', 'textarea[name="description"]');
     });
 </script>
 @endpush

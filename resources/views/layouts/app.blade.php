@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'SIPPM Madina' }} — SIPPM Madina</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/logo-madina.png') }}">
+    <title>{{ $title ?? 'SIPAPA Madina' }} — SIPAPA Madina</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-sipapa.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
@@ -12,57 +12,57 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         h1, h2, h3, h4, .navbar-brand { font-family: 'Poppins', sans-serif; }
-        .sippm-topbar-identity { background-color: #fafaf9; border-bottom: 1px solid var(--sippm-border); font-size: 0.95rem; color: #64748b; }
-        .sippm-page-header { background-color: #ffffff; border-bottom: 1px solid rgba(22, 52, 92, 0.06); }
-        .navbar-sippm { background-color: var(--sippm-navy); box-shadow: var(--sippm-shadow-soft); padding: 0.75rem 0; }
+        .sipapa-topbar-identity { background-color: #fafaf9; border-bottom: 1px solid var(--sipapa-border); font-size: 0.95rem; color: #64748b; }
+        .sipapa-page-header { background-color: #ffffff; border-bottom: 1px solid rgba(22, 52, 92, 0.06); }
+        .navbar-sipapa { background-color: var(--sipapa-navy); box-shadow: var(--sipapa-shadow-soft); padding: 0.75rem 0; }
         
-        .navbar-sippm .nav-link { 
+        .navbar-sipapa .nav-link { 
             color: rgba(255,255,255,.85) !important; 
             font-weight: 500; 
             padding: 0.5rem 1rem !important;
             position: relative;
             transition: color 0.2s ease;
         }
-        .navbar-sippm .nav-link::after {
+        .navbar-sipapa .nav-link::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 50%;
             width: 0;
             height: 2px;
-            background-color: var(--sippm-gold);
+            background-color: var(--sipapa-gold);
             transition: all 0.3s ease;
             transform: translateX(-50%);
         }
-        .navbar-sippm .nav-link:hover::after, .navbar-sippm .nav-link.active::after {
+        .navbar-sipapa .nav-link:hover::after, .navbar-sipapa .nav-link.active::after {
             width: 80%;
         }
-        .navbar-sippm .nav-link:hover, .navbar-sippm .nav-link.active { color: var(--sippm-gold) !important; }
+        .navbar-sipapa .nav-link:hover, .navbar-sipapa .nav-link.active { color: var(--sipapa-gold) !important; }
         
-        .btn-sippm { 
-            background-color: var(--sippm-navy); 
+        .btn-sipapa { 
+            background-color: var(--sipapa-navy); 
             color: #fff; 
-            border-radius: var(--sippm-radius-sm); 
-            box-shadow: var(--sippm-shadow-soft); 
+            border-radius: var(--sipapa-radius-sm); 
+            box-shadow: var(--sipapa-shadow-soft); 
             border: 2px solid transparent; 
             font-weight: 600;
             transition: all 0.2s ease;
         }
-        .btn-sippm:hover { 
-            background-color: var(--sippm-navy-light); 
+        .btn-sipapa:hover { 
+            background-color: var(--sipapa-navy-light); 
             color: #fff; 
             transform: translateY(-1px);
-            box-shadow: var(--sippm-shadow-raised);
+            box-shadow: var(--sipapa-shadow-raised);
         }
-        .btn-sippm:active {
+        .btn-sipapa:active {
             transform: translateY(0);
         }
         
-        footer.sippm-footer { background-color: var(--sippm-navy); color: #f0ede4; }
-        footer.sippm-footer a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s ease; }
-        footer.sippm-footer a:hover { color: var(--sippm-gold); }
+        footer.sipapa-footer { background-color: var(--sipapa-navy); color: #f0ede4; }
+        footer.sipapa-footer a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s ease; }
+        footer.sipapa-footer a:hover { color: var(--sipapa-gold); }
         /* Sizing/weight/color/margin for .footer-col-title live in
-           resources/css/app.css (.sippm-footer .footer-col-title), which
+           resources/css/app.css (.sipapa-footer .footer-col-title), which
            wins on specificity — only the decorative underline stays here. */
         .footer-col-title::after {
             content: '';
@@ -71,7 +71,7 @@
             left: 0;
             width: 30px;
             height: 2px;
-            background-color: var(--sippm-gold);
+            background-color: var(--sipapa-gold);
         }
         .social-icon {
             display: inline-flex;
@@ -85,8 +85,8 @@
             transition: all 0.2s ease;
         }
         .social-icon:hover {
-            background-color: var(--sippm-gold);
-            color: var(--sippm-navy) !important;
+            background-color: var(--sipapa-gold);
+            color: var(--sipapa-navy) !important;
             transform: scale(1.1);
         }
     </style>
@@ -95,33 +95,33 @@
 <body class="d-flex flex-column min-vh-100">
 
     <!-- Tier 1: identity bar -->
-    <div class="sippm-topbar-identity py-2 d-none d-md-block">
+    <div class="sipapa-topbar-identity py-2 d-none d-md-block">
         <div class="container d-flex justify-content-between align-items-center flex-wrap">
             <span class="fw-medium"><i class="bi bi-geo-alt-fill me-1 text-secondary"></i>Pemerintah Kabupaten Mandailing Natal</span>
         </div>
     </div>
 
     <!-- Tier 2: page header (logo + search) -->
-    <div class="sippm-page-header py-3 shadow-xs">
+    <div class="sipapa-page-header py-3 shadow-xs">
         <div class="container d-flex justify-content-between align-items-center gap-3 flex-wrap">
             <a href="{{ url('/') }}" class="d-flex align-items-center text-decoration-none gap-3">
-                <img src="{{ asset('images/logo-madina.png') }}" alt="Lambang Kabupaten Mandailing Natal" style="height:56px; width:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
+                <img src="{{ asset('images/logo-sipapa.png') }}" alt="Lambang Kabupaten Mandailing Natal" style="height:56px; width:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
                 <span>
-                    <span class="d-block fw-bold fs-5 mb-0" style="color: var(--sippm-navy); font-family: 'Poppins', sans-serif;">SIPPM Madina</span>
+                    <span class="d-block fw-bold fs-5 mb-0" style="color: var(--sipapa-navy); font-family: 'Poppins', sans-serif;">SIPAPA Madina</span>
                     <span class="d-block text-muted fw-medium">Sistem Informasi Pengaduan &amp; Pelaporan Kegiatan</span>
                 </span>
             </a>
             <form method="get" action="{{ url('/lacak') }}" class="d-flex align-items-center" style="max-width: 320px; width: 100%;">
                 <div class="input-group shadow-sm">
                     <input type="text" name="ticket_number" class="form-control bg-light border-end-0" placeholder="Cari nomor tiket...">
-                    <button type="submit" class="btn btn-sippm px-3"><i class="bi bi-search"></i></button>
+                    <button type="submit" class="btn btn-sipapa px-3"><i class="bi bi-search"></i></button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Tier 3: sticky nav -->
-    <nav class="navbar navbar-expand-lg navbar-sippm sticky-top" id="mainNav">
+    <nav class="navbar navbar-expand-lg navbar-sipapa sticky-top" id="mainNav">
         <div class="container">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
                 <span class="navbar-toggler-icon"></span>
@@ -152,13 +152,13 @@
         @yield('content')
     </main>
 
-    <footer class="sippm-footer pt-5 pb-4 mt-5">
+    <footer class="sipapa-footer pt-5 pb-4 mt-5">
         <div class="container">
             <div class="row g-4 mb-4">
                 <div class="col-lg-5">
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <img src="{{ asset('images/logo-madina.png') }}" alt="Lambang Kabupaten Mandailing Natal" style="height:36px; width:auto;">
-                        <span class="fw-bold fs-6">SIPPM Madina</span>
+                        <img src="{{ asset('images/logo-sipapa.png') }}" alt="Lambang Kabupaten Mandailing Natal" style="height:36px; width:auto;">
+                        <span class="fw-bold fs-6">SIPAPA Madina</span>
                     </div>
                     <p class="mb-3">Sistem Informasi Pengaduan Masyarakat dan Pelaporan Kegiatan Kabupaten Mandailing Natal — layanan satu pintu melalui Dinas Komunikasi dan Informatika.</p>
                     <div class="d-flex gap-2">

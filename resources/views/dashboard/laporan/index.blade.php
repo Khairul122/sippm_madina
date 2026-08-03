@@ -3,12 +3,12 @@
 @push('styles')
 <style>
     #laporanTabs .nav-link {
-        color: var(--sippm-navy-light);
+        color: var(--sipapa-navy-light);
     }
     #laporanTabs .nav-link.active {
-        background-color: var(--sippm-navy) !important;
+        background-color: var(--sipapa-navy) !important;
         color: #fff !important;
-        box-shadow: var(--sippm-shadow-soft);
+        box-shadow: var(--sipapa-shadow-soft);
     }
     #laporanTabs .nav-link:hover:not(.active) {
         background-color: rgba(22, 52, 92, 0.05);
@@ -46,10 +46,10 @@
 <div class="row g-3 mb-4">
     <!-- Total Pengaduan -->
     <div class="col-sm-6 col-xl-3">
-        <div class="sippm-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sippm-navy) !important;">
+        <div class="sipapa-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sipapa-navy) !important;">
             <div>
                 <span class="text-secondary small fw-medium d-block mb-1">Total Terfilter</span>
-                <h3 class="fw-bold mb-0 text-sippm">{{ number_format($stats['total']) }}</h3>
+                <h3 class="fw-bold mb-0 text-sipapa">{{ number_format($stats['total']) }}</h3>
             </div>
             <div class="rounded-circle p-2 bg-primary bg-opacity-10 text-primary" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                 <i class="bi bi-chat-left-text-fill fs-5"></i>
@@ -59,7 +59,7 @@
 
     <!-- Status Selesai -->
     <div class="col-sm-6 col-xl-3">
-        <div class="sippm-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sippm-green) !important;">
+        <div class="sipapa-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sipapa-green) !important;">
             <div>
                 <span class="text-secondary small fw-medium d-block mb-1">Selesai</span>
                 <h3 class="fw-bold mb-0 text-success">{{ number_format($stats['selesai']) }}</h3>
@@ -72,10 +72,10 @@
 
     <!-- Dalam Proses / Ditindaklanjuti -->
     <div class="col-sm-6 col-xl-3">
-        <div class="sippm-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sippm-amber) !important;">
+        <div class="sipapa-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sipapa-amber) !important;">
             <div>
                 <span class="text-secondary small fw-medium d-block mb-1">Dalam Proses</span>
-                <h3 class="fw-bold mb-0 text-warning" style="color: var(--sippm-amber) !important;">{{ number_format($stats['proses']) }}</h3>
+                <h3 class="fw-bold mb-0 text-warning" style="color: var(--sipapa-amber) !important;">{{ number_format($stats['proses']) }}</h3>
             </div>
             <div class="rounded-circle p-2 bg-warning bg-opacity-10 text-warning" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                 <i class="bi bi-arrow-repeat fs-5"></i>
@@ -85,7 +85,7 @@
 
     <!-- Menunggu / Verifikasi -->
     <div class="col-sm-6 col-xl-3">
-        <div class="sippm-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid #2563eb !important;">
+        <div class="sipapa-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid #2563eb !important;">
             <div>
                 <span class="text-secondary small fw-medium d-block mb-1">Menunggu</span>
                 <h3 class="fw-bold mb-0 text-primary">{{ number_format($stats['pending']) }}</h3>
@@ -100,10 +100,10 @@
 <div class="row g-3 mb-4">
     <!-- Total Kegiatan -->
     <div class="col-sm-6 col-xl-3">
-        <div class="sippm-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sippm-navy) !important;">
+        <div class="sipapa-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sipapa-navy) !important;">
             <div>
                 <span class="text-secondary small fw-medium d-block mb-1">Total Terfilter</span>
-                <h3 class="fw-bold mb-0 text-sippm">{{ number_format($stats['total']) }}</h3>
+                <h3 class="fw-bold mb-0 text-sipapa">{{ number_format($stats['total']) }}</h3>
             </div>
             <div class="rounded-circle p-2 bg-primary bg-opacity-10 text-primary" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                 <i class="bi bi-activity fs-5"></i>
@@ -113,7 +113,7 @@
 
     <!-- Dipublikasikan -->
     <div class="col-sm-6 col-xl-3">
-        <div class="sippm-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sippm-green) !important;">
+        <div class="sipapa-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sipapa-green) !important;">
             <div>
                 <span class="text-secondary small fw-medium d-block mb-1">Dipublikasikan</span>
                 <h3 class="fw-bold mb-0 text-success">{{ number_format($stats['dipublikasikan']) }}</h3>
@@ -126,10 +126,10 @@
 
     <!-- Diverifikasi -->
     <div class="col-sm-6 col-xl-3">
-        <div class="sippm-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sippm-amber) !important;">
+        <div class="sipapa-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid var(--sipapa-amber) !important;">
             <div>
                 <span class="text-secondary small fw-medium d-block mb-1">Diverifikasi</span>
-                <h3 class="fw-bold mb-0 text-warning" style="color: var(--sippm-amber) !important;">{{ number_format($stats['diverifikasi']) }}</h3>
+                <h3 class="fw-bold mb-0 text-warning" style="color: var(--sipapa-amber) !important;">{{ number_format($stats['diverifikasi']) }}</h3>
             </div>
             <div class="rounded-circle p-2 bg-warning bg-opacity-10 text-warning" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                 <i class="bi bi-shield-check fs-5"></i>
@@ -139,7 +139,7 @@
 
     <!-- Draft -->
     <div class="col-sm-6 col-xl-3">
-        <div class="sippm-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid #2563eb !important;">
+        <div class="sipapa-card p-3 d-flex align-items-center justify-content-between bg-white border border-opacity-10 shadow-sm" style="transition: transform 0.2s ease; border-left: 4px solid #2563eb !important;">
             <div>
                 <span class="text-secondary small fw-medium d-block mb-1">Draft Usulan</span>
                 <h3 class="fw-bold mb-0 text-primary">{{ number_format($stats['draft']) }}</h3>
@@ -153,8 +153,8 @@
 @endif
 
 <!-- Container Tab Utama -->
-<div class="sippm-card p-4">
-    <ul class="nav nav-pills p-1 bg-light mb-4 d-inline-flex border" id="laporanTabs" style="border-radius: var(--sippm-radius-sm);">
+<div class="sipapa-card p-4">
+    <ul class="nav nav-pills p-1 bg-light mb-4 d-inline-flex border" id="laporanTabs" style="border-radius: var(--sipapa-radius-sm);">
         <li class="nav-item">
             <a class="nav-link {{ $activeTab === 'complaints' ? 'active' : '' }} px-4 py-2 fw-semibold" href="{{ url('/dashboard/laporan') }}" style="border-radius: 10px; transition: all 0.2s;">
                 <i class="bi bi-chat-left-text me-2"></i>Laporan Pengaduan
@@ -180,21 +180,21 @@
             
             @if($activeTab === 'complaints')
                 <!-- Panel Filter Pengaduan -->
-                <div class="card border-0 bg-light p-4 mb-4" style="border-radius: var(--sippm-radius-sm); border: 1px solid rgba(22, 52, 92, 0.08) !important;">
-                    <h5 class="h6 text-sippm fw-bold mb-3 d-flex align-items-center gap-2">
-                        <i class="bi bi-funnel-fill text-warning" style="color: var(--sippm-gold) !important;"></i>
+                <div class="card border-0 bg-light p-4 mb-4" style="border-radius: var(--sipapa-radius-sm); border: 1px solid rgba(22, 52, 92, 0.08) !important;">
+                    <h5 class="h6 text-sipapa fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-funnel-fill text-warning" style="color: var(--sipapa-gold) !important;"></i>
                         Saring & Cari Laporan Pengaduan
                     </h5>
                     <form method="get" action="{{ url('/dashboard/laporan') }}" class="row g-3">
                         <div class="col-lg-6">
-                            <label class="form-label text-sippm fw-semibold small">Cari Laporan</label>
-                            <div class="input-group shadow-sm" style="border-radius: var(--sippm-radius-sm); overflow: hidden;">
+                            <label class="form-label text-sipapa fw-semibold small">Cari Laporan</label>
+                            <div class="input-group shadow-sm" style="border-radius: var(--sipapa-radius-sm); overflow: hidden;">
                                 <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
                                 <input type="text" name="search" class="form-control border-start-0 ps-1" placeholder="Masukkan nomor tiket atau judul pengaduan..." value="{{ request('search') }}">
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <label class="form-label text-sippm fw-semibold small">Tujuan Pelaporan</label>
+                            <label class="form-label text-sipapa fw-semibold small">Tujuan Pelaporan</label>
                             <select name="target" class="form-select shadow-sm">
                                 <option value="">Semua Dinas (OPD) & Kecamatan</option>
                                 <optgroup label="Organisasi Perangkat Daerah (OPD)">
@@ -211,7 +211,7 @@
                         </div>
 
                         <div class="col-sm-6 col-md-3">
-                            <label class="form-label text-sippm fw-semibold small">Status</label>
+                            <label class="form-label text-sipapa fw-semibold small">Status</label>
                             <select name="status" class="form-select shadow-sm">
                                 <option value="">Semua Status</option>
                                 @foreach($statuses as $status)
@@ -220,7 +220,7 @@
                             </select>
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <label class="form-label text-sippm fw-semibold small">Hari</label>
+                            <label class="form-label text-sipapa fw-semibold small">Hari</label>
                             <select name="hari" class="form-select shadow-sm">
                                 <option value="">Semua Hari</option>
                                 @foreach($hariOptions as $index => $hari)
@@ -229,7 +229,7 @@
                             </select>
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <label class="form-label text-sippm fw-semibold small">Bulan</label>
+                            <label class="form-label text-sipapa fw-semibold small">Bulan</label>
                             <select name="bulan" class="form-select shadow-sm">
                                 <option value="">Semua Bulan</option>
                                 @foreach($bulanOptions as $index => $bulan)
@@ -238,7 +238,7 @@
                             </select>
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <label class="form-label text-sippm fw-semibold small">Tahun</label>
+                            <label class="form-label text-sipapa fw-semibold small">Tahun</label>
                             <select name="tahun" class="form-select shadow-sm">
                                 <option value="">Semua Tahun</option>
                                 @foreach($tahunOptions as $tahun)
@@ -247,23 +247,23 @@
                             </select>
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <label class="form-label text-sippm fw-semibold small">Dari Tanggal</label>
+                            <label class="form-label text-sipapa fw-semibold small">Dari Tanggal</label>
                             <input type="date" name="date_from" class="form-control shadow-sm" value="{{ request('date_from') }}">
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <label class="form-label text-sippm fw-semibold small">Sampai Tanggal</label>
+                            <label class="form-label text-sipapa fw-semibold small">Sampai Tanggal</label>
                             <input type="date" name="date_to" class="form-control shadow-sm" value="{{ request('date_to') }}">
                         </div>
 
                         <!-- Tombol Aksi Kelompok -->
                         <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-3 mt-3 pt-2 border-top border-2 border-white">
                             <div class="d-flex flex-wrap gap-2">
-                                <button type="submit" class="btn btn-sippm px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="background-color: var(--sippm-navy); border-color: var(--sippm-navy);">
+                                <button type="submit" class="btn btn-sipapa px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="background-color: var(--sipapa-navy); border-color: var(--sipapa-navy);">
                                     <i class="bi bi-search"></i>
                                     <span>Cari Data</span>
                                 </button>
                                 @if(request()->anyFilled(['search','status','target','hari','bulan','tahun','date_from','date_to']))
-                                    <a href="{{ url('/dashboard/laporan') }}" class="btn btn-outline-secondary px-4 py-2 d-inline-flex align-items-center gap-2" style="border-radius: var(--sippm-radius-sm);">
+                                    <a href="{{ url('/dashboard/laporan') }}" class="btn btn-outline-secondary px-4 py-2 d-inline-flex align-items-center gap-2" style="border-radius: var(--sipapa-radius-sm);">
                                         <i class="bi bi-arrow-counterclockwise"></i>
                                         <span>Reset</span>
                                     </a>
@@ -271,15 +271,15 @@
                             </div>
                             @if($user->hasRole('kominfo'))
                             <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-outline-primary px-3 py-2 d-inline-flex align-items-center gap-2" style="border-radius: var(--sippm-radius-sm);" @click="document.getElementById('ttd-tab').click()">
+                                <button type="button" class="btn btn-outline-primary px-3 py-2 d-inline-flex align-items-center gap-2" style="border-radius: var(--sipapa-radius-sm);" @click="document.getElementById('ttd-tab').click()">
                                     <i class="bi bi-pencil-square"></i>
                                     <span>Konfig TTD</span>
                                 </button>
-                                <a href="{{ url('/dashboard/laporan/export-pdf') }}?{{ http_build_query(request()->query()) }}" target="_blank" rel="noopener" class="btn btn-danger px-3 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="border-radius: var(--sippm-radius-sm); background-color: var(--sippm-red); border-color: var(--sippm-red);">
+                                <a href="{{ url('/dashboard/laporan/export-pdf') }}?{{ http_build_query(request()->query()) }}" target="_blank" rel="noopener" class="btn btn-danger px-3 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="border-radius: var(--sipapa-radius-sm); background-color: var(--sipapa-red); border-color: var(--sipapa-red);">
                                     <i class="bi bi-file-earmark-pdf-fill"></i>
                                     <span>Preview PDF</span>
                                 </a>
-                                <a href="{{ url('/dashboard/laporan/export-excel') }}?{{ http_build_query(request()->query()) }}" class="btn btn-success px-3 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="border-radius: var(--sippm-radius-sm); background-color: var(--sippm-green); border-color: var(--sippm-green);">
+                                <a href="{{ url('/dashboard/laporan/export-excel') }}?{{ http_build_query(request()->query()) }}" class="btn btn-success px-3 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="border-radius: var(--sipapa-radius-sm); background-color: var(--sipapa-green); border-color: var(--sipapa-green);">
                                     <i class="bi bi-file-earmark-excel-fill"></i>
                                     <span>Ekspor Excel</span>
                                 </a>
@@ -290,18 +290,18 @@
                 </div>
 
                 <!-- Tabel Data Pengaduan Premium -->
-                <div class="card border-0 shadow-sm" style="border-radius: var(--sippm-radius-sm); overflow: hidden; border: 1px solid var(--sippm-border) !important;">
+                <div class="card border-0 shadow-sm" style="border-radius: var(--sipapa-radius-sm); overflow: hidden; border: 1px solid var(--sipapa-border) !important;">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light" style="border-bottom: 2px solid var(--sippm-border);">
+                            <thead class="bg-light" style="border-bottom: 2px solid var(--sipapa-border);">
                                 <tr>
-                                    <th class="px-4 py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em;">No. Tiket</th>
-                                    <th class="py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em;">Judul Pengaduan</th>
-                                    <th class="py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em;">Kategori</th>
-                                    <th class="py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em;">Tujuan</th>
-                                    <th class="py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em; text-align: center;">Status</th>
-                                    <th class="py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em;">Tanggal Masuk</th>
-                                    <th class="px-4 py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em; text-align: center;">Aksi</th>
+                                    <th class="px-4 py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em;">No. Tiket</th>
+                                    <th class="py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em;">Judul Pengaduan</th>
+                                    <th class="py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em;">Kategori</th>
+                                    <th class="py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em;">Tujuan</th>
+                                    <th class="py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em; text-align: center;">Status</th>
+                                    <th class="py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em;">Tanggal Masuk</th>
+                                    <th class="px-4 py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em; text-align: center;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -328,7 +328,7 @@
                                         @endif
                                     </td>
                                     <td class="py-3 text-center">
-                                        <span class="sippm-badge badge-status-{{ $complaint->status->value }} px-3 py-1.5 shadow-none" style="font-size: 0.75rem; border-radius: 30px;">
+                                        <span class="sipapa-badge badge-status-{{ $complaint->status->value }} px-3 py-1.5 shadow-none" style="font-size: 0.75rem; border-radius: 30px;">
                                             {{ $complaint->status->label() }}
                                         </span>
                                     </td>
@@ -339,7 +339,7 @@
                                         </div>
                                     </td>
                                     <td class="px-4 py-3 text-center">
-                                        <a href="{{ url('/dashboard/complaints/'.$complaint->id) }}" class="btn btn-sm btn-sippm px-3 py-1.5 d-inline-flex align-items-center gap-1" style="font-size: 0.8rem; background-color: var(--sippm-navy);">
+                                        <a href="{{ url('/dashboard/complaints/'.$complaint->id) }}" class="btn btn-sm btn-sipapa px-3 py-1.5 d-inline-flex align-items-center gap-1" style="font-size: 0.8rem; background-color: var(--sipapa-navy);">
                                             <i class="bi bi-eye"></i> Detail
                                         </a>
                                     </td>
@@ -361,21 +361,21 @@
                 </div>
             @else
                 <!-- Panel Filter Kegiatan -->
-                <div class="card border-0 bg-light p-4 mb-4" style="border-radius: var(--sippm-radius-sm); border: 1px solid rgba(22, 52, 92, 0.08) !important;">
-                    <h5 class="h6 text-sippm fw-bold mb-3 d-flex align-items-center gap-2">
-                        <i class="bi bi-funnel-fill text-warning" style="color: var(--sippm-gold) !important;"></i>
+                <div class="card border-0 bg-light p-4 mb-4" style="border-radius: var(--sipapa-radius-sm); border: 1px solid rgba(22, 52, 92, 0.08) !important;">
+                    <h5 class="h6 text-sipapa fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-funnel-fill text-warning" style="color: var(--sipapa-gold) !important;"></i>
                         Saring & Cari Kegiatan
                     </h5>
                     <form method="get" action="{{ url('/dashboard/laporan/activities') }}" class="row g-3">
                         <div class="col-lg-6">
-                            <label class="form-label text-sippm fw-semibold small">Cari Kegiatan</label>
-                            <div class="input-group shadow-sm" style="border-radius: var(--sippm-radius-sm); overflow: hidden;">
+                            <label class="form-label text-sipapa fw-semibold small">Cari Kegiatan</label>
+                            <div class="input-group shadow-sm" style="border-radius: var(--sipapa-radius-sm); overflow: hidden;">
                                 <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
                                 <input type="text" name="search" class="form-control border-start-0 ps-1" placeholder="Masukkan judul kegiatan atau lokasi..." value="{{ request('search') }}">
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <label class="form-label text-sippm fw-semibold small">Penerbit (OPD/Kecamatan)</label>
+                            <label class="form-label text-sipapa fw-semibold small">Penerbit (OPD/Kecamatan)</label>
                             <select name="target" class="form-select shadow-sm">
                                 <option value="">Semua Dinas (OPD) & Kecamatan</option>
                                 <optgroup label="Organisasi Perangkat Daerah (OPD)">
@@ -392,7 +392,7 @@
                         </div>
 
                         <div class="col-sm-4">
-                            <label class="form-label text-sippm fw-semibold small">Status</label>
+                            <label class="form-label text-sipapa fw-semibold small">Status</label>
                             <select name="status" class="form-select shadow-sm">
                                 <option value="">Semua Status</option>
                                 <option value="draft" @selected(request('status') === 'draft')>Draft</option>
@@ -402,23 +402,23 @@
                             </select>
                         </div>
                         <div class="col-sm-4">
-                            <label class="form-label text-sippm fw-semibold small">Dari Tanggal</label>
+                            <label class="form-label text-sipapa fw-semibold small">Dari Tanggal</label>
                             <input type="date" name="date_from" class="form-control shadow-sm" value="{{ request('date_from') }}">
                         </div>
                         <div class="col-sm-4">
-                            <label class="form-label text-sippm fw-semibold small">Sampai Tanggal</label>
+                            <label class="form-label text-sipapa fw-semibold small">Sampai Tanggal</label>
                             <input type="date" name="date_to" class="form-control shadow-sm" value="{{ request('date_to') }}">
                         </div>
 
                         <!-- Tombol Aksi Kelompok -->
                         <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-3 mt-3 pt-2 border-top border-2 border-white">
                             <div class="d-flex flex-wrap gap-2">
-                                <button type="submit" class="btn btn-sippm px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="background-color: var(--sippm-navy); border-color: var(--sippm-navy);">
+                                <button type="submit" class="btn btn-sipapa px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="background-color: var(--sipapa-navy); border-color: var(--sipapa-navy);">
                                     <i class="bi bi-search"></i>
                                     <span>Cari Data</span>
                                 </button>
                                 @if(request()->anyFilled(['search','status','target','date_from','date_to']))
-                                    <a href="{{ url('/dashboard/laporan/activities') }}" class="btn btn-outline-secondary px-4 py-2 d-inline-flex align-items-center gap-2" style="border-radius: var(--sippm-radius-sm);">
+                                    <a href="{{ url('/dashboard/laporan/activities') }}" class="btn btn-outline-secondary px-4 py-2 d-inline-flex align-items-center gap-2" style="border-radius: var(--sipapa-radius-sm);">
                                         <i class="bi bi-arrow-counterclockwise"></i>
                                         <span>Reset</span>
                                     </a>
@@ -426,11 +426,11 @@
                             </div>
                             @if($user->hasRole('kominfo'))
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="{{ url('/dashboard/laporan/activities/export-pdf') }}?{{ http_build_query(request()->query()) }}" target="_blank" rel="noopener" class="btn btn-danger px-3 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="border-radius: var(--sippm-radius-sm); background-color: var(--sippm-red); border-color: var(--sippm-red);">
+                                <a href="{{ url('/dashboard/laporan/activities/export-pdf') }}?{{ http_build_query(request()->query()) }}" target="_blank" rel="noopener" class="btn btn-danger px-3 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="border-radius: var(--sipapa-radius-sm); background-color: var(--sipapa-red); border-color: var(--sipapa-red);">
                                     <i class="bi bi-file-earmark-pdf-fill"></i>
                                     <span>Preview PDF</span>
                                 </a>
-                                <a href="{{ url('/dashboard/laporan/activities/export-excel') }}?{{ http_build_query(request()->query()) }}" class="btn btn-success px-3 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="border-radius: var(--sippm-radius-sm); background-color: var(--sippm-green); border-color: var(--sippm-green);">
+                                <a href="{{ url('/dashboard/laporan/activities/export-excel') }}?{{ http_build_query(request()->query()) }}" class="btn btn-success px-3 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="border-radius: var(--sipapa-radius-sm); background-color: var(--sipapa-green); border-color: var(--sipapa-green);">
                                     <i class="bi bi-file-earmark-excel-fill"></i>
                                     <span>Ekspor Excel</span>
                                 </a>
@@ -441,17 +441,17 @@
                 </div>
 
                 <!-- Tabel Data Kegiatan Premium -->
-                <div class="card border-0 shadow-sm" style="border-radius: var(--sippm-radius-sm); overflow: hidden; border: 1px solid var(--sippm-border) !important;">
+                <div class="card border-0 shadow-sm" style="border-radius: var(--sipapa-radius-sm); overflow: hidden; border: 1px solid var(--sipapa-border) !important;">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light" style="border-bottom: 2px solid var(--sippm-border);">
+                            <thead class="bg-light" style="border-bottom: 2px solid var(--sipapa-border);">
                                 <tr>
-                                    <th class="px-4 py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em; width: 40%;">Judul Kegiatan</th>
-                                    <th class="py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em; width: 25%;">Penerbit (OPD/Kecamatan)</th>
-                                    <th class="py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em; width: 15%;">Lokasi</th>
-                                    <th class="py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em; text-align: center; width: 8%;">Status</th>
-                                    <th class="py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em; width: 12%;">Tanggal</th>
-                                    <th class="px-4 py-3 text-sippm fw-bold text-uppercase small" style="letter-spacing: 0.05em; text-align: center;">Aksi</th>
+                                    <th class="px-4 py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em; width: 40%;">Judul Kegiatan</th>
+                                    <th class="py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em; width: 25%;">Penerbit (OPD/Kecamatan)</th>
+                                    <th class="py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em; width: 15%;">Lokasi</th>
+                                    <th class="py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em; text-align: center; width: 8%;">Status</th>
+                                    <th class="py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em; width: 12%;">Tanggal</th>
+                                    <th class="px-4 py-3 text-sipapa fw-bold text-uppercase small" style="letter-spacing: 0.05em; text-align: center;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -468,7 +468,7 @@
                                     </td>
                                     <td class="py-3 small text-muted">{{ $act->location ?? '-' }}</td>
                                     <td class="py-3 text-center">
-                                        <span class="sippm-badge sippm-badge-{{ $act->status->value === 'dipublikasikan' ? 'green' : ($act->status->value === 'ditolak' ? 'red' : 'amber') }} px-3 py-1.5 shadow-none" style="font-size: 0.75rem; border-radius: 30px;">
+                                        <span class="sipapa-badge sipapa-badge-{{ $act->status->value === 'dipublikasikan' ? 'green' : ($act->status->value === 'ditolak' ? 'red' : 'amber') }} px-3 py-1.5 shadow-none" style="font-size: 0.75rem; border-radius: 30px;">
                                             {{ $act->status->label() }}
                                         </span>
                                     </td>
@@ -479,7 +479,7 @@
                                         </div>
                                     </td>
                                     <td class="px-4 py-3 text-center">
-                                        <a href="{{ url('/dashboard/activities/'.$act->id) }}" class="btn btn-sm btn-sippm px-3 py-1.5 d-inline-flex align-items-center gap-1" style="font-size: 0.8rem; background-color: var(--sippm-navy);">
+                                        <a href="{{ url('/dashboard/activities/'.$act->id) }}" class="btn btn-sm btn-sipapa px-3 py-1.5 d-inline-flex align-items-center gap-1" style="font-size: 0.8rem; background-color: var(--sipapa-navy);">
                                             <i class="bi bi-eye"></i> Detail
                                         </a>
                                     </td>
@@ -540,21 +540,21 @@
                 <div class="row g-4">
                     <!-- Kolom Kiri: Form Pengisian -->
                     <div class="col-lg-5">
-                        <div class="card border-0 shadow-sm p-4 bg-light" style="border-radius: var(--sippm-radius-sm); border: 1px solid var(--sippm-border) !important;">
-                            <h5 class="h6 text-sippm fw-bold mb-3 d-flex align-items-center gap-2">
-                                <i class="bi bi-pencil-square text-warning" style="color: var(--sippm-gold) !important;"></i>
+                        <div class="card border-0 shadow-sm p-4 bg-light" style="border-radius: var(--sipapa-radius-sm); border: 1px solid var(--sipapa-border) !important;">
+                            <h5 class="h6 text-sipapa fw-bold mb-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-pencil-square text-warning" style="color: var(--sipapa-gold) !important;"></i>
                                 Konfigurasi Penandatangan
                             </h5>
                             
                             <form method="post" action="{{ url('/dashboard/laporan/ttd') }}" id="form-ttd">
                                 @csrf
                                 <div class="mb-3">
-                                    <label class="form-label text-sippm fw-semibold small">Nama Penandatangan</label>
+                                    <label class="form-label text-sipapa fw-semibold small">Nama Penandatangan</label>
                                     <input type="text" name="nama_penandatangan" class="form-control bg-white shadow-sm" x-model="nama" required placeholder="Contoh: MUHAMMAD SYAIL LUBIS, ST, M.M.">
                                     @error('nama_penandatangan')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-sippm fw-semibold small">Jabatan Dinas (Text Editor Layout TTD)</label>
+                                    <label class="form-label text-sipapa fw-semibold small">Jabatan Dinas (Text Editor Layout TTD)</label>
                                     <!-- Container Rich Text Editor Quill -->
                                     <div id="jabatan-editor" style="min-height: 130px;" class="bg-white rounded border shadow-sm"></div>
                                     <textarea name="jabatan_penandatangan" id="jabatan_penandatangan_input" class="d-none" x-model="jabatan" required></textarea>
@@ -562,16 +562,16 @@
                                     @error('jabatan_penandatangan')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-sippm fw-semibold small">Pangkat / Golongan</label>
+                                    <label class="form-label text-sipapa fw-semibold small">Pangkat / Golongan</label>
                                     <input type="text" name="pangkat" class="form-control bg-white shadow-sm" x-model="pangkat" placeholder="Contoh: Pembina">
                                     @error('pangkat')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-sippm fw-semibold small">NIP</label>
+                                    <label class="form-label text-sipapa fw-semibold small">NIP</label>
                                     <input type="text" name="nip" class="form-control bg-white shadow-sm" inputmode="numeric" x-model="nip" required placeholder="Contoh: 197930192005021002">
                                     @error('nip')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                                 </div>
-                                <button type="submit" class="btn btn-sippm w-100 py-2.5 mt-2 d-flex align-items-center justify-content-center gap-2" style="background-color: var(--sippm-navy); border-color: var(--sippm-navy);">
+                                <button type="submit" class="btn btn-sipapa w-100 py-2.5 mt-2 d-flex align-items-center justify-content-center gap-2" style="background-color: var(--sipapa-navy); border-color: var(--sipapa-navy);">
                                     <i class="bi bi-save-fill"></i>
                                     <span>Simpan Pengaturan</span>
                                 </button>
@@ -581,15 +581,15 @@
 
                     <!-- Kolom Kanan: Live Preview Resmi -->
                     <div class="col-lg-7">
-                        <div class="card border-0 shadow-sm" style="border-radius: var(--sippm-radius-sm); border: 1px solid var(--sippm-border) !important; height: 100%;">
-                            <div class="card-header bg-light py-3 d-flex align-items-center justify-content-between" style="border-bottom: 1px solid var(--sippm-border);">
+                        <div class="card border-0 shadow-sm" style="border-radius: var(--sipapa-radius-sm); border: 1px solid var(--sipapa-border) !important; height: 100%;">
+                            <div class="card-header bg-light py-3 d-flex align-items-center justify-content-between" style="border-bottom: 1px solid var(--sipapa-border);">
                                 <div class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-eye-fill text-sippm"></i>
-                                    <span class="fw-semibold text-sippm">Preview TTD Tata Naskah</span>
+                                    <i class="bi bi-eye-fill text-sipapa"></i>
+                                    <span class="fw-semibold text-sipapa">Preview TTD Tata Naskah</span>
                                 </div>
                             </div>
                             <div class="card-body d-flex flex-column justify-content-center bg-white p-4" style="background-image: radial-gradient(rgba(22, 52, 92, 0.03) 1px, transparent 1px); background-size: 16px 16px;">
-                                <div class="mx-auto w-100 p-4 border rounded-3" style="max-width: 480px; background-color: #ffffff; box-shadow: var(--sippm-shadow-soft); position: relative;">
+                                <div class="mx-auto w-100 p-4 border rounded-3" style="max-width: 480px; background-color: #ffffff; box-shadow: var(--sipapa-shadow-soft); position: relative;">
                                     
                                     <div class="ms-auto" style="max-width: 360px; text-align: left; font-family: Arial, Helvetica, sans-serif; color: #000; line-height: 1.35;">
                                         <!-- Jabatan Dinas (Render Hanging Indent Table) -->

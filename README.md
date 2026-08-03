@@ -1,4 +1,4 @@
-# SIPPM Madina
+﻿# SIPAPA Madina
 
 Sistem Informasi Pengaduan Masyarakat & Pelaporan Kegiatan untuk Pemerintah
 Kabupaten Mandailing Natal. Dibangun di atas Laravel 13 dengan pendekatan
@@ -34,7 +34,7 @@ wajib) dan `progress.md` untuk status implementasi modul per modul.
    UI, atau jalankan `mysqld.exe` langsung dengan config
    `my.ini` bawaan Laragon).
 2. Salin `.env.example` ke `.env` bila belum ada, sesuaikan kredensial DB
-   bila berbeda dari default (`sippm_madina` / `root` / password kosong).
+   bila berbeda dari default (`sipapa_madina` / `root` / password kosong).
 3. Install dependencies:
    ```bash
    composer install

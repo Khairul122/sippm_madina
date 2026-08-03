@@ -1,7 +1,7 @@
-# AGENTS.md — SIPPM Madina
+﻿# AGENTS.md — SIPAPA Madina
 
 Panduan wajib untuk siapa pun (manusia atau AI coding agent) yang
-mengerjakan proyek ini. Berdasarkan PRD SIPPM Madina bagian 14
+mengerjakan proyek ini. Berdasarkan PRD SIPAPA Madina bagian 14
 (Do's/Don'ts) dan bagian 9 (struktur folder wajib).
 
 ## Struktur Folder Wajib (Clean Architecture, 4 lapis)
@@ -140,19 +140,19 @@ bukan di tempat lain.
 Didefinisikan sebagai CSS custom properties di `resources/css/app.css`:
 
 ```
---sippm-navy:   #16345C
---sippm-gold:   #C9A227
---sippm-green:  #2E7D4F
---sippm-amber:  #D98E04
---sippm-red:    #B23A3A
---sippm-cream:  #F7F5EF
---sippm-text:   #2B2B2B
+--sipapa-navy:   #16345C
+--sipapa-gold:   #C9A227
+--sipapa-green:  #2E7D4F
+--sipapa-amber:  #D98E04
+--sipapa-red:    #B23A3A
+--sipapa-cream:  #F7F5EF
+--sipapa-text:   #2B2B2B
 ```
 
-Shadow lembut 2-lapis (`--sippm-shadow-soft`, `--sippm-shadow-raised`) dan
-border-radius 12-16px (`--sippm-radius-sm`, `--sippm-radius-lg`) sudah
-disiapkan sebagai utility class (`.sippm-card`, `.sippm-card-raised`,
-`.sippm-badge-*`, `.sippm-btn-*`) untuk dipakai Blade views di fase
+Shadow lembut 2-lapis (`--sipapa-shadow-soft`, `--sipapa-shadow-raised`) dan
+border-radius 12-16px (`--sipapa-radius-sm`, `--sipapa-radius-lg`) sudah
+disiapkan sebagai utility class (`.sipapa-card`, `.sipapa-card-raised`,
+`.sipapa-badge-*`, `.sipapa-btn-*`) untuk dipakai Blade views di fase
 berikutnya.
 
 ## Repository Interfaces (Domain) — Referensi Cepat untuk Fase 4

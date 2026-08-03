@@ -1,4 +1,4 @@
-# Progress — SIPPM Madina
+﻿# Progress — SIPAPA Madina
 
 ## Status Proyek
 
@@ -35,7 +35,7 @@ kerja sesi ini):
 2. **Bug rich text**: user melaporkan (screenshot) deskripsi pengaduan
    tampil sebagai HTML mentah `<p>...</p>` bukan teks biasa. Ditelusuri:
    editor rich text proyek ini adalah **Quill 1.3.7** (`layouts/dashboard.blade.php`,
-   helper `sippmInitRichText()`) — field `description` (baik Activity
+   helper `sipapaInitRichText()`) — field `description` (baik Activity
    maupun Complaint) SELALU disimpan sebagai HTML mentah oleh Quill,
    sehingga SETIAP tempat yang menampilkannya wajib eksplisit pilih
    `{!! !!}` (render HTML, untuk halaman detail) atau `strip_tags()`
@@ -196,13 +196,13 @@ panel yang login (`layouts/dashboard.blade.php` — layout yang sama untuk
 `/dashboard/*`, `/pengaduan/*`, `/profil`, `/manual-book`, jadi cukup
 diubah satu tempat untuk berlaku ke semua role termasuk masyarakat, pola
 yang sama dengan alasan topbar avatar sebelumnya).
-- Elemen `<div id="sippmPageLoader">` (baru) ditambah tepat setelah
+- Elemen `<div id="sipapaPageLoader">` (baru) ditambah tepat setelah
   `<body>` di `layouts/dashboard.blade.php`; style statis (gradient
   navy→gold, tinggi 3px, fixed top) di `resources/css/app.css`.
 - Proyek ini server-rendered penuh (bukan SPA), jadi tidak ada "selesai
   loading" yang bisa dideteksi di halaman yang sama — context JS-nya
   hancur total setiap kali browser pindah halaman. Solusi:
-  `resources/js/app.js` set flag `sessionStorage` (`sippm:page-loading`)
+  `resources/js/app.js` set flag `sessionStorage` (`sipapa:page-loading`)
   saat navigasi dipicu (klik link/submit form), lalu di
   `DOMContentLoaded` halaman TUJUAN, kalau flag itu ada → animasikan bar
   ke 100% lalu fade out, kalau tidak ada (load langsung/ketik URL/bookmark)
@@ -500,7 +500,7 @@ penting di bawah.
   supaya resolusi nama "Tujuan" tidak N+1 query per baris.
 - `resources/views/dashboard/laporan/export-pdf.blade.php` (baru): laporan
   PDF landscape (`setPaper('a4','landscape')`) dengan kop surat (logo
-  `public_path('images/logo-madina.png')` — WAJIB `public_path()` bukan
+  `public_path('images/logo-sipapa.png')` — WAJIB `public_path()` bukan
   `asset()` karena DomPDF render server-side tanpa konteks HTTP), ringkasan
   filter aktif, tabel data, dan blok tanda tangan resmi (tempat+tanggal,
   jabatan+instansi, spasi kosong untuk ttd fisik+cap, nama digarisbawahi,
@@ -541,11 +541,11 @@ ditolak 403 di `/dashboard/laporan`.
 **2026-07-09 (lanjutan)** — Polishing visual halaman publik + auth, murni
 UI (tidak ada perubahan business rule/route/migration), atas permintaan
 user. Belum di-commit — lihat "Known Issues".
-- **Beranda publik** (`public/home.blade.php`): section baru "Kenapa SIPPM
+- **Beranda publik** (`public/home.blade.php`): section baru "Kenapa SIPAPA
   Madina" (3 value-prop card) di bawah hero, section baru "Kegiatan &amp;
   Dokumentasi Terbaru" (3 kegiatan terpublikasi terbaru, card sama dengan
   `/kegiatan`) sebelum footer, dan CTA band penutup baru
-  (`.btn-sippm-gov-primary`/`.btn-sippm-gov-secondary`). Ditopang query baru
+  (`.btn-sipapa-gov-primary`/`.btn-sipapa-gov-secondary`). Ditopang query baru
   `recentActivities` di `HomeController::index()`
   (`Activity::where(status=DIPUBLIKASIKAN)->with(['documentations','actor'])->latest('date')->take(3)`).
 - Style `.activity-card*` yang sebelumnya inline di `@push('styles')`
@@ -560,7 +560,7 @@ user. Belum di-commit — lihat "Known Issues".
   elemen setelah 2 detik sebagai safety net kalau script lain error.
 - Toggle show/hide password baru (`data-toggle-password="#id"`, listener
   generik di `app.js`) dipasang di `auth/{login,register}.blade.php`.
-  Kartu auth juga direstyle (`.sippm-auth-card`, heading+subheading baru,
+  Kartu auth juga direstyle (`.sipapa-auth-card`, heading+subheading baru,
   tombol lebih besar).
 - Type-scale sitewide dinaikkan (root `17px`, heading `h1-h6` dapat skala
   eksplisit lewat `clamp()`) di `resources/css/app.css` karena banyak
@@ -575,7 +575,7 @@ user. Belum di-commit — lihat "Known Issues".
   `Api\DashboardController::statistics()/performance()` sekarang eksplisit
   `->toArray()` hasil `pluck()` sebelum masuk payload — Blade diikutkan
   memakai `array_keys()`/`array_values()` native. `min-width:260px` +
-  `flex-shrink:0` ditambah ke `.sippm-sidebar` (`layouts/dashboard.blade.php`)
+  `flex-shrink:0` ditambah ke `.sipapa-sidebar` (`layouts/dashboard.blade.php`)
   supaya sidebar tidak collapse saat konten tabel lebar (DataTables).
 - `php artisan test`: 25 test tetap **passed** (tidak ada test baru — murni
   perubahan visual/CSS/JS tanpa business rule baru).
@@ -812,7 +812,7 @@ cookie-session + query DB langsung):
    (dari env `MYSQLDUMP_PATH`, default kosong supaya tidak berdampak di
    Linux produksi yang biasanya sudah punya `mysqldump` di PATH).
    Diverifikasi: `php artisan backup:run --only-db` benar-benar
-   menghasilkan file zip nyata di `storage/app/private/SIPPM Madina/`.
+   menghasilkan file zip nyata di `storage/app/private/SIPAPA Madina/`.
 8. **NFR-16**: `Cache::remember()` TTL 60 detik dipasang di kedua endpoint
    statistik (`StatisticsController::index/performance` web,
    `DashboardController::statistics/performance` API) — TTL pendek dipilih
@@ -859,7 +859,7 @@ diperbarui supaya dokumentasi konsisten dengan keputusan baru ini.
 
 **2026-07-05 (lanjutan 3)** — Ukuran grafik Chart.js di
 `dashboard/statistics/{index,performance}.blade.php` dibatasi konsisten
-(wrapper `.sippm-chart-box`, tinggi 240px, `maintainAspectRatio:false`)
+(wrapper `.sipapa-chart-box`, tinggi 240px, `maintainAspectRatio:false`)
 — sebelumnya bisa membesar tanpa batas tergantung lebar kolom. Seluruh
 tampilan tanggal/waktu diseragamkan ke format Indonesia: `APP_LOCALE`/
 `APP_FALLBACK_LOCALE` diganti `en`→`id`, `Carbon::setLocale('id')`
@@ -905,7 +905,7 @@ count-up vanilla JS), thumbnail dokumentasi + badge OPD/Kecamatan di feed
 kegiatan publik (`/kegiatan`, sebelumnya polos tanpa gambar), sidebar
 dashboard kini punya versi mobile (Bootstrap 5 offcanvas — sebelumnya
 `d-none d-lg-flex` tanpa fallback sama sekali, bug murni). Lambang resmi
-Kabupaten Mandailing Natal (`public/images/logo-madina.png`, dipindah
+Kabupaten Mandailing Natal (`public/images/logo-sipapa.png`, dipindah
 dari folder `foto/` yang diberikan user lalu dihapus) dipasang di semua
 header/sidebar/footer/halaman auth. Dua bug lama ikut diperbaiki:
 `Paginator::useBootstrapFive()` belum pernah dipanggil (pagination
@@ -1040,7 +1040,7 @@ RBAC, repository implementations + binding).
       di `.env`/`.env.example` (lihat "Keputusan Arsitektur" di AGENTS.md)
 - [x] Setup Laravel Echo di `resources/js/app.js` (npm `laravel-echo` +
       `pusher-js`, broadcaster `reverb`) — subscribe ke channel privat
-      sesuai role/id user (`window.SIPPM_USER` di-inject dari
+      sesuai role/id user (`window.SIPAPA_USER` di-inject dari
       `layouts/dashboard.blade.php`) dan channel publik `public-activities`
 - [x] Event/broadcast tiap perubahan status pengaduan
       (ComplaintSubmitted/Verified/Disposed/Handled/Resolved) — sudah ada
@@ -1168,17 +1168,17 @@ Fase 4).
 **Fase 0 (Environment & Fondasi)**
 - MySQL 8.4 Laragon dinyalakan manual (`mysqld.exe --defaults-file=...my.ini`,
   karena tidak terdaftar sebagai Windows Service) dan database
-  `sippm_madina` (utf8mb4_unicode_ci) dibuat.
+  `sipapa_madina` (utf8mb4_unicode_ci) dibuat.
 - `.env` dan `.env.example`: `DB_CONNECTION=mysql`,
-  `DB_HOST=127.0.0.1`, `DB_PORT=3306`, `DB_DATABASE=sippm_madina`,
+  `DB_HOST=127.0.0.1`, `DB_PORT=3306`, `DB_DATABASE=sipapa_madina`,
   `DB_USERNAME=root`, `DB_PASSWORD=` (kosong). `APP_NAME` diganti ke
-  "SIPPM Madina". `QUEUE_CONNECTION=database` &
+  "SIPAPA Madina". `QUEUE_CONNECTION=database` &
   `BROADCAST_CONNECTION=log` sudah default dari skeleton, dikonfirmasi
   tidak perlu diubah.
 - Frontend: Tailwind dihapus dari `package.json` & `vite.config.js`.
   `resources/css/app.css` diganti berisi CSS custom properties palet
-  "Bright Skeuomorphism" + utility classes (`.sippm-card`,
-  `.sippm-badge-*`, dst). `resources/js/app.js` jadi placeholder minimal.
+  "Bright Skeuomorphism" + utility classes (`.sipapa-card`,
+  `.sipapa-badge-*`, dst). `resources/js/app.js` jadi placeholder minimal.
 - `progress.md`, `AGENTS.md`, `README.md` dibuat/diperbarui.
 - Composer packages terpasang: `laravel/sanctum`,
   `spatie/laravel-permission`, `barryvdh/laravel-dompdf`,
@@ -1246,7 +1246,7 @@ dependensi Illuminate:
 
 **Verifikasi**
 - `php artisan migrate:fresh --seed` berhasil penuh terhadap MySQL nyata
-  (`sippm_madina`), termasuk semua 17 migration dan 4 seeder.
+  (`sipapa_madina`), termasuk semua 17 migration dan 4 seeder.
 - `php artisan config:clear` dan `composer dump-autoload` berhasil tanpa
   error (8215 class ter-autoload).
 - Sanity check via `php artisan tinker`: resolusi binding
@@ -1313,9 +1313,9 @@ dependensi Illuminate:
   bootstrap Echo (`broadcaster: 'reverb'`) + listener per channel
   (`App.Models.User.{id}`, `channel-kominfo`, `channel-opd.{id}`,
   `channel-camat.{id}`, `public-activities`), memicu `CustomEvent`
-  browser `sippm:notification` yang didengar oleh Alpine component
+  browser `sipapa:notification` yang didengar oleh Alpine component
   notification bell di `layouts/dashboard.blade.php`
-  (`window.SIPPM_USER` di-inject inline sebelum `@vite` load app.js).
+  (`window.SIPAPA_USER` di-inject inline sebelum `@vite` load app.js).
 - Sidebar dashboard dibangun manual dengan Bootstrap 5 (bukan library
   `admin-lte` literal) karena AdminLTE 3.x resmi berbasis Bootstrap 4 dan
   akan bentrok — lihat "Known Issues".

@@ -5,7 +5,7 @@
     <!-- Header Page -->
     <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 mb-4">
         <div>
-            <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sippm-navy) !important;">Pengaturan Profil</h1>
+            <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sipapa-navy) !important;">Pengaturan Profil</h1>
             <p class="text-muted small mb-0">Kelola informasi pribadi, foto profil, dan keamanan akun Anda.</p>
         </div>
         <div>
@@ -19,9 +19,9 @@
     <div class="row g-4">
         <!-- Kolom Kiri: Ringkasan Profil & Foto -->
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: var(--sippm-radius-lg); background: #ffffff;">
+            <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: var(--sipapa-radius-lg); background: #ffffff;">
                 <!-- Decorative Top Banner Background -->
-                <div class="position-relative" style="height: 120px; background: linear-gradient(135deg, var(--sippm-navy) 0%, var(--sippm-navy-light) 100%);">
+                <div class="position-relative" style="height: 120px; background: linear-gradient(135deg, var(--sipapa-navy) 0%, var(--sipapa-navy-light) 100%);">
                     <div class="position-absolute w-100 h-100" style="background: radial-gradient(circle at 80% 20%, rgba(201, 162, 39, 0.15) 0%, transparent 50%);"></div>
                 </div>
                 
@@ -54,7 +54,7 @@
                     <h4 class="fw-bold mb-1 text-dark" style="font-family: 'Poppins', sans-serif; font-size: 1.15rem;">{{ $user->name }}</h4>
                     <p class="text-muted small mb-3">{{ $user->email }}</p>
                     
-                    <span class="badge px-3 py-2 mb-4 text-uppercase tracking-wider fw-semibold" style="font-size: 0.72rem; letter-spacing: 0.05em; background-color: rgba(22, 52, 92, 0.08); color: var(--sippm-navy); border-radius: 30px;">
+                    <span class="badge px-3 py-2 mb-4 text-uppercase tracking-wider fw-semibold" style="font-size: 0.72rem; letter-spacing: 0.05em; background-color: rgba(22, 52, 92, 0.08); color: var(--sipapa-navy); border-radius: 30px;">
                         <i class="bi bi-shield-fill-check me-1"></i>
                         {{ str_replace('_',' ', $user->getRoleNames()->first() ?? '-') }}
                     </span>
@@ -91,9 +91,9 @@
         <!-- Kolom Kanan: Pengaturan Data & Kata Sandi -->
         <div class="col-lg-8">
             <!-- Card 1: Data Pribadi -->
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: var(--sippm-radius-lg); background: #ffffff;">
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: var(--sipapa-radius-lg); background: #ffffff;">
                 <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2 d-flex align-items-center gap-2">
-                    <div class="p-2 rounded-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background-color: rgba(22, 52, 92, 0.08) !important; color: var(--sippm-navy) !important;">
+                    <div class="p-2 rounded-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background-color: rgba(22, 52, 92, 0.08) !important; color: var(--sipapa-navy) !important;">
                         <i class="bi bi-person-gear fs-5"></i>
                     </div>
                     <div>
@@ -123,7 +123,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-end mt-4 pt-3 border-top">
-                            <button type="submit" class="btn btn-sippm px-4 py-2 rounded-3 fw-semibold text-white shadow-sm d-flex align-items-center gap-2" style="background-color: var(--sippm-navy); border: none;">
+                            <button type="submit" class="btn btn-sipapa px-4 py-2 rounded-3 fw-semibold text-white shadow-sm d-flex align-items-center gap-2" style="background-color: var(--sipapa-navy); border: none;">
                                 <i class="bi bi-save"></i> Simpan Perubahan
                             </button>
                         </div>
@@ -132,9 +132,9 @@
             </div>
 
             <!-- Card 2: Ubah Kata Sandi -->
-            <div class="card border-0 shadow-sm" style="border-radius: var(--sippm-radius-lg); background: #ffffff;">
+            <div class="card border-0 shadow-sm" style="border-radius: var(--sipapa-radius-lg); background: #ffffff;">
                 <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2 d-flex align-items-center gap-2">
-                    <div class="p-2 rounded-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background-color: rgba(178, 58, 58, 0.08) !important; color: var(--sippm-red) !important;">
+                    <div class="p-2 rounded-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background-color: rgba(178, 58, 58, 0.08) !important; color: var(--sipapa-red) !important;">
                         <i class="bi bi-shield-lock fs-5"></i>
                     </div>
                     <div>
@@ -182,7 +182,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end mt-4 pt-3 border-top">
-                            <button type="submit" class="btn px-4 py-2 rounded-3 fw-semibold text-white shadow-sm d-flex align-items-center gap-2" style="background-color: var(--sippm-red); border: none;">
+                            <button type="submit" class="btn px-4 py-2 rounded-3 fw-semibold text-white shadow-sm d-flex align-items-center gap-2" style="background-color: var(--sipapa-red); border: none;">
                                 <i class="bi bi-key-fill"></i> Perbarui Kata Sandi
                             </button>
                         </div>
@@ -237,7 +237,7 @@
     }
     .group-avatar label:hover {
         transform: scale(1.1) rotate(15deg);
-        background-color: var(--sippm-gold) !important;
+        background-color: var(--sipapa-gold) !important;
     }
     
     /* Form input focus animations */
@@ -251,15 +251,15 @@
     .input-group:focus-within .input-group-text,
     .input-group:focus-within input,
     .input-group:focus-within button {
-        border-color: var(--sippm-navy) !important;
+        border-color: var(--sipapa-navy) !important;
     }
     
     /* Custom button transition effects */
-    .btn-sippm:hover {
+    .btn-sipapa:hover {
         opacity: 0.9;
         transform: translateY(-1px);
     }
-    .btn[style*="background-color: var(--sippm-red)"]:hover {
+    .btn[style*="background-color: var(--sipapa-red)"]:hover {
         opacity: 0.9;
         transform: translateY(-1px);
     }

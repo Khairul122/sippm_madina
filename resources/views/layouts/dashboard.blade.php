@@ -4,15 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Dashboard' }} — SIPPM Madina</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/logo-madina.png') }}">
+    <title>{{ $title ?? 'Dashboard' }} — SIPAPA Madina</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-sipapa.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.11/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">
     <script>
-        window.SIPPM_USER = {
+        window.SIPAPA_USER = {
             id: {{ auth()->id() }},
             roles: @json(auth()->user()->getRoleNames()),
             opd_id: @json(auth()->user()->opd_id),
@@ -21,40 +21,40 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: var(--sippm-cream); }
+        body { font-family: 'Inter', sans-serif; background-color: var(--sipapa-cream); }
         h1, h2, h3, h4, .brand-text { font-family: 'Poppins', sans-serif; }
 
-        .sippm-sidebar {
-            width: 260px; min-width: 260px; flex-shrink: 0; min-height: 100vh; background-color: var(--sippm-navy);
-            box-shadow: var(--sippm-shadow-raised); position: sticky; top: 0;
+        .sipapa-sidebar {
+            width: 260px; min-width: 260px; flex-shrink: 0; min-height: 100vh; background-color: var(--sipapa-navy);
+            box-shadow: var(--sipapa-shadow-raised); position: sticky; top: 0;
         }
-        .sippm-sidebar .brand-text { color: #fff; }
-        .sippm-sidebar .nav-link { color: rgba(255,255,255,.75); border-radius: var(--sippm-radius-sm); margin: 2px 10px; }
-        .sippm-sidebar .nav-link.active, .sippm-sidebar .nav-link:hover { background-color: rgba(255,255,255,.12); color: #fff; }
-        .sippm-sidebar .nav-header { color: var(--sippm-gold); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; padding: .5rem 1rem 0.25rem; }
+        .sipapa-sidebar .brand-text { color: #fff; }
+        .sipapa-sidebar .nav-link { color: rgba(255,255,255,.75); border-radius: var(--sipapa-radius-sm); margin: 2px 10px; }
+        .sipapa-sidebar .nav-link.active, .sipapa-sidebar .nav-link:hover { background-color: rgba(255,255,255,.12); color: #fff; }
+        .sipapa-sidebar .nav-header { color: var(--sipapa-gold); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; padding: .5rem 1rem 0.25rem; }
 
-        .sippm-topbar { background-color: #fff; box-shadow: var(--sippm-shadow-soft); border-top: 3px solid var(--sippm-gold); border-radius: 0 0 var(--sippm-radius-lg) var(--sippm-radius-lg); }
-        .btn-sippm { background-color: var(--sippm-navy); color: #fff; border-radius: var(--sippm-radius-sm); box-shadow: var(--sippm-shadow-soft); border: none; }
-        .btn-sippm:hover { background-color: var(--sippm-navy-light); color: #fff; }
+        .sipapa-topbar { background-color: #fff; box-shadow: var(--sipapa-shadow-soft); border-top: 3px solid var(--sipapa-gold); border-radius: 0 0 var(--sipapa-radius-lg) var(--sipapa-radius-lg); }
+        .btn-sipapa { background-color: var(--sipapa-navy); color: #fff; border-radius: var(--sipapa-radius-sm); box-shadow: var(--sipapa-shadow-soft); border: none; }
+        .btn-sipapa:hover { background-color: var(--sipapa-navy-light); color: #fff; }
         [x-cloak] { display: none !important; }
 
         /* Custom Notification Dropdown styling */
         .notification-dropdown {
             width: 360px;
-            border-radius: var(--sippm-radius-lg);
-            border: 1px solid var(--sippm-border);
-            box-shadow: var(--sippm-shadow-raised);
+            border-radius: var(--sipapa-radius-lg);
+            border: 1px solid var(--sipapa-border);
+            box-shadow: var(--sipapa-shadow-raised);
             overflow: hidden;
             background-color: #fff;
         }
         .notification-header {
-            background-color: var(--sippm-navy);
+            background-color: var(--sipapa-navy);
             color: #fff;
             padding: 14px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--sippm-gold);
+            border-bottom: 2px solid var(--sipapa-gold);
         }
         .notification-header h6 {
             margin: 0;
@@ -64,7 +64,7 @@
         .notification-list {
             max-height: 320px;
             overflow-y: auto;
-            background-color: var(--sippm-cream);
+            background-color: var(--sipapa-cream);
         }
         .notification-item {
             display: flex;
@@ -73,13 +73,13 @@
             padding: 12px 16px;
             border-bottom: 1px solid rgba(22, 52, 92, 0.08);
             text-decoration: none;
-            color: var(--sippm-text);
+            color: var(--sipapa-text);
             transition: all 0.2s ease;
             position: relative;
         }
         .notification-item:hover {
             background-color: rgba(22, 52, 92, 0.04);
-            color: var(--sippm-navy);
+            color: var(--sipapa-navy);
         }
         .notification-item.unread {
             background-color: rgba(22, 52, 92, 0.06);
@@ -92,9 +92,9 @@
             transform: translateY(-50%);
             width: 8px;
             height: 8px;
-            background-color: var(--sippm-gold);
+            background-color: var(--sipapa-gold);
             border-radius: 50%;
-            box-shadow: 0 0 4px var(--sippm-gold);
+            box-shadow: 0 0 4px var(--sipapa-gold);
         }
         .notification-icon-wrapper {
             flex-shrink: 0;
@@ -105,7 +105,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1rem;
-            box-shadow: var(--sippm-shadow-soft);
+            box-shadow: var(--sipapa-shadow-soft);
         }
         
         /* Icon types styling */
@@ -115,15 +115,15 @@
         }
         .notification-icon-success {
             background-color: rgba(46, 125, 79, 0.1);
-            color: var(--sippm-green);
+            color: var(--sipapa-green);
         }
         .notification-icon-warning {
             background-color: rgba(217, 142, 4, 0.1);
-            color: var(--sippm-amber);
+            color: var(--sipapa-amber);
         }
         .notification-icon-danger {
             background-color: rgba(178, 58, 58, 0.1);
-            color: var(--sippm-red);
+            color: var(--sipapa-red);
         }
         
         .notification-content {
@@ -158,41 +158,41 @@
             border-top: 1px solid rgba(22, 52, 92, 0.08);
             text-align: center;
         }
-        .notification-footer .text-sippm {
-            color: var(--sippm-navy);
+        .notification-footer .text-sipapa {
+            color: var(--sipapa-navy);
             font-size: 0.8rem;
             transition: color 0.2s;
             font-weight: 600;
         }
-        .notification-footer .text-sippm:hover {
-            color: var(--sippm-gold);
+        .notification-footer .text-sipapa:hover {
+            color: var(--sipapa-gold);
         }
-        .sippm-toast-raised {
-            box-shadow: var(--sippm-shadow-raised) !important;
-            border: 1px solid var(--sippm-border) !important;
-            border-radius: var(--sippm-radius-sm) !important;
+        .sipapa-toast-raised {
+            box-shadow: var(--sipapa-shadow-raised) !important;
+            border: 1px solid var(--sipapa-border) !important;
+            border-radius: var(--sipapa-radius-sm) !important;
         }
     </style>
     @stack('styles')
 </head>
 <body>
-<div id="sippmPageLoader"></div>
+<div id="sipapaPageLoader"></div>
 @php $user = auth()->user(); @endphp
 <div class="d-flex">
-    <aside class="sippm-sidebar d-none d-lg-flex flex-column py-3">
+    <aside class="sipapa-sidebar d-none d-lg-flex flex-column py-3">
         <a href="{{ url('/') }}" class="brand-text text-decoration-none fw-bold fs-5 px-3 mb-3 d-flex align-items-center gap-2">
-            <img src="{{ asset('images/logo-madina.png') }}" alt="Logo" style="height:32px; width:auto;">
-            SIPPM Madina
+            <img src="{{ asset('images/logo-sipapa.png') }}" alt="Logo" style="height:32px; width:auto;">
+            SIPAPA Madina
         </a>
         @include('dashboard.partials.sidebar-nav')
     </aside>
 
     <!-- Mobile sidebar (Bootstrap 5 offcanvas) -->
-    <div class="offcanvas offcanvas-start d-lg-none sippm-sidebar" tabindex="-1" id="sidebarOffcanvas">
+    <div class="offcanvas offcanvas-start d-lg-none sipapa-sidebar" tabindex="-1" id="sidebarOffcanvas">
         <div class="offcanvas-header">
             <a href="{{ url('/') }}" class="brand-text text-decoration-none fw-bold fs-5 d-flex align-items-center gap-2">
-                <img src="{{ asset('images/logo-madina.png') }}" alt="Logo" style="height:28px; width:auto;">
-                SIPPM Madina
+                <img src="{{ asset('images/logo-sipapa.png') }}" alt="Logo" style="height:28px; width:auto;">
+                SIPAPA Madina
             </a>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Tutup"></button>
         </div>
@@ -202,7 +202,7 @@
     </div>
 
     <div class="flex-grow-1">
-        <header class="sippm-topbar d-flex align-items-center justify-content-between px-4 py-3 mb-4">
+        <header class="sipapa-topbar d-flex align-items-center justify-content-between px-4 py-3 mb-4">
             <div class="d-flex align-items-center gap-2">
                 <button class="btn btn-light d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
                     <i class="bi bi-list"></i>
@@ -255,11 +255,11 @@
                         <!-- Footer -->
                         <div class="notification-footer">
                             @if(auth()->user()->hasRole('masyarakat'))
-                                <a href="{{ url('/pengaduan') }}" class="text-decoration-none text-sippm">Lihat Semua Pengaduan</a>
+                                <a href="{{ url('/pengaduan') }}" class="text-decoration-none text-sipapa">Lihat Semua Pengaduan</a>
                             @elseif(auth()->user()->hasAnyRole(['bupati', 'wakil_bupati', 'sekda']))
-                                <a href="{{ url('/dashboard/laporan') }}" class="text-decoration-none text-sippm">Lihat Semua Pengaduan</a>
+                                <a href="{{ url('/dashboard/laporan') }}" class="text-decoration-none text-sipapa">Lihat Semua Pengaduan</a>
                             @else
-                                <a href="{{ url('/dashboard/complaints') }}" class="text-decoration-none text-sippm">Lihat Semua Pengaduan</a>
+                                <a href="{{ url('/dashboard/complaints') }}" class="text-decoration-none text-sipapa">Lihat Semua Pengaduan</a>
                             @endif
                         </div>
                     </div>
@@ -306,7 +306,7 @@
      * textarea's value (HTML) in sync so normal form POST/validation
      * (Form Request `string`/`required` rules) keeps working unchanged.
      */
-    function sippmInitRichText(editorId, textareaSelector) {
+    function sipapaInitRichText(editorId, textareaSelector) {
         if (typeof Quill === 'undefined') return null;
 
         const textarea = document.querySelector(textareaSelector);
@@ -356,7 +356,7 @@
                 this.load();
                 
                 // Live push via Reverb (resources/js/app.js)
-                window.addEventListener('sippm:notification', (e) => {
+                window.addEventListener('sipapa:notification', (e) => {
                     const now = new Date();
                     const newItem = { 
                         id: 'live-' + Date.now(), 
@@ -383,7 +383,7 @@
                             timerProgressBar: true,
                             showCloseButton: true,
                             customClass: {
-                                popup: 'sippm-toast-raised'
+                                popup: 'sipapa-toast-raised'
                             }
                         });
                     }
@@ -439,7 +439,7 @@
             async handleClick(item) {
                 await this.markRead(item);
                 
-                const roles = window.SIPPM_USER.roles || [];
+                const roles = window.SIPAPA_USER.roles || [];
                 const isMasyarakat = roles.includes('masyarakat');
                 const isPimpinan = roles.some(r => ['bupati', 'wakil_bupati', 'sekda'].includes(r));
                 

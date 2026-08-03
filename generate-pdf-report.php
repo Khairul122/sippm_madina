@@ -160,7 +160,7 @@ $html = <<<HTML
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Teknis Hasil Pengujian Sistem - SIPPM Madina</title>
+    <title>Laporan Teknis Hasil Pengujian Sistem - SIPAPA Madina</title>
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -279,7 +279,7 @@ $html = <<<HTML
 
     <!-- Footer Cetak -->
     <div class="footer-info">
-        Laporan Teknis Pengujian Otomatis &middot; SIPPM Madina &middot; {$generatedAt}
+        Laporan Teknis Pengujian Otomatis &middot; SIPAPA Madina &middot; {$generatedAt}
     </div>
 
     <!-- Header Laporan Teknis -->
@@ -293,7 +293,7 @@ $html = <<<HTML
         <table>
             <tr>
                 <td style="width: 20%;" class="bold">Nama Aplikasi:</td>
-                <td style="width: 30%;">Sistem Informasi Pelayanan Pengaduan Masyarakat (SIPPM) Madina</td>
+                <td style="width: 30%;">Sistem Informasi Pelayanan Pengaduan Masyarakat (SIPAPA) Madina</td>
                 <td style="width: 20%;" class="bold">Tanggal Uji:</td>
                 <td style="width: 30%;">{$generatedAt} WIB</td>
             </tr>
@@ -321,7 +321,7 @@ $html = <<<HTML
     <!-- Bab I -->
     <div class="section-title">I. Ringkasan Eksekutif Hasil Pengujian</div>
     <p>
-        Berdasarkan eksekusi seluruh rangkaian pengujian otomatis menggunakan perintah <code>php artisan test</code> pada lingkungan lokal, sistem berhasil melewati seluruh kasus uji yang didefinisikan dengan status keberhasilan 100%. Tidak ditemukan adanya cacat (*bug*), kebocoran akses data, kegagalan validasi, maupun kesalahan integrasi visual antarmuka pengguna pada dashboard SIPPM Madina.
+        Berdasarkan eksekusi seluruh rangkaian pengujian otomatis menggunakan perintah <code>php artisan test</code> pada lingkungan lokal, sistem berhasil melewati seluruh kasus uji yang didefinisikan dengan status keberhasilan 100%. Tidak ditemukan adanya cacat (*bug*), kebocoran akses data, kegagalan validasi, maupun kesalahan integrasi visual antarmuka pengguna pada dashboard SIPAPA Madina.
     </p>
 
     <!-- Bab II -->
@@ -366,7 +366,7 @@ $html .= <<<HTML
     <!-- Bab III -->
     <div class="section-title">III. Detail Evaluasi & Perubahan Visual Tampilan (UI/UX)</div>
     <p>
-        Penyempurnaan antarmuka pengguna dashboard SIPPM Madina diselaraskan dengan tata naskah dan standar kenyamanan modern pemerintahan:
+        Penyempurnaan antarmuka pengguna dashboard SIPAPA Madina diselaraskan dengan tata naskah dan standar kenyamanan modern pemerintahan:
     </p>
     <ul>
         <li><strong>Desain Lebar Penuh (Full Width):</strong> Seluruh batasan lebar inline (max-width) pada halaman form tambah/edit OPD, Kecamatan, Desa, Pengguna, Laporan Kegiatan, halaman manual book, serta visualisasi bagan statistik dan kinerja pelayanan telah dihapus secara menyeluruh sehingga layout memanfaatkan lebar layar secara optimal.</li>
@@ -377,7 +377,7 @@ $html .= <<<HTML
     <!-- Bab IV -->
     <div class="section-title">IV. Kesimpulan Teknis</div>
     <p>
-        Sistem Informasi Pelayanan Pengaduan Masyarakat (SIPPM) Madina dinyatakan stabil, aman, dan siap untuk digunakan di lingkungan produksi Kabupaten Mandailing Natal dengan tingkat keberhasilan kasus uji sebesar <strong>100%</strong>.
+        Sistem Informasi Pelayanan Pengaduan Masyarakat (SIPAPA) Madina dinyatakan stabil, aman, dan siap untuk digunakan di lingkungan produksi Kabupaten Mandailing Natal dengan tingkat keberhasilan kasus uji sebesar <strong>100%</strong>.
     </p>
 
 </body>
@@ -387,7 +387,7 @@ HTML;
 // Generate PDF using Barryvdh\DomPDF\Facade\Pdf (configured in Laragon/Laravel)
 $pdf = Pdf::loadHTML($html);
 $pdf->setPaper('a4', 'portrait');
-$pdfPath = base_path('Laporan_Pengujian_Sistem_SIPPM_Madina.pdf');
+$pdfPath = base_path('Laporan_Pengujian_Sistem_SIPAPA_Madina.pdf');
 $pdf->save($pdfPath);
 
 echo "PDF successfully saved to: {$pdfPath}\n";

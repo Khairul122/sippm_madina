@@ -5,11 +5,11 @@
     <!-- Welcome Header & Action Button -->
     <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 mb-4">
         <div>
-            <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sippm-navy) !important;">Riwayat Pengaduan Saya</h1>
+            <h1 class="h3 mb-1 fw-bold text-dark" style="font-family: 'Poppins', sans-serif; color: var(--sipapa-navy) !important;">Riwayat Pengaduan Saya</h1>
             <p class="text-muted small mb-0">Pantau status, penanganan, dan penyelesaian laporan pengaduan Anda.</p>
         </div>
         <div>
-            <a href="{{ url('/pengaduan/ajukan') }}" class="btn btn-sippm px-4 py-2.5 rounded-pill fw-semibold shadow-sm d-flex align-items-center gap-1 text-white border-0" style="background-color: var(--sippm-navy);">
+            <a href="{{ url('/pengaduan/ajukan') }}" class="btn btn-sipapa px-4 py-2.5 rounded-pill fw-semibold shadow-sm d-flex align-items-center gap-1 text-white border-0" style="background-color: var(--sipapa-navy);">
                 <i class="bi bi-plus-circle-fill"></i> Ajukan Pengaduan Baru
             </a>
         </div>
@@ -27,13 +27,13 @@
     <div class="row g-3 mb-4">
         <!-- Total Pengaduan -->
         <div class="col-sm-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sippm-radius-lg); border-left: 4px solid var(--sippm-navy) !important;">
+            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sipapa-radius-lg); border-left: 4px solid var(--sipapa-navy) !important;">
                 <div class="card-body p-3 d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase tracking-wider" style="font-size: 0.72rem;">Total Laporan</span>
                         <h3 class="fw-bold mb-0 mt-0.5 text-dark" style="font-family: 'Poppins', sans-serif;">{{ number_format($totalCount) }}</h3>
                     </div>
-                    <div class="stat-icon-box bg-navy-subtle text-navy rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: rgba(22, 52, 92, 0.08); color: var(--sippm-navy);">
+                    <div class="stat-icon-box bg-navy-subtle text-navy rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: rgba(22, 52, 92, 0.08); color: var(--sipapa-navy);">
                         <i class="bi bi-folder-fill fs-5"></i>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
 
         <!-- Diajukan / Pending -->
         <div class="col-sm-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sippm-radius-lg); border-left: 4px solid #2563eb !important;">
+            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sipapa-radius-lg); border-left: 4px solid #2563eb !important;">
                 <div class="card-body p-3 d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase tracking-wider" style="font-size: 0.72rem;">Baru Diajukan</span>
@@ -57,13 +57,13 @@
 
         <!-- Dalam Proses -->
         <div class="col-sm-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sippm-radius-lg); border-left: 4px solid var(--sippm-amber) !important;">
+            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sipapa-radius-lg); border-left: 4px solid var(--sipapa-amber) !important;">
                 <div class="card-body p-3 d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase tracking-wider" style="font-size: 0.72rem;">Sedang Diproses</span>
                         <h3 class="fw-bold mb-0 mt-0.5 text-warning" style="font-family: 'Poppins', sans-serif;">{{ number_format($inProgressCount) }}</h3>
                     </div>
-                    <div class="stat-icon-box bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: rgba(217, 142, 4, 0.08); color: var(--sippm-amber);">
+                    <div class="stat-icon-box bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: rgba(217, 142, 4, 0.08); color: var(--sipapa-amber);">
                         <i class="bi bi-gear-fill fs-5"></i>
                     </div>
                 </div>
@@ -72,13 +72,13 @@
 
         <!-- Laporan Selesai -->
         <div class="col-sm-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sippm-radius-lg); border-left: 4px solid var(--sippm-green) !important;">
+            <div class="card border-0 shadow-sm h-100 stat-card" style="border-radius: var(--sipapa-radius-lg); border-left: 4px solid var(--sipapa-green) !important;">
                 <div class="card-body p-3 d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase tracking-wider" style="font-size: 0.72rem;">Laporan Selesai</span>
                         <h3 class="fw-bold mb-0 mt-0.5 text-success" style="font-family: 'Poppins', sans-serif;">{{ number_format($resolvedCount) }}</h3>
                     </div>
-                    <div class="stat-icon-box bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: rgba(46, 125, 79, 0.08); color: var(--sippm-green);">
+                    <div class="stat-icon-box bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: rgba(46, 125, 79, 0.08); color: var(--sipapa-green);">
                         <i class="bi bi-check-circle-fill fs-5"></i>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
     </div>
 
     <!-- Table complaints list -->
-    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: var(--sippm-radius-lg); background: #ffffff;">
+    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: var(--sipapa-radius-lg); background: #ffffff;">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light text-secondary small uppercase tracking-wider" style="border-bottom: 2px solid rgba(22, 52, 92, 0.08);">
@@ -105,7 +105,7 @@
                     <tr class="complaint-row" style="transition: all 0.2s ease;">
                         <!-- Ticket number with custom design -->
                         <td class="py-3 px-4">
-                            <span class="font-monospace px-2.5 py-1 rounded bg-light border text-navy fw-semibold small" style="color: var(--sippm-navy) !important; font-size: 0.85rem;">
+                            <span class="font-monospace px-2.5 py-1 rounded bg-light border text-navy fw-semibold small" style="color: var(--sipapa-navy) !important; font-size: 0.85rem;">
                                 {{ $complaint->ticket_number }}
                             </span>
                         </td>
@@ -131,7 +131,7 @@
                         </td>
                         <!-- Action link -->
                         <td class="py-3 text-end px-4">
-                            <a href="{{ url('/pengaduan/'.$complaint->id) }}" class="btn btn-sm px-3 rounded-pill fw-semibold text-white d-inline-flex align-items-center gap-1 shadow-sm transition-all" style="background-color: var(--sippm-navy); border: none; font-size: 0.8rem;">
+                            <a href="{{ url('/pengaduan/'.$complaint->id) }}" class="btn btn-sm px-3 rounded-pill fw-semibold text-white d-inline-flex align-items-center gap-1 shadow-sm transition-all" style="background-color: var(--sipapa-navy); border: none; font-size: 0.8rem;">
                                 Detail <i class="bi bi-chevron-right small"></i>
                             </a>
                         </td>
@@ -179,7 +179,7 @@
         background-color: rgba(22, 52, 92, 0.02) !important;
     }
     /* Custom button transition effects */
-    .btn-sippm:hover {
+    .btn-sipapa:hover {
         opacity: 0.9;
         transform: translateY(-1px);
     }
