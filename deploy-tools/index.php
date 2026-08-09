@@ -28,6 +28,7 @@ if (file_exists(__DIR__.'/../laravel_app/vendor/autoload.php')) {
 /** @var Application $app */
 if (file_exists(__DIR__.'/../laravel_app/bootstrap/app.php')) {
     $app = require_once __DIR__.'/../laravel_app/bootstrap/app.php';
+    $app->usePublicPath(__DIR__);
 } else {
     $app = require_once __DIR__.'/../bootstrap/app.php';
 }
