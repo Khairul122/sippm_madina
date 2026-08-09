@@ -157,6 +157,7 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         // Backup Database.
         Route::get('/backup', [DatabaseBackupController::class, 'index']);
         Route::post('/backup/run', [DatabaseBackupController::class, 'run']);
+        Route::post('/backup/schedule', [DatabaseBackupController::class, 'updateSchedule']);
         Route::get('/backup/download/{filename}', [DatabaseBackupController::class, 'download']);
         Route::delete('/backup/{filename}', [DatabaseBackupController::class, 'destroy']);
 
