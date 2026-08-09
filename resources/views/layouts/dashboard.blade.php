@@ -204,8 +204,8 @@
     <div class="flex-grow-1">
         <header class="sipapa-topbar d-flex align-items-center justify-content-between px-4 py-3 mb-4">
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-light d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
-                    <i class="bi bi-list"></i>
+                <button class="btn btn-sipapa btn-sidebar-toggle-mobile d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
+                    <i class="bi bi-list fs-5 text-white"></i>
                 </button>
                 <h1 class="h5 mb-0">{{ $title ?? 'Dashboard' }}</h1>
             </div>
