@@ -35,11 +35,11 @@
                     </span>
                 </div>
             </div>
-            <div class="d-flex flex-wrap align-items-center gap-2">
+            <div class="d-flex flex-column gap-2 ms-lg-auto">
                 <form action="{{ url('/dashboard/backup/run') }}" method="POST" class="m-0">
                     @csrf
                     <input type="hidden" name="download" value="1">
-                    <button type="submit" class="btn btn-outline-primary px-3 py-2 shadow-sm d-flex align-items-center gap-2 fw-semibold">
+                    <button type="submit" class="btn btn-outline-primary w-100 px-3 py-2 shadow-sm d-flex align-items-center justify-content-center gap-2 fw-semibold">
                         <i class="bi bi-cloud-download fs-5"></i>
                         <span>Buat & Unduh Langsung</span>
                     </button>
@@ -47,7 +47,7 @@
 
                 <form action="{{ url('/dashboard/backup/run') }}" method="POST" class="m-0">
                     @csrf
-                    <button type="submit" class="btn btn-primary px-4 py-2 shadow-sm d-flex align-items-center gap-2 fw-semibold" style="background-color: var(--sipapa-navy); border-color: var(--sipapa-navy);" data-confirm="Apakah Anda yakin ingin membuat backup database baru sekarang di server?">
+                    <button type="submit" class="btn btn-primary w-100 px-4 py-2 shadow-sm d-flex align-items-center justify-content-center gap-2 fw-semibold" style="background-color: var(--sipapa-navy); border-color: var(--sipapa-navy);" data-confirm="Apakah Anda yakin ingin membuat backup database baru sekarang di server?">
                         <i class="bi bi-database-add fs-5"></i>
                         <span>Buat Backup di Server</span>
                     </button>
