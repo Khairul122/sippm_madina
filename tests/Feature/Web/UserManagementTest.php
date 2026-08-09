@@ -35,7 +35,7 @@ class UserManagementTest extends TestCase
 
         // FR-36: "kelola pengguna" (create) wajib tercatat di audit log.
         $createLog = AuditLog::query()
-            ->where('action', 'user_created')
+            ->where('action', 'Pengguna Baru Dibuat')
             ->where('model_id', $newUser->id)
             ->firstOrFail();
         $this->assertNull($createLog->old_data);
@@ -49,7 +49,7 @@ class UserManagementTest extends TestCase
         // FR-36: nonaktifkan akun juga wajib tercatat, dengan old/new
         // data yang benar-benar berbeda (bukan cuma status baru).
         $deactivateLog = AuditLog::query()
-            ->where('action', 'user_deactivated')
+            ->where('action', 'Pengguna Dinonaktifkan')
             ->where('model_id', $newUser->id)
             ->firstOrFail();
         $this->assertSame(['is_active' => true], $deactivateLog->old_data);
@@ -70,7 +70,7 @@ class UserManagementTest extends TestCase
         $this->assertSame('OPD Diperbarui', $opdUser->fresh()->name);
 
         $updateLog = AuditLog::query()
-            ->where('action', 'user_updated')
+            ->where('action', 'Data Pengguna Diperbarui')
             ->where('model_id', $opdUser->id)
             ->firstOrFail();
         $this->assertSame($opdUser->name, $updateLog->old_data['name']);
