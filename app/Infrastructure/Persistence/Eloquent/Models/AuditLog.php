@@ -41,6 +41,59 @@ class AuditLog extends Model
     }
 
     /**
+     * Catat log audit secara real-time dengan penanganan IP asli pengguna.
+     */
+    public static function record(
+        string $action,
+        ?string $modelType = null,
+        mixed $modelId = null,
+        ?array $oldData = null,
+        ?array $newData = null,
+        ?int $userId = null
+    ): self {
+        return static::query()->create([
+            'user_id' => $userId ?? auth()->id(),
+            'action' => $action,
+            'model_type' => $modelType,
+            'model_id' => $modelId ? (int) $modelId : null,
+            'old_data' => $oldData,
+            'new_data' => $newData,
+            'ip_address' => static::resolveRealIp(),
+        ]);
+    }
+
+    /**
+     * Dapatkan IP address asli pengguna (penanganan proxy/CDN/CWP/Cloudflare).
+     */
+    public static function resolveRealIp(): string
+    {
+        $request = request();
+        if (!$request) {
+            return '127.0.0.1';
+        }
+
+        $headers = [
+            'HTTP_CF_CONNECTING_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_REAL_IP',
+            'HTTP_CLIENT_IP',
+        ];
+
+        foreach ($headers as $header) {
+            $val = $request->server($header) ?? $request->header(str_replace('HTTP_', '', str_replace('_', '-', $header)));
+            if ($val) {
+                $ips = explode(',', $val);
+                $ip = trim($ips[0]);
+                if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                    return $ip;
+                }
+            }
+        }
+
+        return $request->ip() ?? '127.0.0.1';
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo

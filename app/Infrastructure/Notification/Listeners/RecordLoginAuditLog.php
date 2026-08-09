@@ -11,49 +11,41 @@ use Illuminate\Auth\Events\Logout;
 
 /**
  * FR-08: "Sistem mencatat setiap aktivitas login ke dalam audit log."
- * Subscribed to Laravel's built-in Auth events (fired automatically by
- * Auth::attempt()/Auth::login()/Auth::logout(), already used in
- * Web\Auth\LoginController and Api\AuthController — no controller
- * changes needed).
  */
 class RecordLoginAuditLog
 {
     public function handleLogin(Login $event): void
     {
-        AuditLog::query()->create([
-            'user_id' => $event->user->id,
-            'action' => 'login',
-            'model_type' => 'user',
-            'model_id' => $event->user->id,
-            'old_data' => null,
-            'new_data' => ['guard' => $event->guard],
-            'ip_address' => request()?->ip(),
-        ]);
+        AuditLog::record(
+            action: 'Login Berhasil',
+            modelType: 'user',
+            modelId: $event->user->id,
+            newData: ['guard' => $event->guard, 'name' => $event->user->name, 'email' => $event->user->email],
+            userId: $event->user->id
+        );
     }
 
     public function handleLogout(Logout $event): void
     {
-        AuditLog::query()->create([
-            'user_id' => $event->user?->id,
-            'action' => 'logout',
-            'model_type' => 'user',
-            'model_id' => $event->user?->id,
-            'old_data' => null,
-            'new_data' => ['guard' => $event->guard],
-            'ip_address' => request()?->ip(),
-        ]);
+        if ($event->user) {
+            AuditLog::record(
+                action: 'Logout',
+                modelType: 'user',
+                modelId: $event->user->id,
+                newData: ['guard' => $event->guard],
+                userId: $event->user->id
+            );
+        }
     }
 
     public function handleFailed(Failed $event): void
     {
-        AuditLog::query()->create([
-            'user_id' => $event->user?->id,
-            'action' => 'login_failed',
-            'model_type' => 'user',
-            'model_id' => $event->user?->id,
-            'old_data' => null,
-            'new_data' => ['email' => $event->credentials['email'] ?? null],
-            'ip_address' => request()?->ip(),
-        ]);
+        AuditLog::record(
+            action: 'Gagal Login',
+            modelType: 'user',
+            modelId: $event->user?->id,
+            newData: ['attempted_email' => $event->credentials['email'] ?? null],
+            userId: $event->user?->id
+        );
     }
 }
