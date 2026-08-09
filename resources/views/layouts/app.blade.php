@@ -121,7 +121,7 @@
     </div>
 
     <!-- Tier 3: sticky nav -->
-    <nav class="navbar navbar-expand-lg navbar-sipapa sticky-top" id="mainNav">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-sipapa sticky-top" id="mainNav">
         <div class="container">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
                 <span class="navbar-toggler-icon"></span>
