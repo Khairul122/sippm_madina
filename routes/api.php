@@ -21,6 +21,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
+    // Stateless system maintenance helper routes (for CWP without SSH)
+    Route::get('/sys/migrate', function (\Illuminate\Http\Request $request) {
+        if ($request->query('token') !== 'uwVW5Kx3Xfmv') {
+            return response('<pre>Access denied. Invalid token.</pre>', 403);
+        }
+        try {
+            Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            return '<pre>Migration successful!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+        } catch (\Throwable $e) {
+            return '<pre>Migration failed: ' . $e->getMessage() . '</pre>';
+        }
+    });
+
     // Public (no auth)
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
