@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Seeder to import complete database records from silapga_web.sql
@@ -25,8 +26,8 @@ class SilapgaWebDataSeeder extends Seeder
         $sql = File::get($sqlPath);
         $sql = str_replace('@demo.test', '@gmail.com', $sql);
 
-        // Nonaktifkan Foreign Key Checks untuk import massal
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // Nonaktifkan Foreign Key Checks secara driver-agnostic (MySQL & SQLite)
+        Schema::disableForeignKeyConstraints();
 
         preg_match_all('/INSERT INTO `([^`]+)`[\s\S]*?;/i', $sql, $matches, PREG_SET_ORDER);
 
@@ -46,7 +47,7 @@ class SilapgaWebDataSeeder extends Seeder
         }
 
         // Aktifkan kembali Foreign Key Checks
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        Schema::enableForeignKeyConstraints();
 
         if (isset($this->command)) {
             $this->command->info('Berhasil mengimpor '.count($tablesCleared).' tabel data dari silapga_web.sql dengan akun @gmail.com!');
