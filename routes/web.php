@@ -217,6 +217,7 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
 // Helper routes for hosting environments (CWP) without SSH access
 Route::withoutMiddleware([
     \Illuminate\Session\Middleware\StartSession::class,
+    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
     \Illuminate\Cookie\Middleware\EncryptCookies::class,
     \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
 ])->group(function () {
