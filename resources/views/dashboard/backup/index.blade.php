@@ -155,7 +155,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th style="width: 50px;">#</th>
+                        <th style="width: 50px;">No</th>
                         <th>Nama Berkas Backup</th>
                         <th>Ukuran Berkas</th>
                         <th>Tanggal & Waktu Dibuat</th>
