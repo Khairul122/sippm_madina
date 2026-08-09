@@ -15,6 +15,10 @@ class SilapgaWebSqlDataSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         Schema::disableForeignKeyConstraints();
 
         $statements = [
