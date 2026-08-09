@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 /**
- * One demo account per role for manual QA. Email format {role}@demo.test,
+ * One demo account per role for manual QA. Email format {role}@gmail.com,
  * password "password" for all.
  */
 class DemoUserSeeder extends Seeder

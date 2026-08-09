@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             DemoUserSeeder::class,
             AdminUserSeeder::class,
             DummyReportSeeder::class,
+            SilapgaWebDataSeeder::class,
         ]);
     }
 }
