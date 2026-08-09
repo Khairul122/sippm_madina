@@ -111,7 +111,7 @@ class AppServiceProvider extends ServiceProvider
             ComplaintResolved::class,
             ActivityPublished::class,
         ] as $event) {
-            Event::listen($event, RecordAuditLog::class);
+            Event::listen($event, [RecordAuditLog::class, 'handle']);
         }
 
         foreach ([
@@ -122,10 +122,10 @@ class AppServiceProvider extends ServiceProvider
             ComplaintHandled::class,
             ComplaintResolved::class,
         ] as $event) {
-            Event::listen($event, PersistComplaintNotification::class);
+            Event::listen($event, [PersistComplaintNotification::class, 'handle']);
         }
 
-        Event::listen(ActivityPublished::class, PersistActivityNotification::class);
+        Event::listen(ActivityPublished::class, [PersistActivityNotification::class, 'handle']);
 
         // FR-08: catat setiap aktivitas login (berhasil/gagal) dan logout
         // ke audit log — pakai Auth event bawaan Laravel yang sudah

@@ -54,7 +54,7 @@ class ActivityWorkflowTest extends TestCase
         // FR-36/FR-37: audit log untuk publikasi kegiatan wajib merekam
         // status SEBELUM perubahan (diverifikasi), bukan cuma status baru.
         $publishLog = AuditLog::query()
-            ->where('action', 'App\\Infrastructure\\Broadcasting\\Events\\ActivityPublished')
+            ->where('action', 'Laporan Kegiatan Dipublikasikan')
             ->where('model_id', $activity->id)
             ->latest('id')
             ->firstOrFail();

@@ -92,25 +92,25 @@ class ComplaintWorkflowTest extends TestCase
         // wajib merekam status SEBELUM perubahan (old_data), tidak cuma
         // status baru — sebelumnya old_data selalu null di semua baris.
         $verifyLog = AuditLog::query()
-            ->where('action', 'App\\Infrastructure\\Broadcasting\\Events\\ComplaintVerified')
+            ->where('action', 'Pengaduan Diverifikasi')
             ->where('model_id', $complaint->id)
             ->firstOrFail();
         $this->assertSame(['status' => 'diajukan'], $verifyLog->old_data);
 
         $disposeLog = AuditLog::query()
-            ->where('action', 'App\\Infrastructure\\Broadcasting\\Events\\ComplaintDisposed')
+            ->where('action', 'Pengaduan Didisposisikan')
             ->where('model_id', $complaint->id)
             ->firstOrFail();
         $this->assertSame(['status' => 'diverifikasi'], $disposeLog->old_data);
 
         $handleLog = AuditLog::query()
-            ->where('action', 'App\\Infrastructure\\Broadcasting\\Events\\ComplaintHandled')
+            ->where('action', 'Pengaduan Ditindaklanjuti')
             ->where('model_id', $complaint->id)
             ->firstOrFail();
         $this->assertSame(['status' => 'diproses'], $handleLog->old_data);
 
         $resolveLog = AuditLog::query()
-            ->where('action', 'App\\Infrastructure\\Broadcasting\\Events\\ComplaintResolved')
+            ->where('action', 'Pengaduan Selesai & Ditanggap')
             ->where('model_id', $complaint->id)
             ->firstOrFail();
         $this->assertSame(['status' => 'ditindaklanjuti'], $resolveLog->old_data);
