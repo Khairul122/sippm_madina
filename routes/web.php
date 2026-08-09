@@ -214,70 +214,76 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
 });
 
 // Helper routes for hosting environments (CWP) without SSH access
-Route::get('/sys/clear', function () {
-    if (request('token') !== 'uwVW5Kx3Xfmv') {
-        abort(403);
-    }
-    Illuminate\Support\Facades\Artisan::call('config:clear');
-    Illuminate\Support\Facades\Artisan::call('cache:clear');
-    Illuminate\Support\Facades\Artisan::call('view:clear');
-    Illuminate\Support\Facades\Artisan::call('route:clear');
-    return '<pre>Cache cleared successfully!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
-});
-
-Route::get('/sys/link', function () {
-    if (request('token') !== 'uwVW5Kx3Xfmv') {
-        abort(403);
-    }
-    
-    // Determine public_html directory path
-    $publicPath = realpath(base_path('../public_html'));
-    if (!$publicPath || !file_exists($publicPath)) {
-        $publicPath = public_path();
-    }
-    
-    app()->usePublicPath($publicPath);
-
-    // Delete or rename existing link/directory if exists
-    $link = $publicPath . '/storage';
-    if (file_exists($link) || is_link($link)) {
-        if (is_link($link)) {
-            @unlink($link);
-        } elseif (is_dir($link)) {
-            @rename($link, $link . '_old_' . time());
-        } else {
-            @unlink($link);
+Route::withoutMiddleware([
+    \Illuminate\Session\Middleware\StartSession::class,
+    \Illuminate\Cookie\Middleware\EncryptCookies::class,
+    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+])->group(function () {
+    Route::get('/sys/clear', function () {
+        if (request('token') !== 'uwVW5Kx3Xfmv') {
+            abort(403);
         }
-    }
+        Illuminate\Support\Facades\Artisan::call('config:clear');
+        Illuminate\Support\Facades\Artisan::call('cache:clear');
+        Illuminate\Support\Facades\Artisan::call('view:clear');
+        Illuminate\Support\Facades\Artisan::call('route:clear');
+        return '<pre>Cache cleared successfully!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+    });
 
-    try {
-        Illuminate\Support\Facades\Artisan::call('storage:link');
-        return '<pre>Symlink created at: ' . $link . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
-    } catch (\Throwable $e) {
-        return '<pre>Failed to create symlink: ' . $e->getMessage() . '</pre>';
-    }
-});
+    Route::get('/sys/link', function () {
+        if (request('token') !== 'uwVW5Kx3Xfmv') {
+            abort(403);
+        }
+        
+        // Determine public_html directory path
+        $publicPath = realpath(base_path('../public_html'));
+        if (!$publicPath || !file_exists($publicPath)) {
+            $publicPath = public_path();
+        }
+        
+        app()->usePublicPath($publicPath);
 
-Route::get('/sys/migrate', function () {
-    if (request('token') !== 'uwVW5Kx3Xfmv') {
-        abort(403);
-    }
-    try {
-        Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        return '<pre>Migration successful!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
-    } catch (\Throwable $e) {
-        return '<pre>Migration failed: ' . $e->getMessage() . '</pre>';
-    }
-});
+        // Delete or rename existing link/directory if exists
+        $link = $publicPath . '/storage';
+        if (file_exists($link) || is_link($link)) {
+            if (is_link($link)) {
+                @unlink($link);
+            } elseif (is_dir($link)) {
+                @rename($link, $link . '_old_' . time());
+            } else {
+                @unlink($link);
+            }
+        }
 
-Route::get('/sys/seed', function () {
-    if (request('token') !== 'uwVW5Kx3Xfmv') {
-        abort(403);
-    }
-    try {
-        Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-        return '<pre>Seeding successful!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
-    } catch (\Throwable $e) {
-        return '<pre>Seeding failed: ' . $e->getMessage() . '</pre>';
-    }
+        try {
+            Illuminate\Support\Facades\Artisan::call('storage:link');
+            return '<pre>Symlink created at: ' . $link . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+        } catch (\Throwable $e) {
+            return '<pre>Failed to create symlink: ' . $e->getMessage() . '</pre>';
+        }
+    });
+
+    Route::get('/sys/migrate', function () {
+        if (request('token') !== 'uwVW5Kx3Xfmv') {
+            abort(403);
+        }
+        try {
+            Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            return '<pre>Migration successful!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+        } catch (\Throwable $e) {
+            return '<pre>Migration failed: ' . $e->getMessage() . '</pre>';
+        }
+    });
+
+    Route::get('/sys/seed', function () {
+        if (request('token') !== 'uwVW5Kx3Xfmv') {
+            abort(403);
+        }
+        try {
+            Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+            return '<pre>Seeding successful!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+        } catch (\Throwable $e) {
+            return '<pre>Seeding failed: ' . $e->getMessage() . '</pre>';
+        }
+    });
 });
