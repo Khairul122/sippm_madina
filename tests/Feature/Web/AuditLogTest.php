@@ -21,7 +21,7 @@ class AuditLogTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->get('/dashboard/audit-log')->assertOk();
     }
@@ -30,8 +30,8 @@ class AuditLogTest extends TestCase
     {
         $this->seed();
 
-        $opdUser = User::query()->where('email', 'opd@demo.test')->firstOrFail();
-        $bupati = User::query()->where('email', 'bupati@demo.test')->firstOrFail();
+        $opdUser = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
+        $bupati = User::query()->where('email', 'bupati@gmail.com')->firstOrFail();
 
         $this->actingAs($opdUser)->get('/dashboard/audit-log')->assertForbidden();
         $this->actingAs($bupati)->get('/dashboard/audit-log')->assertForbidden();
@@ -41,10 +41,10 @@ class AuditLogTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->post('/login', [
-            'email' => 'kominfo@demo.test',
+            'email' => 'kominfo@gmail.com',
             'password' => 'password',
         ]);
 

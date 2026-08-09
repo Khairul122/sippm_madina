@@ -23,8 +23,8 @@ class DatabaseBackupTest extends TestCase
 
         $this->seed();
 
-        $this->kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
-        $this->opd = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $this->kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
+        $this->opd = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
     }
 
     public function test_unauthenticated_user_cannot_access_backup_dashboard(): void

@@ -21,7 +21,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Administrator Kominfo',
-                'password' => Hash::make('admin12345'),
+                'password' => Hash::make('sipapa12345678'),
                 'is_active' => true,
                 'email_verified_at' => now(),
                 'consent_at' => now(),

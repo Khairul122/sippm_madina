@@ -22,11 +22,11 @@ class AuthenticationTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->post('/login', [
-            'email' => 'kominfo@demo.test',
-            'password' => 'password',
+            'email' => 'kominfo@gmail.com',
+            'password' => 'sipapa12345678',
         ])->assertRedirect('/dashboard');
 
         $this->assertAuthenticatedAs($kominfo);
@@ -37,8 +37,8 @@ class AuthenticationTest extends TestCase
         $this->seed();
 
         $this->post('/login', [
-            'email' => 'masyarakat@demo.test',
-            'password' => 'password',
+            'email' => 'masyarakat@gmail.com',
+            'password' => 'sipapa12345678',
         ])->assertRedirect('/pengaduan');
     }
 
@@ -47,7 +47,7 @@ class AuthenticationTest extends TestCase
         $this->seed();
 
         $this->post('/login', [
-            'email' => 'kominfo@demo.test',
+            'email' => 'kominfo@gmail.com',
             'password' => 'salah-password',
         ])->assertSessionHasErrors('email');
 
@@ -60,15 +60,15 @@ class AuthenticationTest extends TestCase
 
         for ($i = 0; $i < 5; $i++) {
             $this->post('/login', [
-                'email' => 'kominfo@demo.test',
+                'email' => 'kominfo@gmail.com',
                 'password' => 'salah-password',
             ]);
         }
 
         // Percobaan ke-6, meski password benar, tetap diblok RateLimiter.
         $response = $this->post('/login', [
-            'email' => 'kominfo@demo.test',
-            'password' => 'password',
+            'email' => 'kominfo@gmail.com',
+            'password' => 'sipapa12345678',
         ]);
 
         $response->assertSessionHasErrors('email');
@@ -79,7 +79,7 @@ class AuthenticationTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->post('/logout')->assertRedirect('/');
         $this->assertGuest();
@@ -93,7 +93,7 @@ class AuthenticationTest extends TestCase
             'name' => 'Warga Baru',
             'nik' => '1234567890123456',
             'phone' => '081234567890',
-            'email' => 'warga.baru@demo.test',
+            'email' => 'warga.baru@gmail.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'consent' => '1',
@@ -101,7 +101,7 @@ class AuthenticationTest extends TestCase
 
         $response->assertRedirect('/dashboard');
 
-        $user = User::query()->where('email', 'warga.baru@demo.test')->firstOrFail();
+        $user = User::query()->where('email', 'warga.baru@gmail.com')->firstOrFail();
         $this->assertAuthenticatedAs($user);
         $this->assertTrue($user->hasRole('masyarakat'));
     }
@@ -114,13 +114,13 @@ class AuthenticationTest extends TestCase
             'name' => 'Warga Tanpa Consent',
             'nik' => '1234567890123457',
             'phone' => '081234567891',
-            'email' => 'tanpa.consent@demo.test',
+            'email' => 'tanpa.consent@gmail.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ])->assertSessionHasErrors('consent');
 
         $this->assertGuest();
-        $this->assertDatabaseMissing('users', ['email' => 'tanpa.consent@demo.test']);
+        $this->assertDatabaseMissing('users', ['email' => 'tanpa.consent@gmail.com']);
     }
 
     public function test_registration_rejects_duplicate_email(): void
@@ -131,7 +131,7 @@ class AuthenticationTest extends TestCase
             'name' => 'Duplikat',
             'nik' => '1234567890123458',
             'phone' => '081234567892',
-            'email' => 'kominfo@demo.test',
+            'email' => 'kominfo@gmail.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'consent' => '1',

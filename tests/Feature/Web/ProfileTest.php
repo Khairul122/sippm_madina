@@ -20,7 +20,7 @@ class ProfileTest extends TestCase
         $this->seed();
 
         foreach (['masyarakat', 'kominfo', 'opd', 'camat', 'bupati', 'wakil_bupati', 'sekda'] as $role) {
-            $user = User::query()->where('email', "{$role}@demo.test")->firstOrFail();
+            $user = User::query()->where('email', "{$role}@gmail.com")->firstOrFail();
             $this->actingAs($user)->get('/profil')->assertOk();
         }
     }
@@ -29,7 +29,7 @@ class ProfileTest extends TestCase
     {
         $this->seed();
 
-        $user = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $user = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($user)->put('/profil', [
             'name' => 'Nama Baru',
@@ -45,8 +45,8 @@ class ProfileTest extends TestCase
     {
         $this->seed();
 
-        $userA = User::query()->where('email', 'opd@demo.test')->firstOrFail();
-        $userB = User::query()->where('email', 'camat@demo.test')->firstOrFail();
+        $userA = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
+        $userB = User::query()->where('email', 'camat@gmail.com')->firstOrFail();
         $originalNameB = $userB->name;
 
         $this->actingAs($userA)->put('/profil', ['name' => 'Diubah A'])->assertRedirect();
@@ -60,7 +60,7 @@ class ProfileTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
-        $user = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $user = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($user)->post('/profil/avatar', [
             'avatar' => UploadedFile::fake()->image('photo.jpg'),
@@ -76,7 +76,7 @@ class ProfileTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
-        $user = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $user = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($user)->post('/profil/avatar', [
             'avatar' => UploadedFile::fake()->image('first.jpg'),
@@ -97,7 +97,7 @@ class ProfileTest extends TestCase
     {
         $this->seed();
 
-        $user = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $user = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($user)->put('/profil/password', [
             'current_password' => 'salah-password',
@@ -110,10 +110,10 @@ class ProfileTest extends TestCase
     {
         $this->seed();
 
-        $user = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $user = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($user)->put('/profil/password', [
-            'current_password' => 'password',
+            'current_password' => 'sipapa12345678',
             'password' => 'newpassword123',
             'password_confirmation' => 'newpassword123',
         ])->assertRedirect();

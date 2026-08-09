@@ -31,10 +31,10 @@ class DemoUserSeeder extends Seeder
 
         foreach ($roles as $roleSlug => $extra) {
             $user = User::firstOrCreate(
-                ['email' => "{$roleSlug}@demo.test"],
+                ['email' => "{$roleSlug}@gmail.com"],
                 array_merge([
                     'name' => ucwords(str_replace('_', ' ', $roleSlug)).' Demo',
-                    'password' => Hash::make('password'),
+                    'password' => Hash::make('sipapa12345678'),
                     'is_active' => true,
                     'email_verified_at' => now(),
                     'consent_at' => now(),

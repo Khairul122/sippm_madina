@@ -22,7 +22,7 @@ class NotificationWebControllerTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         // Seeder demo (DummyReportSeeder) sudah bisa menyisakan beberapa
         // notifikasi belum dibaca untuk kominfo — hitung baseline dulu,
@@ -54,7 +54,7 @@ class NotificationWebControllerTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         Notification::query()->create([
             'user_id' => $kominfo->id,

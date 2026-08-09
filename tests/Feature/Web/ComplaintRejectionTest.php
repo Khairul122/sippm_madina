@@ -22,8 +22,8 @@ class ComplaintRejectionTest extends TestCase
     {
         $this->seed();
 
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($masyarakat)->post('/pengaduan', [
             'title' => 'Aduan Tidak Jelas',
@@ -45,8 +45,8 @@ class ComplaintRejectionTest extends TestCase
     {
         $this->seed();
 
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($masyarakat)->post('/pengaduan', [
             'title' => 'Aduan Duplikat',
@@ -75,9 +75,9 @@ class ComplaintRejectionTest extends TestCase
     {
         $this->seed();
 
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
-        $opdUser = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
+        $opdUser = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
         $opd = Opd::query()->findOrFail($opdUser->opd_id);
 
         $this->actingAs($masyarakat)->post('/pengaduan', [

@@ -43,7 +43,7 @@ class PublicPagesTest extends TestCase
     {
         $this->seed();
 
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
 
         $this->actingAs($masyarakat)->post('/pengaduan', [
             'title' => 'Lampu Jalan Mati',

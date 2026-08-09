@@ -24,8 +24,8 @@ class ActivityWorkflowTest extends TestCase
     {
         $this->seed();
 
-        $camat = User::query()->where('email', 'camat@demo.test')->firstOrFail();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $camat = User::query()->where('email', 'camat@gmail.com')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($camat)->post('/dashboard/activities', [
             'title' => 'Gotong Royong',
@@ -74,7 +74,7 @@ class ActivityWorkflowTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
         $opd = Opd::query()->firstOrFail();
         $activity = Activity::query()->create([
             'title' => 'Kegiatan Draft',
@@ -95,7 +95,7 @@ class ActivityWorkflowTest extends TestCase
     {
         $this->seed();
 
-        $camat = User::query()->where('email', 'camat@demo.test')->firstOrFail();
+        $camat = User::query()->where('email', 'camat@gmail.com')->firstOrFail();
         $opd = Opd::query()->firstOrFail();
         $activity = Activity::query()->create([
             'title' => 'Kegiatan Terpublikasi',
@@ -119,8 +119,8 @@ class ActivityWorkflowTest extends TestCase
     {
         $this->seed();
 
-        $camat = User::query()->where('email', 'camat@demo.test')->firstOrFail();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $camat = User::query()->where('email', 'camat@gmail.com')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
         $opd = Opd::query()->firstOrFail();
 
         $this->actingAs($camat)->post('/dashboard/activities', [
@@ -164,7 +164,7 @@ class ActivityWorkflowTest extends TestCase
     {
         $this->seed();
 
-        $opd = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $opd = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
 
         $response = $this->actingAs($opd)->post('/dashboard/activities', [
             'title' => 'Kegiatan Uji Ukuran Berkas',
@@ -186,7 +186,7 @@ class ActivityWorkflowTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->post('/dashboard/activities', [
             'title' => 'Kegiatan Kominfo',

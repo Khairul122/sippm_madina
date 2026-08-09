@@ -16,7 +16,7 @@ class ComplaintSubmissionTest extends TestCase
     {
         $this->seed();
 
-        $user = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $user = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
 
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/v1/complaints', [
             'title' => 'Jalan rusak parah',
@@ -48,7 +48,7 @@ class ComplaintSubmissionTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $response = $this->actingAs($kominfo, 'sanctum')->postJson('/api/v1/complaints', [
             'title' => 'Test',
@@ -64,7 +64,7 @@ class ComplaintSubmissionTest extends TestCase
     {
         $this->seed();
 
-        $user = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $user = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
 
         $submit = $this->actingAs($user, 'sanctum')->postJson('/api/v1/complaints', [
             'title' => 'Lampu jalan mati',

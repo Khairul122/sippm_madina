@@ -22,7 +22,7 @@ class ComplaintDispositionTest extends TestCase
 
     private function verifiedComplaint(User $kominfo): Complaint
     {
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
 
         $submit = $this->actingAs($masyarakat, 'sanctum')->postJson('/api/v1/complaints', [
             'title' => 'Selokan tersumbat',
@@ -43,7 +43,7 @@ class ComplaintDispositionTest extends TestCase
     public function test_disposition_to_bupati_is_rejected_with_422(): void
     {
         $this->seed();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
         $complaint = $this->verifiedComplaint($kominfo);
 
         $response = $this->actingAs($kominfo, 'sanctum')->postJson("/api/v1/complaints/{$complaint->id}/dispose", [
@@ -60,7 +60,7 @@ class ComplaintDispositionTest extends TestCase
     public function test_disposition_to_opd_succeeds(): void
     {
         $this->seed();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
         $complaint = $this->verifiedComplaint($kominfo);
         $opd = Opd::query()->firstOrFail();
 
@@ -92,7 +92,7 @@ class ComplaintDispositionTest extends TestCase
     public function test_disposition_with_sparse_non_zero_target_index_succeeds(): void
     {
         $this->seed();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
         $complaint = $this->verifiedComplaint($kominfo);
         $opd = Opd::query()->firstOrFail();
 

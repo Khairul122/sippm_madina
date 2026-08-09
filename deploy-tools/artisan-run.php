@@ -36,6 +36,8 @@ $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $allowedCommands = [
     'key'     => ['key:generate', ['--force' => true]],
     'migrate' => ['migrate', ['--force' => true]],
+    'seed'    => ['db:seed', ['--force' => true]],
+    'fresh'   => ['migrate:fresh', ['--force' => true, '--seed' => true]],
     'link'    => ['storage:link', []],
     'config'  => ['config:cache', []],
     'route'   => ['route:cache', []],

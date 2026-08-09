@@ -25,9 +25,9 @@ class ComplaintWorkflowTest extends TestCase
     {
         $this->seed();
 
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
-        $opdUser = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
+        $opdUser = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
         $opd = Opd::query()->findOrFail($opdUser->opd_id);
 
         // 1. Masyarakat mengajukan pengaduan.
@@ -60,7 +60,7 @@ class ComplaintWorkflowTest extends TestCase
         $dispositionId = $complaint->fresh()->dispositions()->firstOrFail()->id;
 
         // OPD lain (bukan tujuan disposisi) tidak boleh menangani.
-        $otherOpdUser = User::query()->where('email', 'camat@demo.test')->firstOrFail();
+        $otherOpdUser = User::query()->where('email', 'camat@gmail.com')->firstOrFail();
         $this->actingAs($otherOpdUser)->post("/dashboard/complaints/{$complaint->id}/handle", [
             'disposition_id' => $dispositionId,
             'description' => 'Mencoba menangani tanpa disposisi.',
@@ -120,9 +120,9 @@ class ComplaintWorkflowTest extends TestCase
     {
         $this->seed();
 
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
-        $opdUser = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
+        $opdUser = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
         $wrongOpd = Opd::query()->findOrFail($opdUser->opd_id);
         $correctOpd = Opd::query()->where('id', '!=', $wrongOpd->id)->firstOrFail();
 
@@ -169,8 +169,8 @@ class ComplaintWorkflowTest extends TestCase
     {
         $this->seed();
 
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($masyarakat)->post('/pengaduan', [
             'title' => 'Aduan untuk Bupati',

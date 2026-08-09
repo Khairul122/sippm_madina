@@ -20,7 +20,7 @@ class ManualBookTest extends TestCase
         $this->seed();
 
         foreach (['masyarakat', 'kominfo', 'opd', 'camat', 'bupati', 'wakil_bupati', 'sekda'] as $role) {
-            $user = User::query()->where('email', "{$role}@demo.test")->firstOrFail();
+            $user = User::query()->where('email', "{$role}@gmail.com")->firstOrFail();
             $this->actingAs($user)->get('/manual-book')->assertOk();
         }
     }
@@ -29,7 +29,7 @@ class ManualBookTest extends TestCase
     {
         $this->seed();
 
-        $user = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $user = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
 
         $this->actingAs($user)->get('/manual-book')
             ->assertOk()
@@ -41,7 +41,7 @@ class ManualBookTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->post('/manual-book', [
             'file' => UploadedFile::fake()->create('panduan.pdf', 500, 'application/pdf'),
@@ -57,7 +57,7 @@ class ManualBookTest extends TestCase
     {
         $this->seed();
 
-        $opdUser = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $opdUser = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
 
         $this->actingAs($opdUser)->post('/manual-book', [
             'file' => UploadedFile::fake()->create('panduan.pdf', 500, 'application/pdf'),
@@ -71,7 +71,7 @@ class ManualBookTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->post('/manual-book', [
             'file' => UploadedFile::fake()->create('lama.pdf', 500, 'application/pdf'),
@@ -95,7 +95,7 @@ class ManualBookTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->post('/manual-book', [
             'file' => UploadedFile::fake()->image('foto.jpg'),
@@ -109,12 +109,12 @@ class ManualBookTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
         $this->actingAs($kominfo)->post('/manual-book', [
             'file' => UploadedFile::fake()->create('panduan.pdf', 500, 'application/pdf'),
         ]);
 
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
         $this->actingAs($masyarakat)->get('/manual-book/download')->assertOk();
     }
 
@@ -123,7 +123,7 @@ class ManualBookTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
         $this->actingAs($kominfo)->post('/manual-book', [
             'file' => UploadedFile::fake()->create('panduan.pdf', 500, 'application/pdf'),
         ]);
