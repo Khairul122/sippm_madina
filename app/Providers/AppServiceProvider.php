@@ -43,7 +43,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Auto-detect public_html directory path for shared hosting (CWP) layout
+        // where app core lives in /laravel_app/ and public assets live in /public_html/.
+        $publicHtmlPath = base_path('../public_html');
+        if (file_exists($publicHtmlPath)) {
+            $this->app->usePublicPath(realpath($publicHtmlPath));
+        }
     }
 
     /**
