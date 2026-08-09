@@ -63,7 +63,7 @@ class DatabaseBackupTest extends TestCase
 
         $this->assertDatabaseHas('audit_logs', [
             'user_id' => $this->kominfo->id,
-            'action' => 'create_backup',
+            'action' => 'Backup Database Manual',
         ]);
     }
 
@@ -84,7 +84,7 @@ class DatabaseBackupTest extends TestCase
 
             $this->assertDatabaseHas('audit_logs', [
                 'user_id' => $this->kominfo->id,
-                'action' => 'download_backup',
+                'action' => 'Unduh Berkas Backup',
             ]);
         } finally {
             if (File::exists($testFile)) {
@@ -114,7 +114,7 @@ class DatabaseBackupTest extends TestCase
 
         $this->assertDatabaseHas('audit_logs', [
             'user_id' => $this->kominfo->id,
-            'action' => 'delete_backup',
+            'action' => 'Hapus Berkas Backup',
         ]);
     }
 
@@ -143,7 +143,7 @@ class DatabaseBackupTest extends TestCase
 
         $this->assertDatabaseHas('audit_logs', [
             'user_id' => $this->kominfo->id,
-            'action' => 'update_backup_schedule',
+            'action' => 'Perbarui Jadwal Backup',
         ]);
     }
 }

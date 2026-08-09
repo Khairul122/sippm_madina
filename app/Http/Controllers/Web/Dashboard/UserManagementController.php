@@ -188,14 +188,21 @@ class UserManagementController extends Controller
      */
     private function recordUserAudit(string $action, int $modelId, ?array $oldData, array $newData): void
     {
-        AuditLog::query()->create([
-            'user_id' => auth()->id(),
-            'action' => $action,
-            'model_type' => 'user',
-            'model_id' => $modelId,
-            'old_data' => $oldData,
-            'new_data' => $newData,
-            'ip_address' => request()?->ip(),
-        ]);
+        $actionTitle = match ($action) {
+            'user_created' => 'Pengguna Baru Dibuat',
+            'user_updated' => 'Data Pengguna Diperbarui',
+            'user_deleted' => 'Pengguna Dihapus',
+            'user_activated' => 'Pengguna Diaktifkan',
+            'user_deactivated' => 'Pengguna Dinonaktifkan',
+            default => $action,
+        };
+
+        AuditLog::record(
+            action: $actionTitle,
+            modelType: 'user',
+            modelId: $modelId,
+            oldData: $oldData,
+            newData: $newData
+        );
     }
 }

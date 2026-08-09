@@ -98,14 +98,11 @@ class DatabaseBackupController extends Controller
                 ['last_manual_backup_at' => now(), 'updated_by' => auth()->id()]
             );
 
-            AuditLog::query()->create([
-                'user_id' => auth()->id(),
-                'action' => 'create_backup',
-                'model_type' => 'backup',
-                'model_id' => 0,
-                'new_data' => ['description' => 'Membuat backup database manual via dashboard'],
-                'ip_address' => $request->ip(),
-            ]);
+            AuditLog::record(
+                action: 'Backup Database Manual',
+                modelType: 'backup',
+                newData: ['description' => 'Membuat backup database manual via dashboard']
+            );
 
             if ($request->boolean('download')) {
                 $latestFile = $this->getLatestBackupFile();
@@ -139,17 +136,14 @@ class DatabaseBackupController extends Controller
             ]
         );
 
-        AuditLog::query()->create([
-            'user_id' => auth()->id(),
-            'action' => 'update_backup_schedule',
-            'model_type' => 'backup_schedule',
-            'model_id' => 0,
-            'new_data' => [
+        AuditLog::record(
+            action: 'Perbarui Jadwal Backup',
+            modelType: 'backup_schedule',
+            newData: [
                 'backup_frequency' => $request->input('backup_frequency'),
                 'backup_time' => $request->input('backup_time'),
-            ],
-            'ip_address' => $request->ip(),
-        ]);
+            ]
+        );
 
         return redirect('/dashboard/backup')->with('success', 'Pengaturan jadwal backup database berhasil diperbarui!');
     }
@@ -171,14 +165,11 @@ class DatabaseBackupController extends Controller
             return redirect('/dashboard/backup')->with('error', 'File backup tidak ditemukan.');
         }
 
-        AuditLog::query()->create([
-            'user_id' => auth()->id(),
-            'action' => 'download_backup',
-            'model_type' => 'backup',
-            'model_id' => 0,
-            'new_data' => ['filename' => $safeFilename],
-            'ip_address' => $request->ip(),
-        ]);
+        AuditLog::record(
+            action: 'Unduh Berkas Backup',
+            modelType: 'backup',
+            newData: ['filename' => $safeFilename]
+        );
 
         return response()->download($filePath, $safeFilename);
     }
@@ -202,14 +193,11 @@ class DatabaseBackupController extends Controller
 
         File::delete($filePath);
 
-        AuditLog::query()->create([
-            'user_id' => auth()->id(),
-            'action' => 'delete_backup',
-            'model_type' => 'backup',
-            'model_id' => 0,
-            'old_data' => ['filename' => $safeFilename],
-            'ip_address' => $request->ip(),
-        ]);
+        AuditLog::record(
+            action: 'Hapus Berkas Backup',
+            modelType: 'backup',
+            oldData: ['filename' => $safeFilename]
+        );
 
         return redirect('/dashboard/backup')->with('success', "File backup {$safeFilename} berhasil dihapus.");
     }
