@@ -46,9 +46,18 @@ $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
 try {
     $status = $kernel->call('migrate', ['--force' => true]);
+    $migrateOutput = $kernel->output();
+
+    $seedOutput = '';
+    if (isset($_GET['seed']) || isset($_GET['with_seed'])) {
+        $kernel->call('db:seed', ['--class' => 'SilapgaWebSqlDataSeeder', '--force' => true]);
+        $seedOutput = "\n\n=== SEEDER SILAPGA WEB DATA BERHASIL ===\n" . $kernel->output();
+    }
+
     echo '<pre style="background: #111827; color: #10B981; padding: 24px; font-family: monospace; border-radius: 8px; font-size: 14px;">';
     echo "=== MIGRASI DATABASE SIPAPA MADINA BERHASIL ===\n\n";
-    echo htmlspecialchars($kernel->output());
+    echo htmlspecialchars($migrateOutput);
+    echo htmlspecialchars($seedOutput);
     echo "\nStatus Code: {$status} (Success)";
     echo '</pre>';
 } catch (\Throwable $e) {
