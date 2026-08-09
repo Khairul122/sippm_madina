@@ -220,9 +220,9 @@ Route::withoutMiddleware([
     \Illuminate\Cookie\Middleware\EncryptCookies::class,
     \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
 ])->group(function () {
-    Route::get('/sys/clear', function () {
-        if (request('token') !== 'uwVW5Kx3Xfmv') {
-            abort(403);
+    Route::get('/sys/clear', function (\Illuminate\Http\Request $request) {
+        if ($request->query('token') !== 'uwVW5Kx3Xfmv') {
+            return response('<pre>Access denied. Invalid token.</pre>', 403);
         }
         Illuminate\Support\Facades\Artisan::call('config:clear');
         Illuminate\Support\Facades\Artisan::call('cache:clear');
@@ -231,9 +231,9 @@ Route::withoutMiddleware([
         return '<pre>Cache cleared successfully!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
     });
 
-    Route::get('/sys/link', function () {
-        if (request('token') !== 'uwVW5Kx3Xfmv') {
-            abort(403);
+    Route::get('/sys/link', function (\Illuminate\Http\Request $request) {
+        if ($request->query('token') !== 'uwVW5Kx3Xfmv') {
+            return response('<pre>Access denied. Invalid token.</pre>', 403);
         }
         
         // Determine public_html directory path
@@ -264,9 +264,9 @@ Route::withoutMiddleware([
         }
     });
 
-    Route::get('/sys/migrate', function () {
-        if (request('token') !== 'uwVW5Kx3Xfmv') {
-            abort(403);
+    Route::get('/sys/migrate', function (\Illuminate\Http\Request $request) {
+        if ($request->query('token') !== 'uwVW5Kx3Xfmv') {
+            return response('<pre>Access denied. Invalid token.</pre>', 403);
         }
         try {
             Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
@@ -276,9 +276,9 @@ Route::withoutMiddleware([
         }
     });
 
-    Route::get('/sys/seed', function () {
-        if (request('token') !== 'uwVW5Kx3Xfmv') {
-            abort(403);
+    Route::get('/sys/seed', function (\Illuminate\Http\Request $request) {
+        if ($request->query('token') !== 'uwVW5Kx3Xfmv') {
+            return response('<pre>Access denied. Invalid token.</pre>', 403);
         }
         try {
             Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
