@@ -335,29 +335,52 @@ class DatabaseBackupController extends Controller
             File::makeDirectory($backupDir, 0755, true, true);
         }
 
-        $databaseName = (string) config('database.connections.mysql.database', 'sipapa_madina');
-        $tables = DB::select('SHOW TABLES');
-        $keyName = "Tables_in_{$databaseName}";
+        $driver = DB::getDriverName();
+        $tables = [];
+
+        if ($driver === 'sqlite') {
+            $tableObjs = DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+            foreach ($tableObjs as $obj) {
+                $tables[] = $obj->name;
+            }
+        } else {
+            $databaseName = (string) config('database.connections.mysql.database', 'sipapa_madina');
+            $tableObjs = DB::select('SHOW TABLES');
+            $keyName = "Tables_in_{$databaseName}";
+            foreach ($tableObjs as $obj) {
+                $tableArr = (array) $obj;
+                $tName = $tableArr[$keyName] ?? array_values($tableArr)[0] ?? null;
+                if ($tName) {
+                    $tables[] = $tName;
+                }
+            }
+        }
 
         $sqlContent = "-- SIPAPA Madina Database Backup Dump\n";
-        $sqlContent .= "-- Generated: " . date('Y-m-d H:i:s') . "\n";
-        $sqlContent .= "-- Database: {$databaseName}\n\n";
-        $sqlContent .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+        $sqlContent .= "-- Generated: " . date('Y-m-d H:i:s') . "\n\n";
 
-        foreach ($tables as $tableObj) {
-            $tableArr = (array) $tableObj;
-            $tableName = $tableArr[$keyName] ?? array_values($tableArr)[0] ?? null;
-            if (!$tableName) {
-                continue;
-            }
+        if ($driver !== 'sqlite') {
+            $sqlContent .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+        }
 
-            // Get Create Table statement
-            $createTableStmt = DB::select("SHOW CREATE TABLE `{$tableName}`");
-            if (!empty($createTableStmt)) {
-                $createSql = ((array) $createTableStmt[0])['Create Table'] ?? null;
-                if ($createSql) {
-                    $sqlContent .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
-                    $sqlContent .= $createSql . ";\n\n";
+        foreach ($tables as $tableName) {
+            if ($driver === 'sqlite') {
+                $createTableStmt = DB::select("SELECT sql FROM sqlite_master WHERE type='table' AND name='{$tableName}'");
+                if (!empty($createTableStmt)) {
+                    $createSql = $createTableStmt[0]->sql ?? null;
+                    if ($createSql) {
+                        $sqlContent .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
+                        $sqlContent .= $createSql . ";\n\n";
+                    }
+                }
+            } else {
+                $createTableStmt = DB::select("SHOW CREATE TABLE `{$tableName}`");
+                if (!empty($createTableStmt)) {
+                    $createSql = ((array) $createTableStmt[0])['Create Table'] ?? null;
+                    if ($createSql) {
+                        $sqlContent .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
+                        $sqlContent .= $createSql . ";\n\n";
+                    }
                 }
             }
 
@@ -367,9 +390,10 @@ class DatabaseBackupController extends Controller
                 foreach ($rows as $row) {
                     $rowArray = (array) $row;
                     $cols = array_map(fn($col) => "`{$col}`", array_keys($rowArray));
-                    $vals = array_map(function ($val) {
+                    $vals = array_map(function ($val) use ($driver) {
                         if (is_null($val)) return 'NULL';
                         if (is_bool($val)) return $val ? '1' : '0';
+                        if ($driver === 'sqlite') return "'" . addslashes((string) $val) . "'";
                         return DB::getPdo()->quote((string) $val);
                     }, array_values($rowArray));
 
@@ -379,7 +403,9 @@ class DatabaseBackupController extends Controller
             }
         }
 
-        $sqlContent .= "SET FOREIGN_KEY_CHECKS=1;\n";
+        if ($driver !== 'sqlite') {
+            $sqlContent .= "SET FOREIGN_KEY_CHECKS=1;\n";
+        }
 
         $zipFilename = 'backup-' . date('Y-m-d-H-i-s') . '.zip';
         $zipPath = $backupDir . '/' . $zipFilename;
