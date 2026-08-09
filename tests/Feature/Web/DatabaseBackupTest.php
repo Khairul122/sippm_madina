@@ -125,4 +125,25 @@ class DatabaseBackupTest extends TestCase
         $response->assertRedirect('/dashboard/backup');
         $response->assertSessionHas('error', 'Format berkas backup tidak valid.');
     }
+
+    public function test_kominfo_user_can_update_backup_schedule(): void
+    {
+        $response = $this->actingAs($this->kominfo)->post('/dashboard/backup/schedule', [
+            'backup_frequency' => 'daily',
+            'backup_time' => '02:30',
+        ]);
+
+        $response->assertRedirect('/dashboard/backup');
+        $response->assertSessionHas('success', 'Pengaturan jadwal backup database berhasil diperbarui!');
+
+        $this->assertDatabaseHas('site_settings', [
+            'backup_frequency' => 'daily',
+            'backup_time' => '02:30',
+        ]);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'user_id' => $this->kominfo->id,
+            'action' => 'update_backup_schedule',
+        ]);
+    }
 }

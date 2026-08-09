@@ -6,9 +6,11 @@ namespace App\Http\Controllers\Web\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Persistence\Eloquent\Models\AuditLog;
+use App\Infrastructure\Persistence\Eloquent\Models\SiteSetting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -20,6 +22,11 @@ class DatabaseBackupController extends Controller
      */
     public function index(): View
     {
+        $setting = SiteSetting::query()->firstOrCreate(
+            ['id' => 1],
+            ['backup_frequency' => 'weekly', 'backup_time' => '01:00']
+        );
+
         $backupDirs = [
             storage_path('app/private/SIPAPA Madina'),
             storage_path('app/private/SIPPM Madina'),
@@ -62,22 +69,34 @@ class DatabaseBackupController extends Controller
         $totalFiles = count($files);
         $latestBackup = $totalFiles > 0 ? $files[0]['date'] : null;
 
+        $nextBackupFormatted = $this->calculateNextBackup(
+            $setting->backup_frequency ?? 'weekly',
+            $setting->backup_time ?? '01:00'
+        );
+
         return view('dashboard.backup.index', [
             'title' => 'Backup Database',
+            'setting' => $setting,
             'backups' => $files,
             'totalSize' => $this->formatBytes($totalSize),
             'totalFiles' => $totalFiles,
             'latestBackup' => $latestBackup,
+            'nextBackup' => $nextBackupFormatted,
         ]);
     }
 
     /**
-     * Jalankan proses backup database secara manual via Artisan.
+     * Jalankan proses backup database secara manual via Artisan & opsional langsung unduh.
      */
-    public function run(Request $request): RedirectResponse
+    public function run(Request $request): BinaryFileResponse|RedirectResponse
     {
         try {
             Artisan::call('backup:run', ['--only-db' => true]);
+
+            SiteSetting::query()->updateOrCreate(
+                ['id' => 1],
+                ['last_manual_backup_at' => now(), 'updated_by' => auth()->id()]
+            );
 
             AuditLog::query()->create([
                 'user_id' => auth()->id(),
@@ -88,10 +107,51 @@ class DatabaseBackupController extends Controller
                 'ip_address' => $request->ip(),
             ]);
 
+            if ($request->boolean('download')) {
+                $latestFile = $this->getLatestBackupFile();
+                if ($latestFile && File::exists($latestFile['path'])) {
+                    return response()->download($latestFile['path'], $latestFile['name']);
+                }
+            }
+
             return redirect('/dashboard/backup')->with('success', 'Backup database berhasil dibuat!');
         } catch (\Throwable $e) {
             return redirect('/dashboard/backup')->with('error', 'Gagal membuat backup database: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Perbarui jadwal otomatis & frekuensi backup database.
+     */
+    public function updateSchedule(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'backup_frequency' => ['required', 'string', 'in:daily,every_12_hours,every_3_days,weekly,monthly'],
+            'backup_time' => ['required', 'string', 'regex:/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/'],
+        ]);
+
+        SiteSetting::query()->updateOrCreate(
+            ['id' => 1],
+            [
+                'backup_frequency' => $request->input('backup_frequency'),
+                'backup_time' => $request->input('backup_time'),
+                'updated_by' => auth()->id(),
+            ]
+        );
+
+        AuditLog::query()->create([
+            'user_id' => auth()->id(),
+            'action' => 'update_backup_schedule',
+            'model_type' => 'backup_schedule',
+            'model_id' => 0,
+            'new_data' => [
+                'backup_frequency' => $request->input('backup_frequency'),
+                'backup_time' => $request->input('backup_time'),
+            ],
+            'ip_address' => $request->ip(),
+        ]);
+
+        return redirect('/dashboard/backup')->with('success', 'Pengaturan jadwal backup database berhasil diperbarui!');
     }
 
     /**
@@ -152,6 +212,74 @@ class DatabaseBackupController extends Controller
         ]);
 
         return redirect('/dashboard/backup')->with('success', "File backup {$safeFilename} berhasil dihapus.");
+    }
+
+    /**
+     * Hitung perkiraan jadwal backup selanjutnya dalam Bahasa Indonesia.
+     */
+    private function calculateNextBackup(string $frequency, string $timeStr): string
+    {
+        $parts = explode(':', $timeStr);
+        $hour = (int) ($parts[0] ?? 1);
+        $minute = (int) ($parts[1] ?? 0);
+        $now = Carbon::now();
+
+        $next = match ($frequency) {
+            'daily' => $now->copy()->setTime($hour, $minute)->isPast()
+                ? $now->copy()->addDay()->setTime($hour, $minute)
+                : $now->copy()->setTime($hour, $minute),
+
+            'every_12_hours' => $now->copy()->addHours(12),
+
+            'every_3_days' => $now->copy()->setTime($hour, $minute)->isPast()
+                ? $now->copy()->addDays(3)->setTime($hour, $minute)
+                : $now->copy()->setTime($hour, $minute),
+
+            'monthly' => $now->copy()->day(1)->setTime($hour, $minute)->isPast()
+                ? $now->copy()->addMonth()->day(1)->setTime($hour, $minute)
+                : $now->copy()->day(1)->setTime($hour, $minute),
+
+            default => $now->copy()->next(0)->setTime($hour, $minute), // weekly
+        };
+
+        return $next->translatedFormat('l, d F Y \p\u\k\u\l H:i \W\I\B');
+    }
+
+    /**
+     * Dapatkan file backup terbaru.
+     */
+    private function getLatestBackupFile(): ?array
+    {
+        $backupDirs = [
+            storage_path('app/private/SIPAPA Madina'),
+            storage_path('app/private/SIPPM Madina'),
+            storage_path('app/private'),
+        ];
+
+        $files = [];
+        foreach ($backupDirs as $dir) {
+            if (!File::isDirectory($dir)) {
+                continue;
+            }
+
+            foreach (File::files($dir) as $file) {
+                if (strtolower($file->getExtension()) === 'zip') {
+                    $files[] = [
+                        'name' => $file->getFilename(),
+                        'path' => $file->getRealPath(),
+                        'timestamp' => $file->getMTime(),
+                    ];
+                }
+            }
+        }
+
+        if (empty($files)) {
+            return null;
+        }
+
+        usort($files, fn($a, $b) => $b['timestamp'] <=> $a['timestamp']);
+
+        return $files[0];
     }
 
     /**
