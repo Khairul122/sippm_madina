@@ -20,7 +20,7 @@ class LaporanTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->get('/dashboard/laporan')->assertOk();
     }
@@ -29,7 +29,7 @@ class LaporanTest extends TestCase
     {
         $this->seed();
 
-        $opdUser = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $opdUser = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
 
         $this->actingAs($opdUser)->get('/dashboard/laporan')->assertForbidden();
     }
@@ -38,8 +38,8 @@ class LaporanTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
         $opd = Opd::query()->firstOrFail();
 
         $matching = $this->makeComplaint($masyarakat, $opd->id, 'diajukan');
@@ -55,8 +55,8 @@ class LaporanTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
         $opd = Opd::query()->firstOrFail();
 
         // Dua tanggal Senin (weekday=0) di bulan berbeda, dihitung relatif
@@ -81,7 +81,7 @@ class LaporanTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $payload = [
             'nama_penandatangan' => 'Budi Santoso',
@@ -108,7 +108,7 @@ class LaporanTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->post('/dashboard/laporan/ttd', [
             'jabatan_penandatangan' => 'Kepala Dinas',
@@ -121,7 +121,7 @@ class LaporanTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->post('/dashboard/laporan/ttd', [
             'nama_penandatangan' => 'Budi Santoso',
@@ -137,8 +137,8 @@ class LaporanTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
         $opd = Opd::query()->firstOrFail();
         $this->makeComplaint($masyarakat, $opd->id, 'diajukan');
 

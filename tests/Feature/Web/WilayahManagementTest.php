@@ -24,7 +24,7 @@ class WilayahManagementTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $this->actingAs($kominfo)->post('/dashboard/opd', [
             'name' => 'Dinas Uji Coba',
@@ -50,7 +50,7 @@ class WilayahManagementTest extends TestCase
     {
         $this->seed();
 
-        $opdUser = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $opdUser = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
 
         $this->actingAs($opdUser)->get('/dashboard/opd')->assertForbidden();
         $this->actingAs($opdUser)->post('/dashboard/opd', ['name' => 'X', 'code' => 'X'])->assertForbidden();
@@ -62,8 +62,8 @@ class WilayahManagementTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
-        $opdUser = User::query()->where('email', 'opd@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
+        $opdUser = User::query()->where('email', 'opd@gmail.com')->firstOrFail();
         $opd = Opd::query()->findOrFail($opdUser->opd_id);
 
         $this->actingAs($kominfo)->delete("/dashboard/opd/{$opd->id}")
@@ -76,7 +76,7 @@ class WilayahManagementTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
         $kecamatan = Kecamatan::query()->firstOrFail();
 
         $this->actingAs($kominfo)->post('/dashboard/desa', [
@@ -94,7 +94,7 @@ class WilayahManagementTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
         $kecamatanA = Kecamatan::query()->firstOrFail();
         $kecamatanB = Kecamatan::query()->create(['name' => 'Kecamatan B Uji', 'code' => 'KECB']);
 

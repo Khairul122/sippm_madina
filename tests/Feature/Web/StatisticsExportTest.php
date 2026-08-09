@@ -22,7 +22,7 @@ class StatisticsExportTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $response = $this->actingAs($kominfo)->get('/dashboard/statistik/export/pdf');
 
@@ -34,7 +34,7 @@ class StatisticsExportTest extends TestCase
     {
         $this->seed();
 
-        $kominfo = User::query()->where('email', 'kominfo@demo.test')->firstOrFail();
+        $kominfo = User::query()->where('email', 'kominfo@gmail.com')->firstOrFail();
 
         $response = $this->actingAs($kominfo)->get('/dashboard/statistik/export/excel');
 
@@ -49,7 +49,7 @@ class StatisticsExportTest extends TestCase
     {
         $this->seed();
 
-        $bupati = User::query()->where('email', 'bupati@demo.test')->firstOrFail();
+        $bupati = User::query()->where('email', 'bupati@gmail.com')->firstOrFail();
 
         $this->actingAs($bupati)->get('/dashboard/statistik/export/pdf')->assertOk();
     }
@@ -58,7 +58,7 @@ class StatisticsExportTest extends TestCase
     {
         $this->seed();
 
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->firstOrFail();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->firstOrFail();
 
         $this->actingAs($masyarakat)->get('/dashboard/statistik')->assertForbidden();
         $this->actingAs($masyarakat)->get('/dashboard/statistik/export/pdf')->assertForbidden();

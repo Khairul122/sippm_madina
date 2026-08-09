@@ -29,7 +29,7 @@ class DummyReportSeeder extends Seeder
 
     private function seedComplaints(): void
     {
-        $masyarakat = User::query()->where('email', 'masyarakat@demo.test')->first();
+        $masyarakat = User::query()->where('email', 'masyarakat@gmail.com')->first();
         $opd = Opd::query()->orderBy('id')->first();
         $kecamatan = Kecamatan::query()->orderBy('id')->first();
 
@@ -64,8 +64,8 @@ class DummyReportSeeder extends Seeder
 
     private function seedActivities(): void
     {
-        $opdUser = User::query()->where('email', 'opd@demo.test')->first();
-        $camatUser = User::query()->where('email', 'camat@demo.test')->first();
+        $opdUser = User::query()->where('email', 'opd@gmail.com')->first();
+        $camatUser = User::query()->where('email', 'camat@gmail.com')->first();
 
         if (Activity::query()->where('title', 'Gotong Royong Bersih Desa')->exists()) {
             return;
