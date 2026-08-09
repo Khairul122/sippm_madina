@@ -21,14 +21,14 @@
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
             <div>
                 <h4 class="fw-bold mb-1" style="color: var(--sipapa-navy);">
-                    <i class="bi bi-database-fill-gear me-2 text-warning"></i>Backup & Pemulihan Database Sistem
+                    <i class="bi bi-database-fill-gear me-2 text-warning"></i>Backup Database Sistem
                 </h4>
                 <p class="text-muted small mb-2">
                     Kelola jadwal pencadangan otomatis, buat salinan database instan, dan unduh berkas cadangan kapan saja.
                 </p>
                 <div class="d-flex flex-wrap align-items-center gap-2">
                     <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
-                        <i class="bi bi-calendar-event me-1"></i> Backup Selanjutnya: <strong>{{ $nextBackup }}</strong>
+                        <i class="bi bi-calendar-event me-1"></i> Jadwal Otomatis: <strong>{{ $nextBackup }}</strong>
                     </span>
                     <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-2 rounded-pill">
                         <i class="bi bi-shield-check me-1"></i> Driver: <strong>Spatie Laravel Backup</strong>

@@ -45,12 +45,13 @@ class AuditLogTest extends TestCase
 
         $this->post('/login', [
             'email' => 'kominfo@gmail.com',
-            'password' => 'password',
+            'password' => 'sipapa12345678',
         ]);
 
         $this->actingAs($kominfo)->get('/dashboard/audit-log')
             ->assertOk()
             ->assertSee($kominfo->name)
+            ->assertSee('Login Berhasil')
             ->assertDontSee('Belum ada catatan audit log.');
     }
 }
