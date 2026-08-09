@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -91,7 +92,24 @@ class DatabaseBackupController extends Controller
     public function run(Request $request): BinaryFileResponse|RedirectResponse
     {
         try {
-            Artisan::call('backup:run', ['--only-db' => true]);
+            $latestBefore = $this->getLatestBackupFile();
+
+            try {
+                Artisan::call('backup:run', ['--only-db' => true]);
+            } catch (\Throwable $ex) {
+                // If spatie backup fails due to mysqldump binary missing on hosting, proceed to pure PHP fallback
+            }
+
+            $latestAfter = $this->getLatestBackupFile();
+
+            // If Spatie backup did not create a new zip file, generate pure PHP database backup
+            if (!$latestAfter || ($latestBefore && $latestBefore['path'] === $latestAfter['path'])) {
+                $backupPath = $this->generatePurePhpDatabaseBackup();
+                $latestAfter = [
+                    'name' => basename($backupPath),
+                    'path' => $backupPath,
+                ];
+            }
 
             SiteSetting::query()->updateOrCreate(
                 ['id' => 1],
@@ -104,11 +122,8 @@ class DatabaseBackupController extends Controller
                 newData: ['description' => 'Membuat backup database manual via dashboard']
             );
 
-            if ($request->boolean('download')) {
-                $latestFile = $this->getLatestBackupFile();
-                if ($latestFile && File::exists($latestFile['path'])) {
-                    return response()->download($latestFile['path'], $latestFile['name']);
-                }
+            if ($request->boolean('download') && $latestAfter && File::exists($latestAfter['path'])) {
+                return response()->download($latestAfter['path'], $latestAfter['name']);
             }
 
             return redirect('/dashboard/backup')->with('success', 'Backup database berhasil dibuat!');
@@ -307,5 +322,74 @@ class DatabaseBackupController extends Controller
         $bytes /= pow(1024, $pow);
 
         return round($bytes, $precision) . ' ' . $units[$pow];
+    }
+
+    /**
+     * Backup database menggunakan murni PHP (PDO SQL Dumper) apabila mysqldump
+     * tidak tersedia di server hosting (CWP/Shared Hosting).
+     */
+    private function generatePurePhpDatabaseBackup(): string
+    {
+        $backupDir = storage_path('app/private/SIPAPA Madina');
+        if (!File::isDirectory($backupDir)) {
+            File::makeDirectory($backupDir, 0755, true, true);
+        }
+
+        $databaseName = (string) config('database.connections.mysql.database', 'sipapa_madina');
+        $tables = DB::select('SHOW TABLES');
+        $keyName = "Tables_in_{$databaseName}";
+
+        $sqlContent = "-- SIPAPA Madina Database Backup Dump\n";
+        $sqlContent .= "-- Generated: " . date('Y-m-d H:i:s') . "\n";
+        $sqlContent .= "-- Database: {$databaseName}\n\n";
+        $sqlContent .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+
+        foreach ($tables as $tableObj) {
+            $tableArr = (array) $tableObj;
+            $tableName = $tableArr[$keyName] ?? array_values($tableArr)[0] ?? null;
+            if (!$tableName) {
+                continue;
+            }
+
+            // Get Create Table statement
+            $createTableStmt = DB::select("SHOW CREATE TABLE `{$tableName}`");
+            if (!empty($createTableStmt)) {
+                $createSql = ((array) $createTableStmt[0])['Create Table'] ?? null;
+                if ($createSql) {
+                    $sqlContent .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
+                    $sqlContent .= $createSql . ";\n\n";
+                }
+            }
+
+            // Get Table Data
+            $rows = DB::table($tableName)->get();
+            if ($rows->isNotEmpty()) {
+                foreach ($rows as $row) {
+                    $rowArray = (array) $row;
+                    $cols = array_map(fn($col) => "`{$col}`", array_keys($rowArray));
+                    $vals = array_map(function ($val) {
+                        if (is_null($val)) return 'NULL';
+                        if (is_bool($val)) return $val ? '1' : '0';
+                        return DB::getPdo()->quote((string) $val);
+                    }, array_values($rowArray));
+
+                    $sqlContent .= "INSERT INTO `{$tableName}` (" . implode(', ', $cols) . ") VALUES (" . implode(', ', $vals) . ");\n";
+                }
+                $sqlContent .= "\n";
+            }
+        }
+
+        $sqlContent .= "SET FOREIGN_KEY_CHECKS=1;\n";
+
+        $zipFilename = 'backup-' . date('Y-m-d-H-i-s') . '.zip';
+        $zipPath = $backupDir . '/' . $zipFilename;
+
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
+            $zip->addFromString('db-dump-' . date('Y-m-d-H-i-s') . '.sql', $sqlContent);
+            $zip->close();
+        }
+
+        return $zipPath;
     }
 }
