@@ -184,6 +184,14 @@ jobs:
             **/node_modules/**
             index.php
 
+      - name: Upload production index.php (usePublicPath fix) to public_html
+        if: steps.ftp_deploy_public.outcome == 'success'
+        run: |
+          echo "Mengunggah deploy-tools/index.php sebagai public_html/index.php..."
+          curl --silent --show-error --ftp-create-dirs \
+            -T deploy-tools/index.php \
+            "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}/public_html/index.php"
+
       - name: Trigger Auto-Unzip vendor on server
         id: trigger_unzip
         if: steps.ftp_deploy_core.outcome == 'success'
