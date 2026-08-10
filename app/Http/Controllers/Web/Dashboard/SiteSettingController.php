@@ -46,7 +46,7 @@ class SiteSettingController extends Controller
             $data['hero_image_path'] = $path;
         }
 
-        SiteSetting::query()->updateOrCreate(['id' => 1], $data);
+        SiteSetting::singleton($data);
 
         return back()->with('status', 'Pengaturan beranda berhasil diperbarui.');
     }

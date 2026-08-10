@@ -90,7 +90,7 @@ class ManualBookController extends Controller
             Storage::disk('public')->delete($existing->file_path);
         }
 
-        ManualBook::query()->updateOrCreate(['id' => 1], [
+        ManualBook::singleton([
             'file_path' => $path,
             'original_name' => $file->getClientOriginalName(),
             'file_size' => $file->getSize(),

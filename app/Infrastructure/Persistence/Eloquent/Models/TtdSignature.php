@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Persistence\Eloquent\Models;
 
+use App\Infrastructure\Persistence\Eloquent\Models\Concerns\HasSingletonRow;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,4 +13,5 @@ use Illuminate\Database\Eloquent\Model;
 #[Fillable(['nama_penandatangan', 'jabatan_penandatangan', 'pangkat', 'nip'])]
 class TtdSignature extends Model
 {
+    use HasSingletonRow;
 }
