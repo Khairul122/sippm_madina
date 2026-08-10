@@ -248,11 +248,11 @@
                         </div>
                         <div class="col-sm-6 col-md-3">
                             <label class="form-label text-sipapa fw-semibold small">Dari Tanggal</label>
-                            <input type="date" name="date_from" class="form-control shadow-sm" value="{{ request('date_from') }}">
+                            <input type="date" name="date_from" class="form-control shadow-sm" value="{{ request('date_from') }}" onchange="this.form.submit()">
                         </div>
                         <div class="col-sm-6 col-md-3">
                             <label class="form-label text-sipapa fw-semibold small">Sampai Tanggal</label>
-                            <input type="date" name="date_to" class="form-control shadow-sm" value="{{ request('date_to') }}">
+                            <input type="date" name="date_to" class="form-control shadow-sm" value="{{ request('date_to') }}" onchange="this.form.submit()">
                         </div>
 
                         <!-- Tombol Aksi Kelompok -->
@@ -271,7 +271,7 @@
                             </div>
                             @if($user->hasRole('kominfo'))
                             <div class="d-flex flex-wrap gap-2">
-                                <button type="button" class="btn btn-outline-primary px-3 py-2 d-inline-flex align-items-center gap-2" style="border-radius: var(--sipapa-radius-sm);" @click="document.getElementById('ttd-tab').click()">
+                                <button type="button" class="btn btn-outline-primary px-3 py-2 d-inline-flex align-items-center gap-2" style="border-radius: var(--sipapa-radius-sm);" onclick="document.getElementById('ttd-tab').click()">
                                     <i class="bi bi-pencil-square"></i>
                                     <span>Konfig TTD</span>
                                 </button>
@@ -403,11 +403,11 @@
                         </div>
                         <div class="col-sm-4">
                             <label class="form-label text-sipapa fw-semibold small">Dari Tanggal</label>
-                            <input type="date" name="date_from" class="form-control shadow-sm" value="{{ request('date_from') }}">
+                            <input type="date" name="date_from" class="form-control shadow-sm" value="{{ request('date_from') }}" onchange="this.form.submit()">
                         </div>
                         <div class="col-sm-4">
                             <label class="form-label text-sipapa fw-semibold small">Sampai Tanggal</label>
-                            <input type="date" name="date_to" class="form-control shadow-sm" value="{{ request('date_to') }}">
+                            <input type="date" name="date_to" class="form-control shadow-sm" value="{{ request('date_to') }}" onchange="this.form.submit()">
                         </div>
 
                         <!-- Tombol Aksi Kelompok -->

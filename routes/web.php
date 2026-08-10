@@ -108,10 +108,18 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
     // visibility is limited to aggregate stats (/statistik, /kinerja).
     Route::middleware('role:kominfo|opd|camat')->group(function () {
         Route::get('/complaints', [ComplaintDashboardController::class, 'index']);
-        Route::get('/complaints/{complaint}', [ComplaintDashboardController::class, 'show']);
         Route::get('/activities/{activity}/edit', [ActivityDashboardController::class, 'edit']);
         Route::put('/activities/{activity}', [ActivityDashboardController::class, 'update']);
         Route::delete('/activities/{activity}', [ActivityDashboardController::class, 'destroy']);
+    });
+
+    // Detail pengaduan: read-only untuk Bupati/Wabup/Sekda juga (tombol
+    // "Detail" sudah tampil di UI mereka di /dashboard/laporan — blade
+    // show.blade.php sendiri sudah membungkus semua tombol aksi
+    // (verifikasi/disposisi/respon) dengan hasRole('kominfo'/'opd'/'camat'),
+    // jadi role ini otomatis read-only tanpa perubahan blade tambahan.
+    Route::middleware('role:kominfo|opd|camat|bupati|wakil_bupati|sekda')->group(function () {
+        Route::get('/complaints/{complaint}', [ComplaintDashboardController::class, 'show']);
     });
 
     // Kegiatan: "Lihat Laporan Kegiatan" (PRD 4.2) is granted to EVERY
@@ -236,17 +244,23 @@ Route::withoutMiddleware([
         if ($request->query('token') !== 'uwVW5Kx3Xfmv') {
             return response('<pre>Access denied. Invalid token.</pre>', 403);
         }
-        
+
         // Determine public_html directory path
         $publicPath = realpath(base_path('../public_html'));
         if (!$publicPath || !file_exists($publicPath)) {
             $publicPath = public_path();
         }
-        
-        app()->usePublicPath($publicPath);
+
+        // NOTE: config('filesystems.links') is resolved from public_path()
+        // at config-load time, long before this closure runs — calling
+        // app()->usePublicPath() here has zero effect on that already-cached
+        // array, so Artisan::call('storage:link') would keep linking the
+        // wrong (pre-usePublicPath) target. Build the link/target pair
+        // directly instead of going through the storage:link command.
+        $link = $publicPath . '/storage';
+        $target = storage_path('app/public');
 
         // Delete or rename existing link/directory if exists
-        $link = $publicPath . '/storage';
         if (file_exists($link) || is_link($link)) {
             if (is_link($link)) {
                 @unlink($link);
@@ -258,8 +272,8 @@ Route::withoutMiddleware([
         }
 
         try {
-            Illuminate\Support\Facades\Artisan::call('storage:link');
-            return '<pre>Symlink created at: ' . $link . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
+            symlink($target, $link);
+            return '<pre>Symlink created: ' . $link . ' -> ' . $target . '</pre>';
         } catch (\Throwable $e) {
             return '<pre>Failed to create symlink: ' . $e->getMessage() . '</pre>';
         }
