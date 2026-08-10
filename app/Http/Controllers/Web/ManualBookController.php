@@ -82,8 +82,12 @@ class ManualBookController extends Controller
     public function upload(UploadManualBookRequest $request): RedirectResponse
     {
         $existing = ManualBook::query()->find(1);
+        $isReplacing = (bool) $existing;
         $file = $request->file('file');
 
+        // Simpan file baru DULU sebelum menghapus file lama — supaya kalau
+        // penyimpanan file baru gagal di tengah jalan (disk penuh, dst),
+        // file lama yang masih valid tidak ikut hilang.
         $path = $file->store('manual-books', 'public');
 
         if ($existing?->file_path) {
@@ -97,6 +101,8 @@ class ManualBookController extends Controller
             'uploaded_by' => $request->user()->id,
         ]);
 
-        return back()->with('status', 'Manual book berhasil diunggah.');
+        return back()->with('status', $isReplacing
+            ? 'Manual book berhasil diganti. File lama sudah dihapus dari server.'
+            : 'Manual book berhasil diunggah.');
     }
 }

@@ -60,15 +60,25 @@
 
         @if(auth()->user()->hasRole('kominfo'))
             <div class="border-top pt-4">
-                <h3 class="h6 fw-semibold mb-3">{{ $manualBook ? 'Ganti Manual Book' : 'Unggah Manual Book' }}</h3>
-                <form method="post" action="{{ url('/manual-book') }}" enctype="multipart/form-data">
+                <h3 class="h6 fw-semibold mb-3">{{ $manualBook ? 'Unggah Ulang / Ganti Manual Book' : 'Unggah Manual Book' }}</h3>
+                @if($manualBook && ! $manualBookFileMissing)
+                    <p class="small text-muted mb-3">
+                        Mengunggah file baru akan langsung menggantikan
+                        <strong>{{ $manualBook->original_name }}</strong> — file lama otomatis
+                        dihapus dari server dan tidak bisa dikembalikan.
+                    </p>
+                @endif
+                <form method="post" action="{{ url('/manual-book') }}" enctype="multipart/form-data"
+                    @if($manualBook && ! $manualBookFileMissing)
+                        data-confirm="File manual book saat ini ({{ $manualBook->original_name }}) akan digantikan dan dihapus permanen dari server. Lanjutkan?"
+                    @endif>
                     @csrf
                     <div class="mb-3">
                         <input type="file" name="file" accept="application/pdf" class="form-control" required>
-                        <div class="form-text">File PDF, maks 20 MB.</div>
+                        <div class="form-text">File PDF, maks 20 MB. File lama otomatis digantikan (bukan ditambahkan sebagai file baru).</div>
                     </div>
                     <button type="submit" class="btn btn-sipapa btn-sm px-4 rounded-3 fw-semibold">
-                        <i class="bi bi-upload me-1"></i>{{ $manualBook ? 'Ganti File' : 'Unggah' }}
+                        <i class="bi bi-upload me-1"></i>{{ $manualBook ? 'Unggah & Ganti File' : 'Unggah' }}
                     </button>
                 </form>
             </div>
