@@ -565,6 +565,18 @@
         });
     @endif
 
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: @json(session('error')),
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4500,
+            timerProgressBar: true,
+        });
+    @endif
+
     @if($errors->any())
         Swal.fire({
             icon: 'error',

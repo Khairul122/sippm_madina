@@ -24,14 +24,30 @@
                         @endif
                     </div>
                 </div>
-                <a href="{{ url('/manual-book/download') }}" class="btn btn-sipapa btn-sm px-4 rounded-3 fw-semibold flex-shrink-0">
-                    <i class="bi bi-download me-1"></i>Unduh
-                </a>
+                @unless($manualBookFileMissing)
+                    <a href="{{ url('/manual-book/download') }}" class="btn btn-sipapa btn-sm px-4 rounded-3 fw-semibold flex-shrink-0">
+                        <i class="bi bi-download me-1"></i>Unduh
+                    </a>
+                @endunless
             </div>
 
-            <div class="mb-4" style="border-radius: var(--sipapa-radius-sm); overflow:hidden; border:1px solid rgba(22, 52, 92, 0.12);">
-                <iframe src="{{ url('/manual-book/preview') }}" title="Preview Manual Book" style="width:100%; height:70vh; border:none; display:block;"></iframe>
-            </div>
+            @if($manualBookFileMissing)
+                <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                    <div>
+                        File PDF manual book tidak ditemukan di server (kemungkinan hilang saat migrasi/deploy).
+                        @if(auth()->user()->hasRole('kominfo'))
+                            Silakan unggah ulang file lewat form di bawah.
+                        @else
+                            Silakan hubungi Kominfo untuk mengunggah ulang.
+                        @endif
+                    </div>
+                </div>
+            @else
+                <div class="mb-4" style="border-radius: var(--sipapa-radius-sm); overflow:hidden; border:1px solid rgba(22, 52, 92, 0.12);">
+                    <iframe src="{{ url('/manual-book/preview') }}" title="Preview Manual Book" style="width:100%; height:70vh; border:none; display:block;"></iframe>
+                </div>
+            @endif
         @else
             <div class="text-center py-5 mb-4">
                 <i class="bi bi-journal-x text-muted" style="font-size:64px;"></i>
