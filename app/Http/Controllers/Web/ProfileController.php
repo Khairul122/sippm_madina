@@ -48,6 +48,20 @@ class ProfileController extends Controller
         return back()->with('status', 'Foto profil berhasil diperbarui.');
     }
 
+    public function destroyAvatar(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        if (! $user->avatar_path) {
+            return back()->with('status', 'Belum ada foto profil untuk dihapus.');
+        }
+
+        $this->deleteOldAvatar($user->avatar_path);
+        $user->update(['avatar_path' => null]);
+
+        return back()->with('status', 'Foto profil berhasil dihapus.');
+    }
+
     public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
     {
         $request->user()->update(['password' => $request->validated('password')]);

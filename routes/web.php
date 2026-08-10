@@ -69,6 +69,7 @@ Route::prefix('profil')->middleware(['auth', 'active'])->group(function () {
     Route::get('/', [ProfileController::class, 'show']);
     Route::put('/', [ProfileController::class, 'updateInfo']);
     Route::post('/avatar', [ProfileController::class, 'updateAvatar']);
+    Route::delete('/avatar', [ProfileController::class, 'destroyAvatar']);
     Route::put('/password', [ProfileController::class, 'updatePassword']);
 });
 

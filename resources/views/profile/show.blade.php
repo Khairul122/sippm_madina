@@ -43,6 +43,13 @@
                         <label for="avatarFileInput" class="position-absolute bottom-0 end-0 bg-warning text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 36px; height: 36px; border: 2.5px solid #fff; cursor: pointer; transition: all 0.2s ease;" title="Ubah foto">
                             <i class="bi bi-camera-fill text-dark small"></i>
                         </label>
+
+                        <!-- Overlay delete button — cuma tampil kalau user sudah punya foto -->
+                        @if($user->avatarUrl())
+                            <button type="submit" form="avatarDeleteForm" class="position-absolute bottom-0 start-0 bg-danger text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm border-0" style="width: 36px; height: 36px; border: 2.5px solid #fff !important; cursor: pointer; transition: all 0.2s ease;" title="Hapus foto">
+                                <i class="bi bi-trash-fill small"></i>
+                            </button>
+                        @endif
                     </div>
 
                     <!-- Hidden File Input inside Form -->
@@ -50,6 +57,13 @@
                         @csrf
                         <input type="file" id="avatarFileInput" name="avatar" accept="image/png,image/jpeg" onchange="submitAvatarForm(this)">
                     </form>
+
+                    @if($user->avatarUrl())
+                        <form id="avatarDeleteForm" method="post" action="{{ url('/profil/avatar') }}" class="d-none" data-confirm="Hapus foto profil? Foto akan kembali ke ikon bawaan.">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+                    @endif
 
                     <h4 class="fw-bold mb-1 text-dark" style="font-family: 'Poppins', sans-serif; font-size: 1.15rem;">{{ $user->name }}</h4>
                     <p class="text-muted small mb-3">{{ $user->email }}</p>
