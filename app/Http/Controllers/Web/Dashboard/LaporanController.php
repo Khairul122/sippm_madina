@@ -109,7 +109,7 @@ class LaporanController extends Controller
 
     public function updateTtd(UpdateTtdRequest $request): RedirectResponse
     {
-        TtdSignature::query()->updateOrCreate(['id' => 1], $request->validated());
+        TtdSignature::singleton($request->validated());
 
         return redirect('/dashboard/laporan')->with('status', 'Data TTD berhasil disimpan.');
     }
