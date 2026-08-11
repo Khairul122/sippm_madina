@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Http\Policies\ActivityPolicy;
 use App\Http\Policies\AuditLogPolicy;
 use App\Http\Policies\ComplaintPolicy;
+use App\Http\Policies\NotificationPolicy;
 use App\Http\Policies\UserPolicy;
 use App\Infrastructure\Broadcasting\Events\ActivityPublished;
 use App\Infrastructure\Broadcasting\Events\ComplaintDisposed;
@@ -21,6 +22,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\Activity;
 use App\Infrastructure\Persistence\Eloquent\Models\AuditLog;
 use App\Infrastructure\Persistence\Eloquent\Models\Complaint;
 use App\Infrastructure\Persistence\Eloquent\Models\Kecamatan;
+use App\Infrastructure\Persistence\Eloquent\Models\Notification;
 use App\Infrastructure\Persistence\Eloquent\Models\Opd;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
 use Illuminate\Auth\Events\Failed;
@@ -94,6 +96,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Activity::class, ActivityPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(AuditLog::class, AuditLogPolicy::class);
+        Gate::policy(Notification::class, NotificationPolicy::class);
 
         // Fase 4/5: one centralized audit-log listener + one persisted
         // in-app notification listener per domain, subscribed to every
