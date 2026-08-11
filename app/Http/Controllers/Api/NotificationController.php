@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api;
 use App\Domain\Notification\Repositories\NotificationRepositoryInterface;
 use App\Http\Controllers\Concerns\ApiResponds;
 use App\Http\Controllers\Controller;
+use App\Infrastructure\Persistence\Eloquent\Models\Notification as NotificationModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -45,6 +46,12 @@ class NotificationController extends Controller
 
     public function markRead(int $notification): JsonResponse
     {
+        // Object-level authorization — cek kepemilikan lewat NotificationPolicy
+        // SEBELUM markAsRead() dieksekusi (sebelumnya ID mentah dari URL
+        // langsung diproses tanpa cek pemilik, celah IDOR).
+        $model = NotificationModel::query()->findOrFail($notification);
+        $this->authorize('view', $model);
+
         $this->notifications->markAsRead($notification);
 
         return $this->success(null, 'Notifikasi ditandai sudah dibaca.');

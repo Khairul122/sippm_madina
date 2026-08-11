@@ -355,20 +355,21 @@
             init() {
                 this.load();
                 
-                // Live push via Reverb (resources/js/app.js)
+                // Live push via Reverb (resources/js/app.js) — payload cuma
+                // berisi title/message (lihat broadcastWith() di
+                // app/Infrastructure/Broadcasting/Events/*), TIDAK membawa
+                // id baris notifikasi di DB. Event fan-out kayak
+                // ComplaintSubmitted dikirim ke channel bersama
+                // ('channel-kominfo') yang didengar banyak user sekaligus,
+                // masing-masing punya baris notifikasi sendiri dengan id
+                // berbeda — jadi tidak ada "satu" id yang bisa disisipkan
+                // ke payload broadcast. Solusinya: reload dari server
+                // (this.load()) supaya id, is_read, dan unread_count
+                // selalu akurat sesuai data asli, alih-alih menyisipkan
+                // item palsu dengan id rekaan yang tidak pernah tersambung
+                // ke endpoint mark-as-read.
                 window.addEventListener('sipapa:notification', (e) => {
-                    const now = new Date();
-                    const newItem = { 
-                        id: 'live-' + Date.now(), 
-                        title: e.detail.title, 
-                        message: e.detail.message, 
-                        is_read: false,
-                        type: 'LiveNotification',
-                        created_at: now.toISOString()
-                    };
-                    
-                    this.items.unshift(newItem);
-                    this.unread++;
+                    this.load();
 
                     // Visual Alert / Swal Toast for real-time notification
                     if (window.Swal) {
@@ -407,12 +408,7 @@
                 if (item.is_read) return;
                 item.is_read = true;
                 this.unread = Math.max(0, this.unread - 1);
-                
-                // Don't fetch for temporary live items without integer DB ID
-                if (typeof item.id === 'string' && item.id.startsWith('live-')) {
-                    return;
-                }
-                
+
                 try {
                     await fetch(`{{ url('/dashboard/notifications') }}/${item.id}/read`, {
                         method: 'POST',
