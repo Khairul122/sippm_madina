@@ -2,6 +2,7 @@ name: CI/CD
 
 env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: 'true'
+  FTP_HOST: btg-gadis.madina.go.id
 
 on:
   push:
@@ -76,7 +77,7 @@ jobs:
             echo "| Branch | \`${GITHUB_REF_NAME}\` |"
             echo "| Trigger oleh | ${GITHUB_ACTOR} |"
             echo "| Waktu (UTC) | $(date -u '+%Y-%m-%d %H:%M:%S') |"
-            echo "| Target server | \`${{ secrets.FTP_SERVER }}\` |"
+            echo "| Target server | \`${{ env.FTP_HOST }}\` |"
             echo "| Target folder (app inti) | \`/laravel_app/\` |"
             echo "| Target folder (isi public/) | \`/public_html/\` |"
             echo "| .env | dibuat otomatis dari secret \`ENV_PRODUCTION\` & diunggah |"
@@ -124,7 +125,7 @@ jobs:
         id: ftp_deploy_core
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ${{ env.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT || 21 }}
@@ -151,7 +152,7 @@ jobs:
           ensure_dir() {
             curl --silent --show-error --ssl-reqd --ftp-create-dirs \
               -T /dev/null \
-              "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}/laravel_app/$1/.keep" || true
+              "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ env.FTP_HOST }}/laravel_app/$1/.keep" || true
           }
           ensure_dir "storage/framework/cache/data"
           ensure_dir "storage/framework/sessions"
@@ -163,7 +164,7 @@ jobs:
         id: ftp_deploy_public
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ${{ env.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT || 21 }}
@@ -186,7 +187,7 @@ jobs:
           echo "Mengunggah deploy-tools/index.php sebagai public_html/index.php..."
           curl --silent --show-error --ssl-reqd --ftp-create-dirs \
             -T deploy-tools/index.php \
-            "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_SERVER }}/public_html/index.php"
+            "ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ env.FTP_HOST }}/public_html/index.php"
 
       - name: Deploy result summary
         if: always()
@@ -196,7 +197,7 @@ jobs:
             echo "### 📦 Hasil deploy"
             echo ""
             if [ "${{ steps.ftp_deploy_core.outcome }}" = "success" ] && [ "${{ steps.ftp_deploy_public.outcome }}" = "success" ]; then
-              echo "✅ Berhasil di-deploy ke \`${{ secrets.FTP_SERVER }}\`"
+              echo "✅ Berhasil di-deploy ke \`${{ env.FTP_HOST }}\`"
             else
               echo "❌ Deploy gagal — cek log step \"Deploy app core\" / \"Deploy public assets\" di atas untuk detail error FTP."
             fi
