@@ -10,6 +10,7 @@ use App\Application\DTOs\HandleComplaintDTO;
 use App\Application\DTOs\ResolveComplaintDTO;
 use App\Application\DTOs\VerifyComplaintDTO;
 use App\Application\UseCases\Complaint\CancelDispositionUseCase;
+use App\Application\UseCases\Complaint\DeleteComplaintUseCase;
 use App\Application\UseCases\Complaint\DisposeComplaintUseCase;
 use App\Application\UseCases\Complaint\HandleComplaintUseCase;
 use App\Application\UseCases\Complaint\ResolveComplaintUseCase;
@@ -43,6 +44,7 @@ class ComplaintDashboardController extends Controller
         private readonly CancelDispositionUseCase $cancelDisposition,
         private readonly HandleComplaintUseCase $handleComplaint,
         private readonly ResolveComplaintUseCase $resolveComplaint,
+        private readonly DeleteComplaintUseCase $deleteComplaint,
     ) {
     }
 
@@ -239,6 +241,16 @@ class ComplaintDashboardController extends Controller
         }
 
         return back()->with('status', 'Jawaban resmi berhasil dikirim.');
+    }
+
+    public function destroy(Request $request, int $complaint): RedirectResponse
+    {
+        $model = Complaint::query()->findOrFail($complaint);
+        $this->authorize('delete', $model);
+
+        $this->deleteComplaint->execute($complaint, $request->user()->id);
+
+        return redirect('/dashboard/complaints')->with('status', 'Pengaduan berhasil dihapus.');
     }
 
     private function pendingDispositionFor(mixed $user, Complaint $complaint): ?int

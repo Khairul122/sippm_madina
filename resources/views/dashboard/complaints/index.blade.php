@@ -159,9 +159,18 @@
                         </td>
                         <!-- Action link -->
                         <td class="py-3 text-end px-4">
-                            <a href="{{ url('/dashboard/complaints/'.$complaint->id) }}" class="btn btn-sm px-3 rounded-pill fw-semibold text-white d-inline-flex align-items-center gap-1 shadow-sm transition-all" style="background-color: var(--sipapa-navy); border: none; font-size: 0.8rem;">
-                                Detail <i class="bi bi-chevron-right small"></i>
-                            </a>
+                            <div class="d-inline-flex align-items-center gap-2">
+                                <a href="{{ url('/dashboard/complaints/'.$complaint->id) }}" class="btn btn-sm px-3 rounded-pill fw-semibold text-white d-inline-flex align-items-center gap-1 shadow-sm transition-all" style="background-color: var(--sipapa-navy); border: none; font-size: 0.8rem;">
+                                    Detail <i class="bi bi-chevron-right small"></i>
+                                </a>
+                                @can('delete', $complaint)
+                                    <form method="post" action="{{ url('/dashboard/complaints/'.$complaint->id) }}" class="m-0" data-confirm="Hapus pengaduan {{ $complaint->ticket_number }} dari daftar? Riwayat dan audit tetap tersimpan.">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" aria-label="Hapus pengaduan {{ $complaint->ticket_number }}" title="Hapus pengaduan"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                @endcan
+                            </div>
                         </td>
                     </tr>
                 @empty

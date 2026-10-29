@@ -31,6 +31,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -58,6 +59,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        TrustProxies::at(array_filter(array_map('trim', explode(',', (string) config('app.trusted_proxies', '')))));
+
         if (
             str_starts_with(config('app.url'), 'https://') ||
             request()->header('X-Forwarded-Proto') === 'https' ||

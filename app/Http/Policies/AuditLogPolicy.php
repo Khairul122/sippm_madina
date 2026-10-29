@@ -26,4 +26,9 @@ class AuditLogPolicy
     {
         return $user->hasRole('kominfo');
     }
+
+    public function manageIpBlocks(User $user): bool
+    {
+        return $user->hasRole('kominfo');
+    }
 }

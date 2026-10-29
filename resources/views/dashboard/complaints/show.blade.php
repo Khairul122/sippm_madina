@@ -10,7 +10,16 @@
                     <span class="font-monospace text-muted small">{{ $complaint->ticket_number }}</span>
                     <h2 class="h4 mb-0">{{ $complaint->title }}</h2>
                 </div>
-                <span class="badge badge-status-{{ $complaint->status->value }} fs-6">{{ $complaint->status->label() }}</span>
+                <div class="d-flex flex-column align-items-end gap-2">
+                    <span class="badge badge-status-{{ $complaint->status->value }} fs-6">{{ $complaint->status->label() }}</span>
+                    @can('delete', $complaint)
+                        <form method="post" action="{{ url('/dashboard/complaints/'.$complaint->id) }}" class="m-0" data-confirm="Hapus pengaduan {{ $complaint->ticket_number }} dari daftar? Riwayat dan audit tetap tersimpan.">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Hapus Pengaduan</button>
+                        </form>
+                    @endcan
+                </div>
             </div>
             <dl class="row small mb-0">
                 <dt class="col-sm-3">Pengadu</dt><dd class="col-sm-9">{{ $complaint->user->name }}</dd>

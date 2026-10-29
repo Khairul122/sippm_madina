@@ -67,30 +67,7 @@ class AuditLog extends Model
      */
     public static function resolveRealIp(): string
     {
-        $request = request();
-        if (!$request) {
-            return '127.0.0.1';
-        }
-
-        $headers = [
-            'HTTP_CF_CONNECTING_IP',
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_REAL_IP',
-            'HTTP_CLIENT_IP',
-        ];
-
-        foreach ($headers as $header) {
-            $val = $request->server($header) ?? $request->header(str_replace('HTTP_', '', str_replace('_', '-', $header)));
-            if ($val) {
-                $ips = explode(',', $val);
-                $ip = trim($ips[0]);
-                if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                    return $ip;
-                }
-            }
-        }
-
-        return $request->ip() ?? '127.0.0.1';
+        return request()?->ip() ?? '127.0.0.1';
     }
 
     /**

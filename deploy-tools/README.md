@@ -27,3 +27,16 @@ Endpoint HTTP untuk migrasi, seeding, cache, dan ekstraksi vendor tidak ada.
 
 Jika skrip lama pernah disalin secara manual ke `public_html`, hapus
 `sys-unzip.php`, `sys-migrate.php`, dan `artisan-run.php` di server.
+
+## blokir ip dari log audit
+
+Jalankan `php artisan migrate --force` setelah deploy agar tabel `blocked_ips`
+tersedia. Fitur ini menolak permintaan yang masuk ke Laravel; aset statis dan
+lalu lintas yang berhenti di web server tetap perlu aturan firewall/WAF.
+
+Jika memakai proxy atau CDN, isi `TRUSTED_PROXIES` di `.env` dengan daftar IP
+proxy yang benar-benar dipercaya, dipisahkan koma. Jangan gunakan `*`.
+Jalankan `php artisan config:clear` setelah mengubah nilai ini. Tanpa daftar
+proxy yang tepat, Laravel dapat melihat IP proxy sebagai IP semua pengunjung.
+IP pada audit log lama mungkin berasal dari header yang dapat dipalsukan;
+periksa ulang sebelum memblokirnya.

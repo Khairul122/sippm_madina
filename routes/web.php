@@ -145,6 +145,7 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
     });
 
     Route::middleware('role:kominfo')->group(function () {
+        Route::delete('/complaints/{complaint}', [ComplaintDashboardController::class, 'destroy']);
         Route::post('/complaints/{complaint}/verify', [ComplaintDashboardController::class, 'verify']);
         Route::post('/complaints/{complaint}/dispose', [ComplaintDashboardController::class, 'dispose']);
         Route::post('/complaints/{complaint}/cancel-disposition', [ComplaintDashboardController::class, 'cancelDisposition']);
@@ -162,6 +163,8 @@ Route::prefix('dashboard')->middleware(['auth', 'active'])->group(function () {
         Route::post('/users/{user}/toggle-active', [UserManagementController::class, 'toggleActive']);
 
         Route::get('/audit-log', [AuditLogController::class, 'index']);
+        Route::post('/audit-log/{auditLog}/block-ip', [AuditLogController::class, 'blockIp']);
+        Route::delete('/audit-log/blocked-ips/{blockedIp}', [AuditLogController::class, 'unblockIp']);
 
         // Backup Database.
         Route::get('/backup', [DatabaseBackupController::class, 'index']);

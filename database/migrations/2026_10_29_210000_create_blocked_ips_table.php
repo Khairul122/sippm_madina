@@ -1,0 +1,24 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('blocked_ips', function (Blueprint $table) {
+            $table->id();
+            $table->string('ip_address', 45)->unique();
+            $table->foreignId('blocked_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('audit_log_id')->nullable()->constrained('audit_logs')->nullOnDelete();
+            $table->timestamp('created_at')->useCurrent();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('blocked_ips');
+    }
+};

@@ -12,6 +12,7 @@
                 <p class="text-muted small mb-0">
                     Mencatat secara real-time setiap aktivitas pengguna, waktu presisi, aksi, target data, dan alamat IP publik/klien secara aman & <em>immutable</em> (tidak dapat diubah/dihapus).
                 </p>
+                <p class="text-muted small mb-0">IP pada log lama mungkin berasal dari header proxy yang belum terverifikasi. Periksa sebelum memblokir.</p>
             </div>
             <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2 rounded-pill">
                 <i class="bi bi-lock-fill me-1"></i> Log Permanen (Immutable)
@@ -119,6 +120,23 @@
                             <span class="badge bg-dark bg-opacity-10 text-dark border font-monospace">
                                 <i class="bi bi-globe me-1"></i>{{ $log->ip_address ?? '127.0.0.1' }}
                             </span>
+                            @php
+                                $ip = filter_var($log->ip_address, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)
+                                    ? inet_ntop(inet_pton($log->ip_address)) : null;
+                                $blockedId = $ip ? ($blockedIps[$ip] ?? null) : null;
+                            @endphp
+                            @if($blockingReady && $blockedId)
+                                <form method="post" action="{{ url('/dashboard/audit-log/blocked-ips/'.$blockedId) }}" class="mt-1" data-confirm="Cabut blokir IP {{ $ip }}?">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-success">Buka Blokir</button>
+                                </form>
+                            @elseif($blockingReady && $ip && $ip !== request()->ip())
+                                <form method="post" action="{{ url('/dashboard/audit-log/'.$log->id.'/block-ip') }}" class="mt-1" data-confirm="Blokir semua akses aplikasi dari IP {{ $ip }}?">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Blokir IP</button>
+                                </form>
+                            @endif
                         </td>
                         <td class="text-end">
                             @if($log->old_data || $log->new_data)
