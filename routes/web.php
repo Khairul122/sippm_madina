@@ -40,14 +40,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index']);
-Route::get('/lacak', [TrackComplaintController::class, 'index']);
+Route::get('/lacak', [TrackComplaintController::class, 'index'])->middleware('throttle:track');
 Route::get('/kegiatan', [ActivityFeedController::class, 'index']);
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:login');
     Route::get('/register', [RegisterController::class, 'create']);
-    Route::post('/register', [RegisterController::class, 'store']);
+    Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:register');
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
@@ -56,7 +56,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 Route::prefix('pengaduan')->middleware(['auth', 'active', 'role:masyarakat'])->group(function () {
     Route::get('/', [MyComplaintController::class, 'index']);
     Route::get('/ajukan', [MyComplaintController::class, 'create']);
-    Route::post('/', [MyComplaintController::class, 'store']);
+    Route::post('/', [MyComplaintController::class, 'store'])->middleware('throttle:complaint-submit');
     Route::get('/{complaint}', [MyComplaintController::class, 'show']);
 });
 

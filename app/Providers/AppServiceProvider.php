@@ -144,21 +144,40 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Logout::class, [RecordLoginAuditLog::class, 'handleLogout']);
         Event::listen(Failed::class, [RecordLoginAuditLog::class, 'handleFailed']);
 
-        // NFR-07: batasi percobaan login per kombinasi IP+email supaya
-        // brute force pada satu akun ataupun dari satu sumber sama-sama
-        // dibatasi. Diterapkan via `throttle:login` di routes/web.php
-        // (session login) dan routes/api.php (Sanctum token login).
-        RateLimiter::for('login', function (Request $request) {
-            $key = strtolower((string) $request->input('email')).'|'.$request->ip();
-            $message = 'Terlalu banyak percobaan masuk. Coba lagi dalam beberapa menit.';
+        RateLimiter::for('site', function (Request $request) {
+            $limits = [Limit::perMinute(120)->by('site:'.$request->ip())];
 
-            return Limit::perMinute(5)->by($key)->response(function () use ($request, $message) {
+            if (! in_array($request->method(), ['GET', 'HEAD', 'OPTIONS'], true)) {
+                $limits[] = Limit::perMinute(60)->by('site:write:'.$request->ip());
+            }
+
+            return $limits;
+        });
+
+        // Login dibatasi per IP dan kombinasi akun+IP; mengganti email
+        // tidak boleh mereset batas percobaan dari sumber yang sama.
+        RateLimiter::for('login', function (Request $request) {
+            $key = hash('sha256', strtolower((string) $request->input('email')).'|'.$request->ip());
+            $message = 'Terlalu banyak percobaan masuk. Coba lagi dalam beberapa menit.';
+            $response = function () use ($request, $message) {
                 if ($request->is('api/*') || $request->expectsJson()) {
                     return response()->json(['success' => false, 'message' => $message], 429);
                 }
 
                 return back()->withErrors(['email' => $message])->onlyInput('email');
-            });
+            };
+
+            return [
+                Limit::perMinute(20)->by('login:ip:'.$request->ip())->response($response),
+                Limit::perMinute(5)->by('login:account:'.$key)->response($response),
+            ];
         });
+
+        RateLimiter::for('register', fn (Request $request) => Limit::perHour(10)->by('register:'.$request->ip()));
+        RateLimiter::for('complaint-submit', fn (Request $request) => [
+            Limit::perHour(10)->by('complaint:user:'.$request->user()?->id),
+            Limit::perHour(60)->by('complaint:ip:'.$request->ip()),
+        ]);
+        RateLimiter::for('track', fn (Request $request) => Limit::perMinute(30)->by('track:'.$request->ip()));
     }
 }
