@@ -20,6 +20,14 @@
         </div>
     </div>
 
+    @if(! $blockingReady)
+        <div class="alert alert-warning mb-4" role="alert">
+            Fitur blokir IP belum aktif. Jalankan <code>php artisan migrate --force</code> di server CWP.
+        </div>
+    @else
+        <p class="text-muted small mb-3">Cari alamat IP pada log, lalu gunakan tombol Blokir IP. IP yang sedang Anda gunakan tidak dapat diblokir.</p>
+    @endif
+
     {{-- Filter & Search Card --}}
     <div class="sipapa-card p-3 mb-4">
         <form method="GET" action="{{ url('/dashboard/audit-log') }}" class="row g-2 align-items-center">
@@ -136,6 +144,10 @@
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Blokir IP</button>
                                 </form>
+                            @elseif($blockingReady && $ip)
+                                <button type="button" class="btn btn-sm btn-outline-secondary mt-1" disabled title="IP yang sedang Anda gunakan tidak dapat diblokir">IP Anda</button>
+                            @elseif(! $blockingReady)
+                                <span class="d-block small text-warning mt-1">Blokir belum aktif</span>
                             @endif
                         </td>
                         <td class="text-end">

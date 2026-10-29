@@ -100,6 +100,10 @@ class AuditLogTest extends TestCase
             'ip_address' => '8.8.8.8',
         ]);
 
+        $this->withServerVariables(['REMOTE_ADDR' => '8.8.8.8'])
+            ->actingAs($kominfo)->get('/dashboard/audit-log')
+            ->assertOk()->assertSee('IP Anda');
+
         $this->withServerVariables(['REMOTE_ADDR' => '9.9.9.9'])
             ->actingAs($opd)->post("/dashboard/audit-log/{$log->id}/block-ip")
             ->assertForbidden();
