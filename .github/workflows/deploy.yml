@@ -90,17 +90,6 @@ jobs:
           extensions: mbstring, dom, fileinfo, gd, zip
           coverage: none
 
-      - name: Cache Composer packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.composer/cache
-          key: composer-deploy-${{ hashFiles('composer.lock') }}
-          restore-keys: composer-deploy-
-
-      - name: Install Production Composer
-        run: |
-          composer install --no-dev --prefer-dist --optimize-autoloader --no-progress
-
       - name: Generate .env for deployment
         run: |
           if [ -z "${{ secrets.ENV_PRODUCTION }}" ]; then
@@ -142,6 +131,7 @@ jobs:
             **/tests/**
             **/.github/**
             public/**
+            **/vendor/**
             **/storage/framework/cache/**
             **/storage/framework/sessions/**
             **/storage/framework/views/**

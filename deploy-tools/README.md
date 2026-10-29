@@ -1,12 +1,19 @@
 # Deployment pada shared hosting
 
 Workflow `.github/workflows/deploy.yml` membangun aplikasi, menjalankan tes,
-lalu mengunggah kode, `vendor/`, dan aset publik lewat FTPS. Semua koneksi
+lalu mengunggah kode dan aset publik lewat FTPS. Semua koneksi
 FTP wajib memakai TLS yang valid. Pastikan server mendukung FTPS.
 
 Secret `ENV_PRODUCTION` berisi seluruh konfigurasi `.env` produksi. Workflow
 membuat `.env` dari secret tersebut dan mengunggahnya ke `/laravel_app/.env`.
 Jangan simpan `.env`, dump SQL, atau token pemeliharaan dalam repositori.
+
+Folder `vendor/` yang sudah terpasang di server dipertahankan saat deploy.
+Jika `composer.lock` berubah, jalankan `composer install --no-dev` pada mesin
+tepercaya, kemas folder `vendor/` sebagai ZIP, unggah lewat FTPS, lalu ekstrak
+di `/laravel_app/` melalui file manager hosting. Hapus ZIP setelah ekstraksi.
+Lakukan ini sebelum menjalankan workflow. Unggahan FTP langsung untuk ribuan
+berkas vendor pernah terputus di tengah proses.
 
 Sebelum deploy pertama, buat symlink berikut melalui panel hosting atau SSH:
 
