@@ -56,6 +56,12 @@ class ComplaintController extends Controller
 
         if ($user->hasRole('masyarakat')) {
             $query->where('user_id', $user->id);
+        } elseif ($user->hasRole('opd')) {
+            $query->whereHas('dispositions', fn ($q) => $q->where('disposed_to_type', 'opd')->where('disposed_to_id', $user->opd_id));
+        } elseif ($user->hasRole('camat')) {
+            $query->whereHas('dispositions', fn ($q) => $q->where('disposed_to_type', 'camat')->where('disposed_to_id', $user->kecamatan_id));
+        } elseif (! $user->hasAnyRole(['kominfo', 'bupati', 'wakil_bupati', 'sekda'])) {
+            abort(403);
         }
 
         if ($request->filled('status')) {
@@ -66,7 +72,7 @@ class ComplaintController extends Controller
             $query->where('category', $request->string('category'));
         }
 
-        $complaints = $query->orderByDesc('created_at')->paginate((int) $request->integer('per_page', 15));
+        $complaints = $query->orderByDesc('created_at')->paginate(min(100, max(1, $request->integer('per_page', 15))));
 
         return $this->success(ComplaintResource::collection($complaints));
     }
@@ -102,6 +108,7 @@ class ComplaintController extends Controller
         $model = ComplaintModel::query()
             ->with(['user', 'attachments', 'statusHistories', 'dispositions', 'handlings', 'response'])
             ->findOrFail($complaint);
+        $this->authorize('view', $model);
 
         return $this->success(new ComplaintResource($model));
     }
@@ -109,6 +116,7 @@ class ComplaintController extends Controller
     public function history(int $complaint): JsonResponse
     {
         $model = ComplaintModel::query()->with('statusHistories')->findOrFail($complaint);
+        $this->authorize('view', $model);
 
         return $this->success((new ComplaintResource($model))->toArray(request())['status_histories'] ?? []);
     }

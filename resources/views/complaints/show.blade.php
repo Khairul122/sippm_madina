@@ -11,7 +11,7 @@
                 </div>
                 <span class="badge badge-status-{{ $complaint->status->value }} fs-6">{{ $complaint->status->label() }}</span>
             </div>
-            <div class="mb-0 rich-text-content">{!! $complaint->description !!}</div>
+            <div class="mb-0 rich-text-content">{!! \App\Http\Support\SafeRichText::render($complaint->description) !!}</div>
             @if($complaint->rejection_reason)
                 <div class="alert alert-danger mt-3 mb-0">Alasan ditolak: {{ $complaint->rejection_reason }}</div>
             @endif
@@ -33,7 +33,7 @@
                         </div>
                         <span class="text-muted small font-monospace"><i class="bi bi-calendar3"></i> {{ $handling->created_at->translatedFormat('d F Y, H:i') }} WIB</span>
                     </div>
-                    <div class="rich-text-content small mb-2">{!! $handling->description !!}</div>
+                    <div class="rich-text-content small mb-2">{!! \App\Http\Support\SafeRichText::render($handling->description) !!}</div>
                     @if($handling->attachment_path)
                         <div class="border-top pt-2">
                             <a href="{{ asset('storage/'.$handling->attachment_path) }}" target="_blank" class="btn btn-sm btn-outline-primary py-1 px-2 text-decoration-none small">

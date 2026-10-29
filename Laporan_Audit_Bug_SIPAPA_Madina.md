@@ -202,7 +202,7 @@ Catatan: dokumen PERBAIKAN.docx sebelumnya sudah mencatat permintaan serupa ("Ak
 
 Di luar cakupan bug yang dilaporkan, ditemukan catatan di `progress.md` yang masih relevan untuk ditindaklanjuti bila belum dilakukan:
 
-- Token akses `deploy-tools/artisan-run.php` dan route `/sys/*` (`uwVW5Kx3Xfmv`) bersifat hardcoded dan tercatat pernah sama dengan `DB_PASSWORD` produksi. Jika belum pernah dirotasi, sangat disarankan mengganti `DB_PASSWORD` dan token ini dengan nilai berbeda, karena token URL mudah tercatat di access log server maupun riwayat browser.
+- Token akses `deploy-tools/artisan-run.php` dan route `/sys/*` (`[redacted]`) bersifat hardcoded dan tercatat pernah sama dengan `DB_PASSWORD` produksi. Jika belum pernah dirotasi, sangat disarankan mengganti `DB_PASSWORD` dan token ini dengan nilai berbeda, karena token URL mudah tercatat di access log server maupun riwayat browser.
 - Route `/sys/clear`, `/sys/link`, `/sys/migrate`, `/sys/seed` di `routes/web.php` (baris 217-291) adalah endpoint publik yang hanya dilindungi token statis di query string, bukan autentikasi Laravel. Setelah kondisi hosting stabil dan mendukung akses via SSH atau file manager yang lebih baik, endpoint ini sebaiknya dinonaktifkan atau dipindah ke luar routing HTTP.
 
 ---

@@ -19,10 +19,10 @@ class DatabaseSeeder extends Seeder
             OpdSeeder::class,
             KecamatanSeeder::class,
             ComplaintCategorySeeder::class,
-            DemoUserSeeder::class,
-            AdminUserSeeder::class,
-            DummyReportSeeder::class,
-            SilapgaWebSqlDataSeeder::class,
         ]);
+
+        if (! app()->isProduction()) {
+            $this->call([DemoUserSeeder::class, AdminUserSeeder::class, DummyReportSeeder::class]);
+        }
     }
 }

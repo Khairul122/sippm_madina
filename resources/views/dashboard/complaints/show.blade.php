@@ -16,7 +16,7 @@
                 <dt class="col-sm-3">Pengadu</dt><dd class="col-sm-9">{{ $complaint->user->name }}</dd>
                 <dt class="col-sm-3">Kategori</dt><dd class="col-sm-9">{{ ucfirst($complaint->category) }}</dd>
                 <dt class="col-sm-3">Tujuan</dt><dd class="col-sm-9">{{ ucfirst(str_replace('_',' ', $complaint->target_type)) }}</dd>
-                <dt class="col-sm-3">Deskripsi</dt><dd class="col-sm-9"><div class="rich-text-content">{!! $complaint->description !!}</div></dd>
+                <dt class="col-sm-3">Deskripsi</dt><dd class="col-sm-9"><div class="rich-text-content">{!! \App\Http\Support\SafeRichText::render($complaint->description) !!}</div></dd>
                 @if($complaint->rejection_reason)
                     <dt class="col-sm-3">Alasan Ditolak</dt><dd class="col-sm-9 text-danger">{{ $complaint->rejection_reason }}</dd>
                 @endif
@@ -49,7 +49,7 @@
                         </div>
                         <span class="text-muted small font-monospace"><i class="bi bi-calendar3"></i> {{ $handling->created_at->translatedFormat('d F Y, H:i') }} WIB</span>
                     </div>
-                    <div class="rich-text-content small mb-2">{!! $handling->description !!}</div>
+                    <div class="rich-text-content small mb-2">{!! \App\Http\Support\SafeRichText::render($handling->description) !!}</div>
                     @if($handling->attachment_path)
                         <div class="border-top pt-2">
                             <a href="{{ asset('storage/'.$handling->attachment_path) }}" target="_blank" class="btn btn-xs btn-outline-primary py-1 px-2 text-decoration-none small" style="font-size: 0.75rem;">

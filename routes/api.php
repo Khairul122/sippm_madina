@@ -21,25 +21,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
-    // Stateless system maintenance helper routes (for CWP without SSH)
-    Route::get('/sys/migrate', function (\Illuminate\Http\Request $request) {
-        if ($request->query('token') !== 'uwVW5Kx3Xfmv') {
-            return response('<pre>Access denied. Invalid token.</pre>', 403);
-        }
-        try {
-            Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-            return '<pre>Migration successful!' . "\n\n" . Illuminate\Support\Facades\Artisan::output() . '</pre>';
-        } catch (\Throwable $e) {
-            return '<pre>Migration failed: ' . $e->getMessage() . '</pre>';
-        }
-    });
-
     // Public (no auth)
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
     Route::get('/track/{ticketNumber}', [PublicComplaintController::class, 'track']);
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum', 'active'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
 
@@ -59,7 +46,8 @@ Route::prefix('v1')->group(function () {
             ->middleware('role:kominfo');
 
         // Activities
-        Route::get('/activities', [ActivityController::class, 'index']);
+        Route::get('/activities', [ActivityController::class, 'index'])
+            ->middleware('role:kominfo|opd|camat|bupati|wakil_bupati|sekda');
         Route::post('/activities', [ActivityController::class, 'store'])
             ->middleware('role:opd|camat');
         Route::post('/activities/{activity}/verify', [ActivityController::class, 'verify'])
@@ -68,7 +56,8 @@ Route::prefix('v1')->group(function () {
             ->middleware('role:kominfo');
 
         // Dashboard
-        Route::get('/dashboard/statistics', [DashboardController::class, 'statistics']);
+        Route::get('/dashboard/statistics', [DashboardController::class, 'statistics'])
+            ->middleware('role:kominfo|opd|camat|bupati|wakil_bupati|sekda');
         Route::get('/dashboard/performance', [DashboardController::class, 'performance'])
             ->middleware('role:kominfo|bupati|wakil_bupati|sekda');
 

@@ -34,12 +34,19 @@ class ActivityController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = ActivityModel::query()->with('documentations');
+        $user = $request->user();
+
+        if ($user->hasRole('opd')) {
+            $query->where('actor_type', 'opd')->where('actor_id', $user->opd_id);
+        } elseif ($user->hasRole('camat')) {
+            $query->where('actor_type', 'kecamatan')->where('actor_id', $user->kecamatan_id);
+        }
 
         if ($request->filled('status')) {
             $query->where('status', $request->string('status'));
         }
 
-        $activities = $query->orderByDesc('date')->paginate((int) $request->integer('per_page', 15));
+        $activities = $query->orderByDesc('date')->paginate(min(100, max(1, $request->integer('per_page', 15))));
 
         return $this->success(ActivityResource::collection($activities));
     }

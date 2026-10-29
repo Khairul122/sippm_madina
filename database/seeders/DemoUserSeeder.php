@@ -16,6 +16,10 @@ class DemoUserSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            return;
+        }
+
         $firstOpd = Opd::query()->orderBy('id')->first();
         $firstKecamatan = Kecamatan::query()->orderBy('id')->first();
 

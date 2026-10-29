@@ -29,7 +29,7 @@ class UserController extends Controller
             $query->whereHas('roles', fn ($q) => $q->where('name', $request->string('role')));
         }
 
-        $users = $query->orderBy('name')->paginate((int) $request->integer('per_page', 15));
+        $users = $query->orderBy('name')->paginate(min(100, max(1, $request->integer('per_page', 15))));
 
         return $this->success(UserResource::collection($users));
     }

@@ -74,7 +74,7 @@
                             <div class="small text-muted mb-2 font-monospace"><i class="bi bi-calendar-event me-1"></i>{{ $activity->date->translatedFormat('d F Y') }}</div>
                             <h2 class="h4 fw-bold text-sipapa mb-3">{{ $activity->title }}</h2>
                             <div class="rich-text-content mb-4" style="line-height:1.6; font-size:0.95rem;">
-                                {!! $activity->description !!}
+                                {!! \App\Http\Support\SafeRichText::render($activity->description) !!}
                             </div>
                             @if($activity->actor)
                                 <div class="border-top pt-3 mt-3">

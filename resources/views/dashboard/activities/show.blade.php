@@ -23,7 +23,7 @@
                 <dd class="col-sm-9 fw-semibold text-dark">{{ $activity->location ?? '-' }}</dd>
                 
                 <dt class="col-sm-3 text-secondary">Deskripsi</dt>
-                <dd class="col-sm-9"><div class="rich-text-content">{!! $activity->description !!}</div></dd>
+                <dd class="col-sm-9"><div class="rich-text-content">{!! \App\Http\Support\SafeRichText::render($activity->description) !!}</div></dd>
                 
                 @if($activity->rejection_reason)
                     <dt class="col-sm-3 text-danger">Alasan Ditolak</dt>

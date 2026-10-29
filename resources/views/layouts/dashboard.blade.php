@@ -326,7 +326,7 @@
         });
 
         if (textarea.value) {
-            quill.root.innerHTML = textarea.value;
+            quill.setContents(quill.clipboard.convert(textarea.value));
         }
 
         quill.on('text-change', () => {

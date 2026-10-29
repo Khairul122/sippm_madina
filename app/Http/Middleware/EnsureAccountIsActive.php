@@ -19,6 +19,10 @@ class EnsureAccountIsActive
         $user = $request->user();
 
         if ($user && ! $user->is_active) {
+            if ($request->is('api/*')) {
+                abort(403, 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.');
+            }
+
             auth()->guard()->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();

@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         if (jabatanInput && jabatanInput.value) {
-            quillJabatan.root.innerHTML = jabatanInput.value;
+            quillJabatan.setContents(quillJabatan.clipboard.convert(jabatanInput.value));
         }
 
         quillJabatan.on('text-change', function () {
